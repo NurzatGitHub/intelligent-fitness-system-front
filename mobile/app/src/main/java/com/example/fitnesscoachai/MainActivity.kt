@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.example.fitnesscoachai.ui.auth.AuthActivity
-import com.example.fitnesscoachai.ui.camera.CameraActivity
+import com.example.fitnesscoachai.ui.exercise.ExerciseSelectActivity
 import com.example.fitnesscoachai.ui.home.HomeFragment
 import com.example.fitnesscoachai.ui.profile.ProfileFragment
 
@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
             when (it.itemId) {
                 R.id.nav_home -> openFragment(HomeFragment())
                 R.id.nav_camera -> {
-                    startActivity(Intent(this, CameraActivity::class.java))
+                    startActivity(Intent(this, ExerciseSelectActivity::class.java))
                 }
                 R.id.nav_profile -> openFragment(ProfileFragment())
             }

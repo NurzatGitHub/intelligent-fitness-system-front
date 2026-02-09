@@ -3,21 +3,25 @@ package com.example.fitnesscoachai.ui.auth
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.fitnesscoachai.MainActivity
 import com.example.fitnesscoachai.R
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 
 class AuthActivity : AppCompatActivity() {
 
-    private lateinit var etEmail: EditText
-    private lateinit var etPassword: EditText
-    private lateinit var btnLogin: Button
+    private lateinit var etEmail: TextInputEditText
+    private lateinit var etPassword: TextInputEditText
+    private lateinit var btnLogin: MaterialButton
+    private lateinit var btnContinueAsGuest: MaterialButton
+    private lateinit var tvCreateAccount: TextView
+    private lateinit var tvForgotPassword: TextView
 
     private val viewModel: AuthViewModel by viewModels()
 
@@ -28,11 +32,33 @@ class AuthActivity : AppCompatActivity() {
         etEmail = findViewById(R.id.etEmail)
         etPassword = findViewById(R.id.etPassword)
         btnLogin = findViewById(R.id.btnLogin)
+        btnContinueAsGuest = findViewById(R.id.btnContinueAsGuest)
+        tvCreateAccount = findViewById(R.id.tvCreateAccount)
+        tvForgotPassword = findViewById(R.id.tvForgotPassword)
 
         setupObservers()
 
         btnLogin.setOnClickListener {
             login()
+        }
+
+        btnContinueAsGuest.setOnClickListener {
+            // Continue as guest - skip authentication
+            getSharedPreferences("auth", MODE_PRIVATE).edit()
+                .putBoolean("isLoggedIn", true)
+                .putBoolean("isGuest", true)
+                .apply()
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
+
+        tvCreateAccount.setOnClickListener {
+            startActivity(Intent(this, SignUpStep1Activity::class.java))
+        }
+
+        tvForgotPassword.setOnClickListener {
+            // TODO: Implement forgot password functionality
+            Toast.makeText(this, "Forgot password feature coming soon", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -53,7 +79,7 @@ class AuthActivity : AppCompatActivity() {
                     is AuthViewModel.LoginState.Success -> {
                         Log.d("AuthActivity", "State: Success - ${state.authResponse.access.take(20)}...")
                         btnLogin.isEnabled = true
-                        btnLogin.text = "Login"
+                        btnLogin.text = "Log In"
 
                         // Сохраняем токен
                         saveAuthData(state.authResponse)
@@ -65,7 +91,7 @@ class AuthActivity : AppCompatActivity() {
                     is AuthViewModel.LoginState.Error -> {
                         Log.e("AuthActivity", "State: Error - ${state.message}")
                         btnLogin.isEnabled = true
-                        btnLogin.text = "Login"
+                        btnLogin.text = "Log In"
                         Toast.makeText(
                             this@AuthActivity,
                             "Error: ${state.message}",
@@ -95,6 +121,7 @@ class AuthActivity : AppCompatActivity() {
             .putString("access_token", authResponse.access)
             .putString("refresh_token", authResponse.refresh)
             .putBoolean("isLoggedIn", true)
+            .putString("user_name", authResponse.user.username)
             .apply()
     }
 }

@@ -8,16 +8,22 @@
     <LinearLayout
         android:orientation="vertical"
         android:padding="24dp"
-        android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical">
+        android:layout_height="wrap_content">
 
         <TextView
-            android:text="Welcome Back"
+            android:text="Create Account"
             android:textSize="32sp"
             android:textStyle="bold"
-            android:layout_marginBottom="48dp"
+            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:text="Step 1 of 2"
+            android:textSize="14sp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:layout_marginBottom="32dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
@@ -39,9 +45,11 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="16dp"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            app:endIconMode="password_toggle">
+            app:endIconMode="password_toggle"
+            app:helperTextEnabled="true"
+            app:helperText="Use a strong password">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPassword"
@@ -52,60 +60,36 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:id="@+id/tvForgotPassword"
-            android:text="Forgot password?"
-            android:textSize="14sp"
-            android:textColor="?attr/colorPrimary"
-            android:layout_gravity="end"
-            android:layout_marginBottom="24dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnLogin"
-            android:text="Log In"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:minHeight="56dp"
-            style="@style/Widget.Material3.Button"/>
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            app:endIconMode="password_toggle">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnContinueAsGuest"
-            android:text="Continue as Guest"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:minHeight="56dp"
-            style="@style/Widget.Material3.Button.OutlinedButton"/>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:text="Don't have an account? "
-                android:textSize="14sp"
-                android:layout_width="wrap_content"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etConfirmPassword"
+                android:hint="Confirm Password"
+                android:inputType="textPassword"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <TextView
-                android:id="@+id/tvCreateAccount"
-                android:text="Create an account"
-                android:textSize="14sp"
-                android:textColor="?attr/colorPrimary"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        </LinearLayout>
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/cbTerms"
+            android:text="I agree to the Terms and Conditions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnNext"
+            android:text="Next"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="56dp"
+            style="@style/Widget.Material3.Button"/>
 
     </LinearLayout>
 
