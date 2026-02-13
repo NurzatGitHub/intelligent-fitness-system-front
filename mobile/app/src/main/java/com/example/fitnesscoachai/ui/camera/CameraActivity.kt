@@ -53,11 +53,11 @@ class CameraActivity : AppCompatActivity() {
             viewModel.connectWebSocket()
         }
 
-        btnTest.setOnClickListener {
-            // Тестовая отправка кадра
-            val testBitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
-            viewModel.sendFrame(testBitmap)
-        }
+//        btnTest.setOnClickListener {
+//            // Тестовая отправка кадра
+//            val testBitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+//            viewModel.sendFrame(testBitmap)
+//        }
 
         if (allPermissionsGranted()) {
             startCamera()
@@ -72,7 +72,7 @@ class CameraActivity : AppCompatActivity() {
         cameraExecutor = Executors.newSingleThreadExecutor()
 
         // Авто-коннект при открытии
-        viewModel.connectWebSocket()
+        viewModel.connectWebSocket(false)
     }
 
     private fun observeViewModel() {
@@ -92,9 +92,13 @@ class CameraActivity : AppCompatActivity() {
                         tvFeedback.text = "WebSocket connected!"
                         Toast.makeText(this@CameraActivity, "Connected!", Toast.LENGTH_SHORT).show()
                     }
-                    is CameraViewModel.AnalysisState.FrameSent -> {
-                        tvFeedback.text = "Frame sent to server"
+                    is CameraViewModel.AnalysisState.Info -> {
+                        tvStatus.text = "Status: Connected"
+                        tvFeedback.text = state.message
                     }
+//                    is CameraViewModel.AnalysisState.FrameSent -> {
+//                        tvFeedback.text = "Frame sent to server"
+//                    }
                     is CameraViewModel.AnalysisState.AnalysisReceived -> {
                         val result = state.result
                         tvStatus.text = "Exercise: ${result.exercise}"
