@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:overScrollMode="never">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Training Goal"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="6dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="What do you want to achieve?"
+            android:textSize="14sp"
+            android:alpha="0.75"
+            android:layout_marginBottom="24dp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="24dp"
+            app:cardUseCompatPadding="true"
+            app:cardElevation="2dp"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupGoal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="false"
+                    app:singleSelection="true"
+                    app:selectionRequired="true"
+                    android:layout_marginBottom="10dp">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipLoseWeight"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Lose weight"
+                        android:checkable="true"
+                        android:minHeight="52dp"
+                        app:chipStrokeWidth="1dp"
+                        app:chipStrokeColor="?attr/colorOutline"
+                        app:chipBackgroundColor="?attr/colorSurface"
+                        android:textColor="?attr/colorOnSurface"
+                        app:checkedIconVisible="false" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipBuildMuscle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Build muscle"
+                        android:checkable="true"
+                        android:minHeight="52dp"
+                        app:chipStrokeWidth="1dp"
+                        app:chipStrokeColor="?attr/colorOutline"
+                        app:chipBackgroundColor="?attr/colorSurface"
+                        android:textColor="?attr/colorOnSurface"
+                        app:checkedIconVisible="false" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipGetStronger"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Get stronger"
+                        android:checkable="true"
+                        android:minHeight="52dp"
+                        app:chipStrokeWidth="1dp"
+                        app:chipStrokeColor="?attr/colorOutline"
+                        app:chipBackgroundColor="?attr/colorSurface"
+                        android:textColor="?attr/colorOnSurface"
+                        app:checkedIconVisible="false" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipImproveEndurance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Improve endurance"
+                        android:checkable="true"
+                        android:minHeight="52dp"
+                        app:chipStrokeWidth="1dp"
+                        app:chipStrokeColor="?attr/colorOutline"
+                        app:chipBackgroundColor="?attr/colorSurface"
+                        android:textColor="?attr/colorOnSurface"
+                        app:checkedIconVisible="false" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipStayHealthy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Stay healthy"
+                        android:checkable="true"
+                        android:minHeight="52dp"
+                        app:chipStrokeWidth="1dp"
+                        app:chipStrokeColor="?attr/colorOutline"
+                        app:chipBackgroundColor="?attr/colorSurface"
+                        android:textColor="?attr/colorOnSurface"
+                        app:checkedIconVisible="false" />
+
+                </com.google.android.material.chip.ChipGroup>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnNext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="56dp"
+            android:text="Next"
+            style="@style/Widget.Material3.Button"
+            android:layout_marginBottom="12dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnBack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="56dp"
+            android:text="Back"
+            style="@style/Widget.Material3.Button.OutlinedButton" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="12dp" />
+
+    </LinearLayout>
+
+</ScrollView>

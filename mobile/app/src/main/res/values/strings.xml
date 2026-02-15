@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">FitnessCoachAI</string>
+    <string name="auth_welcome_back">Welcome Back</string>
+    <string name="auth_subtitle">Sign in to continue</string>
+    <string name="auth_email">Email</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_forgot">Forgot password?</string>
+    <string name="auth_login">Log In</string>
+    <string name="auth_guest">Continue as Guest</string>
+    <string name="auth_or">or</string>
+    <string name="auth_google">Continue with Google</string>
+    <string name="auth_no_account">Don’t have an account?</string>
+    <string name="auth_create"> Create an account</string>
+    <string name="signup_create_account">Create Account</string>
+    <string name="signup_step_1_2">Step 1 of 2</string>
+    <string name="signup_password_hint">Use a strong password (8+ characters)</string>
+    <string name="signup_confirm_password">Confirm Password</string>
+    <string name="signup_terms">I agree to the Terms and Privacy Policy</string>
+    <string name="signup_next">Next</string>
+    <string name="signup_have_account">Already have an account?</string>
+    <string name="signup_login"> Log in</string>
+
+
 </resources>

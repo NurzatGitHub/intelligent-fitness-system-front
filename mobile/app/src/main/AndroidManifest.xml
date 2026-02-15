@@ -25,6 +25,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".MainActivity"
             android:exported="false" />
@@ -35,8 +36,28 @@
             android:name=".ui.auth.SignUpStep1Activity"
             android:exported="false" />
         <activity
-            android:name=".ui.auth.SignUpStep2Activity"
+            android:name=".ui.auth.onboarding.SignUpAgeActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.auth.onboarding.SignUpHeightActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.auth.onboarding.SignUpWeightActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.auth.onboarding.SignUpFitnessLevelActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.auth.onboarding.SignUpGoalActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.auth.onboarding.SignUpLimitationsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.auth.onboarding.SignUpFrequencyActivity"
+            android:exported="false" />
+
+
         <activity
             android:name=".ui.welcome.WelcomeActivity"
             android:exported="false" />
@@ -52,6 +73,7 @@
         <activity
             android:name=".ui.history.HistoryActivity"
             android:exported="false" />
+
     </application>
 
 </manifest>

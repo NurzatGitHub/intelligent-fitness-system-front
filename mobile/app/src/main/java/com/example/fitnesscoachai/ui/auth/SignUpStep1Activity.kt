@@ -2,76 +2,195 @@ package com.example.fitnesscoachai.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Patterns
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.fitnesscoachai.R
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 
 class SignUpStep1Activity : AppCompatActivity() {
+
+    private lateinit var tilEmail: TextInputLayout
+    private lateinit var tilPassword: TextInputLayout
+    private lateinit var tilConfirmPassword: TextInputLayout
 
     private lateinit var etEmail: TextInputEditText
     private lateinit var etPassword: TextInputEditText
     private lateinit var etConfirmPassword: TextInputEditText
+
     private lateinit var cbTerms: MaterialCheckBox
     private lateinit var btnNext: MaterialButton
+
+    private var attempted = false
+    private var emailTouched = false
+    private var passTouched = false
+    private var confirmTouched = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup_step1)
 
+        tilEmail = findViewById(R.id.tilEmail)
+        tilPassword = findViewById(R.id.tilPassword)
+        tilConfirmPassword = findViewById(R.id.tilConfirmPassword)
+
         etEmail = findViewById(R.id.etEmail)
         etPassword = findViewById(R.id.etPassword)
         etConfirmPassword = findViewById(R.id.etConfirmPassword)
+
         cbTerms = findViewById(R.id.cbTerms)
         btnNext = findViewById(R.id.btnNext)
 
+        setupUi()
+        updateButtonEnabled()
+    }
+
+    private fun setupUi() {
+        btnNext.isEnabled = false
+
+        val watcher = SimpleTextWatcher {
+            // кнопку обновляем всегда, ошибки — только если уже пытались/трогали
+            updateButtonEnabled()
+            validate(showErrors = attempted)
+        }
+
+        etEmail.addTextChangedListener(watcher)
+        etPassword.addTextChangedListener(watcher)
+        etConfirmPassword.addTextChangedListener(watcher)
+
+        cbTerms.setOnCheckedChangeListener { _, _ ->
+            updateButtonEnabled()
+            if (attempted) validate(showErrors = true)
+        }
+
+        etEmail.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                emailTouched = true
+                validate(showErrors = true)
+            }
+        }
+
+        etPassword.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                passTouched = true
+                validate(showErrors = true)
+            }
+        }
+
+        etConfirmPassword.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                confirmTouched = true
+                validate(showErrors = true)
+            }
+        }
+
+        etConfirmPassword.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                btnNext.performClick()
+                true
+            } else false
+        }
+
         btnNext.setOnClickListener {
-            validateAndProceed()
+            attempted = true
+            emailTouched = true
+            passTouched = true
+            confirmTouched = true
+
+            val ok = validate(showErrors = true)
+            if (!ok) return@setOnClickListener
+
+            val email = etEmail.text?.toString()?.trim().orEmpty()
+            val password = etPassword.text?.toString()?.trim().orEmpty()
+
+            val intent = Intent(this, com.example.fitnesscoachai.ui.auth.onboarding.SignUpAgeActivity::class.java)
+            intent.putExtra("email", email)
+            intent.putExtra("password", password)
+            startActivity(intent)
+
+
         }
     }
 
-    private fun validateAndProceed() {
-        val email = etEmail.text.toString().trim()
-        val password = etPassword.text.toString().trim()
-        val confirmPassword = etConfirmPassword.text.toString().trim()
+    private fun updateButtonEnabled() {
+        btnNext.isEnabled = isFormValid()
+    }
 
-        when {
-            email.isEmpty() -> {
-                etEmail.error = "Email is required"
-                return
+    private fun isFormValid(): Boolean {
+        val email = etEmail.text?.toString()?.trim().orEmpty()
+        val pass = etPassword.text?.toString()?.trim().orEmpty()
+        val confirm = etConfirmPassword.text?.toString()?.trim().orEmpty()
+
+        val emailOk = email.isNotBlank() && Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        val passOk = pass.length >= 8
+        val confirmOk = confirm.isNotBlank() && confirm == pass
+        val termsOk = cbTerms.isChecked
+
+        return emailOk && passOk && confirmOk && termsOk
+    }
+
+    private fun validate(showErrors: Boolean): Boolean {
+        val email = etEmail.text?.toString()?.trim().orEmpty()
+        val pass = etPassword.text?.toString()?.trim().orEmpty()
+        val confirm = etConfirmPassword.text?.toString()?.trim().orEmpty()
+
+        // сброс
+        tilEmail.error = null
+        tilPassword.error = null
+        tilConfirmPassword.error = null
+
+        var ok = true
+
+        val showEmailErr = showErrors && (emailTouched || attempted)
+        val showPassErr = showErrors && (passTouched || attempted)
+        val showConfirmErr = showErrors && (confirmTouched || attempted)
+
+        if (showEmailErr) {
+            tilEmail.error = when {
+                email.isBlank() -> "Email is required"
+                !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> "Please enter a valid email"
+                else -> null
             }
-            !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
-                etEmail.error = "Please enter a valid email"
-                return
+            if (tilEmail.error != null) ok = false
+        } else {
+            // даже если не показываем, всё равно учитываем валидность
+            if (email.isBlank() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) ok = false
+        }
+
+        if (showPassErr) {
+            tilPassword.error = when {
+                pass.isBlank() -> "Password is required"
+                pass.length < 8 -> "Password must be at least 8 characters"
+                else -> null
             }
-            password.isEmpty() -> {
-                etPassword.error = "Password is required"
-                return
+            if (tilPassword.error != null) ok = false
+        } else {
+            if (pass.length < 8) ok = false
+        }
+
+        if (showConfirmErr) {
+            tilConfirmPassword.error = when {
+                confirm.isBlank() -> "Please confirm your password"
+                confirm != pass -> "Passwords do not match"
+                else -> null
             }
-            password.length < 8 -> {
-                etPassword.error = "Password must be at least 8 characters"
-                return
-            }
-            confirmPassword.isEmpty() -> {
-                etConfirmPassword.error = "Please confirm your password"
-                return
-            }
-            password != confirmPassword -> {
-                etConfirmPassword.error = "Passwords do not match"
-                return
-            }
-            !cbTerms.isChecked -> {
-                Toast.makeText(this, "Please agree to the Terms and Conditions", Toast.LENGTH_SHORT).show()
-                return
+            if (tilConfirmPassword.error != null) ok = false
+        } else {
+            if (confirm.isBlank() || confirm != pass) ok = false
+        }
+
+        if (!cbTerms.isChecked) {
+            ok = false
+            if (showErrors && attempted) {
+                Toast.makeText(this, "Please agree to the Terms and Privacy Policy", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // Pass data to Step 2
-        val intent = Intent(this, SignUpStep2Activity::class.java)
-        intent.putExtra("email", email)
-        intent.putExtra("password", password)
-        startActivity(intent)
+        updateButtonEnabled()
+        return ok
     }
 }

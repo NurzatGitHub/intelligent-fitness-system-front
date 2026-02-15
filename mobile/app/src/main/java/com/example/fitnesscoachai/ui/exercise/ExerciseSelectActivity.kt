@@ -4,8 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.fitnesscoachai.R
-import com.example.fitnesscoachai.ui.workout.WorkoutActivity
 import com.google.android.material.card.MaterialCardView
+import com.example.fitnesscoachai.ui.workout.WorkoutActivity
+
 
 class ExerciseSelectActivity : AppCompatActivity() {
 

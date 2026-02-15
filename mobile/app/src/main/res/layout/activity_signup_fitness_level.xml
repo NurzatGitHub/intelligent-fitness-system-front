@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:overScrollMode="never">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fitness Level"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="6dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Step 4 of 8"
+            android:textSize="14sp"
+            android:alpha="0.7"
+            android:layout_marginBottom="20dp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="28dp"
+            app:cardUseCompatPadding="true"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Choose your current level"
+                    android:textSize="14sp"
+                    android:alpha="0.8"
+                    android:layout_marginBottom="12dp"/>
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true"
+                    app:selectionRequired="true"
+                    android:layout_marginBottom="16dp">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipBeginner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Beginner"
+                        android:checkable="true"
+                        app:chipStrokeWidth="1dp"
+                        app:chipStrokeColor="?attr/colorOutline"
+                        app:chipBackgroundColor="?attr/colorSurface"
+                        android:textColor="?attr/colorOnSurface"
+                        android:minHeight="52dp"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"/>
+
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipIntermediate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Intermediate"
+                        android:checkable="true"
+                        app:chipStrokeWidth="1dp"
+                        app:chipStrokeColor="?attr/colorOutline"
+                        app:chipBackgroundColor="?attr/colorSurface"
+                        android:textColor="?attr/colorOnSurface"
+                        android:minHeight="52dp"/>
+
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipAdvanced"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Advanced"
+                        android:checkable="true"
+                        app:chipStrokeWidth="1dp"
+                        app:chipStrokeColor="?attr/colorOutline"
+                        app:chipBackgroundColor="?attr/colorSurface"
+                        android:textColor="?attr/colorOnSurface"
+                        android:minHeight="52dp"/>
+
+                </com.google.android.material.chip.ChipGroup>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnNext"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="56dp"
+                    android:text="Next"
+                    android:enabled="false"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBack"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="56dp"
+                    android:text="Back"
+                    android:layout_marginTop="10dp"/>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+    </LinearLayout>
+</ScrollView>
