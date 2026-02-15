@@ -20,16 +20,18 @@ import com.example.fitnesscoachai.R
 import com.example.fitnesscoachai.ui.summary.SummaryActivity
 import androidx.camera.view.PreviewView
 import com.example.fitnesscoachai.ui.workout.WorkoutViewModel.WorkoutState
-import com.example.fitnesscoachai.ui.camera.AnalysisResult
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.delay
 
 class WorkoutActivity : AppCompatActivity() {
 
     private lateinit var cameraExecutor: ExecutorService
+
+    private lateinit var overlayView: OverlayView
     private lateinit var previewView: PreviewView
     private lateinit var tvExerciseName: TextView
     private lateinit var tvTimer: TextView
@@ -46,6 +48,10 @@ class WorkoutActivity : AppCompatActivity() {
     private var workoutStartTime: Long = 0
     private var timer: CountDownTimer? = null
     private var elapsedSeconds: Long = 0
+    private var poseHelper: PoseLandmarkerHelper? = null
+    private var lastSendMs = 0L
+
+    private var lastSentPoints: List<PosePoint>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +60,7 @@ class WorkoutActivity : AppCompatActivity() {
         exerciseName = intent.getStringExtra("exercise_name") ?: "Exercise"
 
         initializeViews()
+        poseHelper = PoseLandmarkerHelper(this)
         setupObservers()
         setupListeners()
 
@@ -82,6 +89,9 @@ class WorkoutActivity : AppCompatActivity() {
         btnStartPause = findViewById(R.id.btnStartPause)
         btnFinish = findViewById(R.id.btnFinish)
 
+        overlayView = findViewById(R.id.overlayView)
+        overlayView.mirrorX = true
+
         tvExerciseName.text = "$exerciseName Training"
         tvAIStatus.text = "AI: Ready"
         tvReps.text = "0"
@@ -97,33 +107,40 @@ class WorkoutActivity : AppCompatActivity() {
                         tvFeedback.text = "Tap Start to begin training"
                         tvGuidance.visibility = android.view.View.GONE
                     }
+                    is WorkoutState.Connecting -> {
+                        tvAIStatus.text = "AI: Connecting..."
+                        tvFeedback.text = "Connecting..."
+                    }
                     is WorkoutState.Connected -> {
-                        tvAIStatus.text = "AI: Detecting"
-                        tvFeedback.text = "Analyzing posture…"
+                        tvAIStatus.text = "AI: Connected"
+                        tvFeedback.text = "Ready"
                         tvGuidance.visibility = android.view.View.VISIBLE
                         tvGuidance.text = "Stand fully in frame\nMake sure your whole body is visible"
                     }
-                    is WorkoutState.AnalysisReceived -> {
-                        val result: AnalysisResult = state.result
-                        tvReps.text = result.count.toString()
+                    is WorkoutState.Setup -> {
+                        tvAIStatus.text = "AI: Detecting"
+                        tvFeedback.text = state.hint
+                        tvGuidance.visibility = android.view.View.VISIBLE
+                        tvGuidance.text = state.hint
+                    }
+                    is WorkoutState.Active -> {
                         tvAIStatus.text = "AI: Tracking"
-                        
-                        // Show most important feedback (1-2 items max)
-                        val feedbackText = when {
-                            result.errors.isNotEmpty() -> result.errors.first()
-                            result.feedback.isNotEmpty() -> result.feedback
-                            else -> "Good form"
-                        }
-                        tvFeedback.text = feedbackText
-                        
-                        // Hide guidance when tracking starts
-                        if (isWorkoutActive) {
-                            tvGuidance.visibility = android.view.View.GONE
-                        }
+                        val res = state.res
+                        tvReps.text = (res.rep_count ?: 0).toString()
+
+                        val conf = res.confidence?.let { String.format("%.2f", it) } ?: "-"
+                        tvFeedback.text = "${res.overall ?: ""} (conf=$conf)"
+
+                        overlayView.updatePose(lastSentPoints, res.segments ?: emptyList())
+                        tvGuidance.visibility = android.view.View.GONE
+                    }
+                    is WorkoutState.Info -> {
+                        tvFeedback.text = state.msg
                     }
                     is WorkoutState.Error -> {
                         tvAIStatus.text = "AI: Error"
-                        tvFeedback.text = "Error: ${state.message}"
+                        tvFeedback.text = state.message
+                        Toast.makeText(this@WorkoutActivity, state.message, Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -151,6 +168,38 @@ class WorkoutActivity : AppCompatActivity() {
         tvAIStatus.text = "AI: Tracking"
         tvFeedback.text = "Analyzing posture…"
         tvGuidance.visibility = android.view.View.GONE
+
+        val test = listOf(
+            PosePoint(0.40f,0.25f,0.99f),
+            PosePoint(0.60f,0.25f,0.99f),
+            PosePoint(0.50f,0.30f,0.99f),
+            PosePoint(0.50f,0.40f,0.99f),
+            PosePoint(0.42f,0.40f,0.99f),
+            PosePoint(0.58f,0.40f,0.99f),
+            PosePoint(0.40f,0.50f,0.99f),
+            PosePoint(0.60f,0.50f,0.99f),
+            PosePoint(0.38f,0.62f,0.99f),
+            PosePoint(0.62f,0.62f,0.99f),
+            PosePoint(0.46f,0.55f,0.99f),
+            PosePoint(0.54f,0.55f,0.99f),
+            PosePoint(0.46f,0.70f,0.99f),
+            PosePoint(0.54f,0.70f,0.99f),
+            PosePoint(0.46f,0.86f,0.99f),
+            PosePoint(0.54f,0.86f,0.99f),
+            PosePoint(0.45f,0.92f,0.99f),
+            PosePoint(0.55f,0.92f,0.99f)
+        )
+
+//        viewModel.sendLandmarks(test)
+//        overlayView.updatePose(test, emptyList())
+
+        lifecycleScope.launch {
+            while (isWorkoutActive) {
+                lastSentPoints = test
+                viewModel.sendLandmarks(test)
+                delay(200)
+            }
+        }
 
         // Start timer
         timer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
@@ -201,11 +250,34 @@ class WorkoutActivity : AppCompatActivity() {
                 .build()
                 .also {
                     it.setAnalyzer(cameraExecutor) { imageProxy ->
-                        if (isWorkoutActive) {
-                            // TODO: Capture frame and send to viewModel
-                            // viewModel.sendFrame(imageProxy)
+                        try {
+                            if (!isWorkoutActive) return@setAnalyzer
+
+                            val now = System.currentTimeMillis()
+                            if (now - lastSendMs < 200) return@setAnalyzer // 5 FPS
+                            lastSendMs = now
+
+                            // !!! ВАЖНО: тут нужен конвертер ImageProxy -> MPImage
+                            // Самый простой рабочий способ: использовать AndroidBitmap + MPImage (дороже по CPU)
+                            val bmp = ImageProxyToBitmapConverter.toBitmap(imageProxy) ?: return@setAnalyzer
+                            val mpImage = com.google.mediapipe.framework.image.BitmapImageBuilder(bmp).build()
+
+                            val result = poseHelper?.detect(mpImage) ?: return@setAnalyzer
+                            val firstPose = result.landmarks().firstOrNull() ?: return@setAnalyzer
+
+                            val points18 = PoseMapper.mapTo18(firstPose)
+                            lastSentPoints = points18
+                            viewModel.sendLandmarks(points18)
+
+                            // Можешь временно рисовать точки без сегментов,
+                            // пока не пришёл ответ:
+                            runOnUiThread {
+                                overlayView.updatePose(points18, emptyList())
+                            }
+
+                        } finally {
+                            imageProxy.close()
                         }
-                        imageProxy.close()
                     }
                 }
 
@@ -244,5 +316,7 @@ class WorkoutActivity : AppCompatActivity() {
         timer?.cancel()
         cameraExecutor.shutdown()
         viewModel.disconnectWebSocket()
+        poseHelper?.close()
+        poseHelper = null
     }
 }

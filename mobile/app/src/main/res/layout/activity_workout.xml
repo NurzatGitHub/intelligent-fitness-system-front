@@ -56,7 +56,7 @@
             android:layout_height="match_parent"/>
 
         <!-- Overlay for skeleton and guidance -->
-        <View
+        <com.example.fitnesscoachai.ui.workout.OverlayView
             android:id="@+id/overlayView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
