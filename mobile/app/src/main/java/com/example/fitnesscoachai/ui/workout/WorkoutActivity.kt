@@ -25,8 +25,9 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.delay
-
+import android.util.Size
+import android.graphics.Bitmap
+import androidx.camera.view.TransformExperimental
 class WorkoutActivity : AppCompatActivity() {
 
     private lateinit var cameraExecutor: ExecutorService
@@ -50,8 +51,12 @@ class WorkoutActivity : AppCompatActivity() {
     private var elapsedSeconds: Long = 0
     private var poseHelper: PoseLandmarkerHelper? = null
     private var lastSendMs = 0L
-
     private var lastSentPoints: List<PosePoint>? = null
+//    private lateinit var yuvConverter: YuvToRgbConverter
+    private lateinit var btnSwitchCamera: android.widget.ImageButton
+    private var lensFacing = CameraSelector.LENS_FACING_FRONT
+    private var cameraProvider: ProcessCameraProvider? = null
+    private val stabilizer = PoseStabilizer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,32 +65,35 @@ class WorkoutActivity : AppCompatActivity() {
         exerciseName = intent.getStringExtra("exercise_name") ?: "Exercise"
 
         initializeViews()
+//        yuvConverter = YuvToRgbConverter(this)
         poseHelper = PoseLandmarkerHelper(this)
         setupObservers()
         setupListeners()
 
+        // 1) executor СНАЧАЛА
+        cameraExecutor = Executors.newSingleThreadExecutor()
+
+        // 2) потом камера
         if (allPermissionsGranted()) {
             startCamera()
         } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.CAMERA),
-                10
-            )
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), 10)
         }
 
-        cameraExecutor = Executors.newSingleThreadExecutor()
+        // 3) потом WS
         viewModel.connectWebSocket()
     }
 
     private fun initializeViews() {
         previewView = findViewById(R.id.previewView)
+        previewView.scaleType = PreviewView.ScaleType.FILL_CENTER
         tvExerciseName = findViewById(R.id.tvExerciseName)
         tvTimer = findViewById(R.id.tvTimer)
         tvAIStatus = findViewById(R.id.tvAIStatus)
         tvReps = findViewById(R.id.tvReps)
         tvFeedback = findViewById(R.id.tvFeedback)
         tvGuidance = findViewById(R.id.tvGuidance)
+        btnSwitchCamera = findViewById(R.id.btnSwitchCamera)
         btnStartPause = findViewById(R.id.btnStartPause)
         btnFinish = findViewById(R.id.btnFinish)
 
@@ -106,6 +114,7 @@ class WorkoutActivity : AppCompatActivity() {
                         tvAIStatus.text = "AI: Ready"
                         tvFeedback.text = "Tap Start to begin training"
                         tvGuidance.visibility = android.view.View.GONE
+                        overlayView.updatePose(null, emptyList())
                     }
                     is WorkoutState.Connecting -> {
                         tvAIStatus.text = "AI: Connecting..."
@@ -122,6 +131,7 @@ class WorkoutActivity : AppCompatActivity() {
                         tvFeedback.text = state.hint
                         tvGuidance.visibility = android.view.View.VISIBLE
                         tvGuidance.text = state.hint
+                        overlayView.updatePose(lastSentPoints, emptyList())
                     }
                     is WorkoutState.Active -> {
                         tvAIStatus.text = "AI: Tracking"
@@ -155,6 +165,15 @@ class WorkoutActivity : AppCompatActivity() {
                 pauseWorkout()
             }
         }
+        btnSwitchCamera.setOnClickListener {
+            lensFacing = if (lensFacing == CameraSelector.LENS_FACING_FRONT)
+                CameraSelector.LENS_FACING_BACK
+            else
+                CameraSelector.LENS_FACING_FRONT
+
+            overlayView.mirrorX = (lensFacing == CameraSelector.LENS_FACING_FRONT)
+            bindCameraUseCases()
+        }
 
         btnFinish.setOnClickListener {
             finishWorkout()
@@ -168,38 +187,7 @@ class WorkoutActivity : AppCompatActivity() {
         tvAIStatus.text = "AI: Tracking"
         tvFeedback.text = "Analyzing posture…"
         tvGuidance.visibility = android.view.View.GONE
-
-        val test = listOf(
-            PosePoint(0.40f,0.25f,0.99f),
-            PosePoint(0.60f,0.25f,0.99f),
-            PosePoint(0.50f,0.30f,0.99f),
-            PosePoint(0.50f,0.40f,0.99f),
-            PosePoint(0.42f,0.40f,0.99f),
-            PosePoint(0.58f,0.40f,0.99f),
-            PosePoint(0.40f,0.50f,0.99f),
-            PosePoint(0.60f,0.50f,0.99f),
-            PosePoint(0.38f,0.62f,0.99f),
-            PosePoint(0.62f,0.62f,0.99f),
-            PosePoint(0.46f,0.55f,0.99f),
-            PosePoint(0.54f,0.55f,0.99f),
-            PosePoint(0.46f,0.70f,0.99f),
-            PosePoint(0.54f,0.70f,0.99f),
-            PosePoint(0.46f,0.86f,0.99f),
-            PosePoint(0.54f,0.86f,0.99f),
-            PosePoint(0.45f,0.92f,0.99f),
-            PosePoint(0.55f,0.92f,0.99f)
-        )
-
-//        viewModel.sendLandmarks(test)
-//        overlayView.updatePose(test, emptyList())
-
-        lifecycleScope.launch {
-            while (isWorkoutActive) {
-                lastSentPoints = test
-                viewModel.sendLandmarks(test)
-                delay(200)
-            }
-        }
+        stabilizer.reset()
 
         // Start timer
         timer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
@@ -237,60 +225,9 @@ class WorkoutActivity : AppCompatActivity() {
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-
         cameraProviderFuture.addListener({
-            val cameraProvider = cameraProviderFuture.get()
-
-            val preview = Preview.Builder().build().also {
-                it.setSurfaceProvider(previewView.surfaceProvider)
-            }
-
-            val imageAnalysis = ImageAnalysis.Builder()
-                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                .build()
-                .also {
-                    it.setAnalyzer(cameraExecutor) { imageProxy ->
-                        try {
-                            if (!isWorkoutActive) return@setAnalyzer
-
-                            val now = System.currentTimeMillis()
-                            if (now - lastSendMs < 200) return@setAnalyzer // 5 FPS
-                            lastSendMs = now
-
-                            // !!! ВАЖНО: тут нужен конвертер ImageProxy -> MPImage
-                            // Самый простой рабочий способ: использовать AndroidBitmap + MPImage (дороже по CPU)
-                            val bmp = ImageProxyToBitmapConverter.toBitmap(imageProxy) ?: return@setAnalyzer
-                            val mpImage = com.google.mediapipe.framework.image.BitmapImageBuilder(bmp).build()
-
-                            val result = poseHelper?.detect(mpImage) ?: return@setAnalyzer
-                            val firstPose = result.landmarks().firstOrNull() ?: return@setAnalyzer
-
-                            val points18 = PoseMapper.mapTo18(firstPose)
-                            lastSentPoints = points18
-                            viewModel.sendLandmarks(points18)
-
-                            // Можешь временно рисовать точки без сегментов,
-                            // пока не пришёл ответ:
-                            runOnUiThread {
-                                overlayView.updatePose(points18, emptyList())
-                            }
-
-                        } finally {
-                            imageProxy.close()
-                        }
-                    }
-                }
-
-            val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
-
-            cameraProvider.unbindAll()
-            cameraProvider.bindToLifecycle(
-                this,
-                cameraSelector,
-                preview,
-                imageAnalysis
-            )
-
+            cameraProvider = cameraProviderFuture.get()
+            bindCameraUseCases()
         }, ContextCompat.getMainExecutor(this))
     }
 
@@ -299,6 +236,65 @@ class WorkoutActivity : AppCompatActivity() {
             this,
             Manifest.permission.CAMERA
         ) == PackageManager.PERMISSION_GRANTED
+
+    private fun bindCameraUseCases() {
+        val provider = cameraProvider ?: return
+
+        val preview = Preview.Builder().build().also {
+            it.setSurfaceProvider(previewView.surfaceProvider)
+        }
+
+        val imageAnalysis = ImageAnalysis.Builder()
+            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
+            .build()
+
+        imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
+            try {
+                if (!isWorkoutActive) return@setAnalyzer
+
+                val now = System.currentTimeMillis()
+                if (now - lastSendMs < 100) return@setAnalyzer
+                lastSendMs = now
+
+                val bmp = RgbaToBitmap.toBitmap(imageProxy)
+                val mpImage = com.google.mediapipe.framework.image.BitmapImageBuilder(bmp).build()
+
+                val ts = System.currentTimeMillis()
+                val result = poseHelper?.detectVideo(mpImage, imageProxy.imageInfo.rotationDegrees, ts)
+                val firstPose = result?.landmarks()?.firstOrNull()
+
+                if (firstPose == null) {
+                    runOnUiThread { overlayView.updatePose(null, emptyList()) }
+                    return@setAnalyzer
+                }
+
+                val raw18 = PoseMapper.mapTo18(firstPose)
+                val stable18 = stabilizer.apply(raw18) ?: raw18
+
+                lastSentPoints = stable18
+                viewModel.sendLandmarks(stable18)
+
+                val rot = imageProxy.imageInfo.rotationDegrees
+                val imgW = if (rot == 90 || rot == 270) imageProxy.height else imageProxy.width
+                val imgH = if (rot == 90 || rot == 270) imageProxy.width else imageProxy.height
+
+                runOnUiThread {
+                    overlayView.setImageSize(imgW, imgH)
+                    overlayView.updatePose(stable18, emptyList())
+                }
+            } finally {
+                imageProxy.close()
+            }
+        }
+
+        val cameraSelector = CameraSelector.Builder()
+            .requireLensFacing(lensFacing)
+            .build()
+
+        provider.unbindAll()
+        provider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
+    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,

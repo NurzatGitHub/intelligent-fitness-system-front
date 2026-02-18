@@ -29,6 +29,15 @@ class OverlayView @JvmOverloads constructor(
 
     var mirrorX: Boolean = true
 
+    // размеры изображения (кадр анализа)
+    private var imageW: Int = 1
+    private var imageH: Int = 1
+
+    fun setImageSize(w: Int, h: Int) {
+        imageW = max(1, w)
+        imageH = max(1, h)
+    }
+
     fun updatePose(points: List<PosePoint>?, segments: List<Segment>) {
         this.points = points
         this.segments = segments
@@ -40,27 +49,41 @@ class OverlayView @JvmOverloads constructor(
         val pts = points ?: return
         if (pts.size < 18) return
 
-        val w = width.toFloat()
-        val h = height.toFloat()
+        val viewW = width.toFloat()
+        val viewH = height.toFloat()
+        val imgW = imageW.toFloat()
+        val imgH = imageH.toFloat()
 
-        fun mapX(x: Float): Float {
-            val px = x.coerceIn(0f, 1f) * w
-            return if (mirrorX) (w - px) else px
+        // center-crop mapping (как PreviewView FILL_CENTER)
+        val scale = max(viewW / imgW, viewH / imgH)
+        val scaledW = imgW * scale
+        val scaledH = imgH * scale
+        val dx = (scaledW - viewW) / 2f
+        val dy = (scaledH - viewH) / 2f
+
+        fun mapX(xNorm: Float): Float {
+            var x = xNorm.coerceIn(0f, 1f) * imgW
+            if (mirrorX) x = imgW - x
+            return x * scale - dx
         }
 
-        fun mapY(y: Float): Float = y.coerceIn(0f, 1f) * h
+        fun mapY(yNorm: Float): Float {
+            val y = yNorm.coerceIn(0f, 1f) * imgH
+            return y * scale - dy
+        }
 
         // линии
         for (s in segments) {
             if (s.a !in pts.indices || s.b !in pts.indices) continue
             paintLine.color = runCatching { Color.parseColor(s.color) }.getOrElse { Color.GREEN }
+
             val a = pts[s.a]
             val b = pts[s.b]
             canvas.drawLine(mapX(a.x), mapY(a.y), mapX(b.x), mapY(b.y), paintLine)
         }
 
-        // точки (по желанию)
-        val r = max(6f, w * 0.008f)
+        // точки
+        val r = max(6f, viewW * 0.008f)
         for (p in pts) {
             canvas.drawCircle(mapX(p.x), mapY(p.y), r, paintPoint)
         }

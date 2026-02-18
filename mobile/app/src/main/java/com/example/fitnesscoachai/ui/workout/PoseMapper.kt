@@ -1,58 +1,67 @@
 package com.example.fitnesscoachai.ui.workout
 
-import kotlin.math.max
+import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 import kotlin.math.min
 
 object PoseMapper {
 
-    // MediaPipe Pose indices
-    private const val L_EAR = 7
-    private const val R_EAR = 8
-    private const val MOUTH_L = 9
-    private const val MOUTH_R = 10
+    // MediaPipe PoseLandmarker indices (33)
+    private const val NOSE = 0
+    private const val L_EYE_INNER = 1
+    private const val R_EYE_INNER = 4
+
     private const val L_SHOULDER = 11
     private const val R_SHOULDER = 12
     private const val L_ELBOW = 13
     private const val R_ELBOW = 14
     private const val L_WRIST = 15
     private const val R_WRIST = 16
+
     private const val L_HIP = 23
     private const val R_HIP = 24
     private const val L_KNEE = 25
     private const val R_KNEE = 26
     private const val L_ANKLE = 27
     private const val R_ANKLE = 28
+
     private const val L_FOOT = 31
     private const val R_FOOT = 32
 
-    // твой формат 0..17
-    // 0 left_ear, 1 right_ear, 2 mouth(mid 9&10), 3 chest(mid 11&12),
-    // 4 L_shoulder, 5 R_shoulder, 6 L_elbow, 7 R_elbow, 8 L_wrist, 9 R_wrist,
-    // 10 L_hip, 11 R_hip, 12 L_knee, 13 R_knee, 14 L_ankle, 15 R_ankle,
-    // 16 L_foot, 17 R_foot
-    fun mapTo18(landmarks33: List<com.google.mediapipe.tasks.components.containers.NormalizedLandmark>): List<PosePoint> {
-        fun p(i: Int): PosePoint {
-            val lm = landmarks33[i]
-            val v = lm.visibility().orElse(1.0f) // visibility может быть Optional
-            return PosePoint(lm.x(), lm.y(), v)
+    // твой формат 0..17:
+    // 0 dummy, 1 dummy, 2 dummy, 3 chest(mid shoulders),
+    // 4 L_sh,5 R_sh,6 L_el,7 R_el,8 L_wr,9 R_wr,
+    // 10 L_hip,11 R_hip,12 L_knee,13 R_knee,14 L_ankle,15 R_ankle,
+    // 16 L_foot,17 R_foot
+    fun mapTo18(lm: List<NormalizedLandmark>): List<PosePoint> {
+        require(lm.size >= 33) { "Expected 33 landmarks, got ${lm.size}" }
+
+        fun vis(i: Int): Float {
+            // visibility() у тебя Optional — берём безопасно
+            return runCatching { lm[i].visibility().orElse(0.0f) }.getOrDefault(0.0f)
         }
 
-        fun mid(a: PosePoint, b: PosePoint): PosePoint {
-            return PosePoint(
+        fun p(i: Int): PosePoint = PosePoint(lm[i].x(), lm[i].y(), vis(i))
+
+        fun mid(a: PosePoint, b: PosePoint): PosePoint =
+            PosePoint(
                 (a.x + b.x) / 2f,
                 (a.y + b.y) / 2f,
                 min(a.v, b.v)
             )
-        }
 
-        val le = p(L_EAR)
-        val re = p(R_EAR)
-        val mouth = mid(p(MOUTH_L), p(MOUTH_R))
-        val chest = mid(p(L_SHOULDER), p(R_SHOULDER))
+        val lSh = p(L_SHOULDER)
+        val rSh = p(R_SHOULDER)
+
+        // dummy точки (не используются в backend, просто чтобы было 18)
+        val d0 = p(NOSE)
+        val d1 = p(L_EYE_INNER)
+        val d2 = p(R_EYE_INNER)
+
+        val chest = mid(lSh, rSh)
 
         return listOf(
-            le, re, mouth, chest,
-            p(L_SHOULDER), p(R_SHOULDER),
+            d0, d1, d2, chest,
+            lSh, rSh,
             p(L_ELBOW), p(R_ELBOW),
             p(L_WRIST), p(R_WRIST),
             p(L_HIP), p(R_HIP),
