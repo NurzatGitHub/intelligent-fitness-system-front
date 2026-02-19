@@ -7,6 +7,7 @@ import com.example.fitnesscoachai.R
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.progressindicator.LinearProgressIndicator
 
 class SignUpFitnessLevelActivity : AppCompatActivity() {
 
@@ -21,6 +22,7 @@ class SignUpFitnessLevelActivity : AppCompatActivity() {
         chipGroup = findViewById(R.id.chipGroup)
         btnNext = findViewById(R.id.btnNext)
         btnBack = findViewById(R.id.btnBack)
+        findViewById<LinearProgressIndicator>(R.id.progress).setProgressCompat(57, true) // step 5/8
 
         val email = intent.getStringExtra("email").orEmpty()
         val password = intent.getStringExtra("password").orEmpty()

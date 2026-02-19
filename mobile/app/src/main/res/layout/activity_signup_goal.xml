@@ -4,45 +4,81 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:overScrollMode="never">
+    android:overScrollMode="never"
+    android:background="@drawable/bg_auth_gradient">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp"
-        android:gravity="center_horizontal">
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="18dp"
+        android:paddingBottom="18dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Training Goal"
-            android:textSize="28sp"
+            android:text="Create Account"
+            android:textColor="@android:color/white"
             android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="6dp" />
+            android:textSize="28sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="6dp"/>
 
         <TextView
+            android:id="@+id/tvStep"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="What do you want to achieve?"
+            android:text="Step 6 of 8"
+            android:textColor="#BFFFFFFF"
             android:textSize="14sp"
-            android:alpha="0.75"
-            android:layout_marginBottom="24dp" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="10dp"/>
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progress"
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:layout_marginBottom="18dp"
+            app:trackCornerRadius="100dp"
+            app:trackThickness="6dp"
+            app:trackColor="#33FFFFFF"
+            app:indicatorColor="#6C5CE7"
+            android:max="100" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="24dp"
+            app:cardCornerRadius="22dp"
             app:cardUseCompatPadding="true"
-            app:cardElevation="2dp"
-            android:layout_marginBottom="24dp">
+            app:strokeWidth="1dp"
+            app:strokeColor="#2AFFFFFF"
+            app:cardBackgroundColor="#1AFFFFFF">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="18dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Training Goal"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="What do you want to achieve?"
+                    android:textColor="#BFFFFFFF"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="12dp"/>
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chipGroupGoal"
@@ -61,10 +97,11 @@
                         android:checkable="true"
                         android:minHeight="52dp"
                         app:chipStrokeWidth="1dp"
-                        app:chipStrokeColor="?attr/colorOutline"
-                        app:chipBackgroundColor="?attr/colorSurface"
-                        android:textColor="?attr/colorOnSurface"
-                        app:checkedIconVisible="false" />
+                        app:chipStrokeColor="#55FFFFFF"
+                        app:chipBackgroundColor="#141A2A"
+                        android:textColor="@android:color/white"
+                        app:checkedIconVisible="false"
+                        app:checkedIconTint="#6C5CE7"/>
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipBuildMuscle"
@@ -73,11 +110,13 @@
                         android:text="Build muscle"
                         android:checkable="true"
                         android:minHeight="52dp"
+                        android:layout_marginTop="8dp"
                         app:chipStrokeWidth="1dp"
-                        app:chipStrokeColor="?attr/colorOutline"
-                        app:chipBackgroundColor="?attr/colorSurface"
-                        android:textColor="?attr/colorOnSurface"
-                        app:checkedIconVisible="false" />
+                        app:chipStrokeColor="#55FFFFFF"
+                        app:chipBackgroundColor="#141A2A"
+                        android:textColor="@android:color/white"
+                        app:checkedIconVisible="false"
+                        app:checkedIconTint="#6C5CE7"/>
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipGetStronger"
@@ -86,11 +125,13 @@
                         android:text="Get stronger"
                         android:checkable="true"
                         android:minHeight="52dp"
+                        android:layout_marginTop="8dp"
                         app:chipStrokeWidth="1dp"
-                        app:chipStrokeColor="?attr/colorOutline"
-                        app:chipBackgroundColor="?attr/colorSurface"
-                        android:textColor="?attr/colorOnSurface"
-                        app:checkedIconVisible="false" />
+                        app:chipStrokeColor="#55FFFFFF"
+                        app:chipBackgroundColor="#141A2A"
+                        android:textColor="@android:color/white"
+                        app:checkedIconVisible="false"
+                        app:checkedIconTint="#6C5CE7"/>
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipImproveEndurance"
@@ -99,11 +140,13 @@
                         android:text="Improve endurance"
                         android:checkable="true"
                         android:minHeight="52dp"
+                        android:layout_marginTop="8dp"
                         app:chipStrokeWidth="1dp"
-                        app:chipStrokeColor="?attr/colorOutline"
-                        app:chipBackgroundColor="?attr/colorSurface"
-                        android:textColor="?attr/colorOnSurface"
-                        app:checkedIconVisible="false" />
+                        app:chipStrokeColor="#55FFFFFF"
+                        app:chipBackgroundColor="#141A2A"
+                        android:textColor="@android:color/white"
+                        app:checkedIconVisible="false"
+                        app:checkedIconTint="#6C5CE7"/>
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipStayHealthy"
@@ -112,38 +155,44 @@
                         android:text="Stay healthy"
                         android:checkable="true"
                         android:minHeight="52dp"
+                        android:layout_marginTop="8dp"
                         app:chipStrokeWidth="1dp"
-                        app:chipStrokeColor="?attr/colorOutline"
-                        app:chipBackgroundColor="?attr/colorSurface"
-                        android:textColor="?attr/colorOnSurface"
-                        app:checkedIconVisible="false" />
+                        app:chipStrokeColor="#55FFFFFF"
+                        app:chipBackgroundColor="#141A2A"
+                        android:textColor="@android:color/white"
+                        app:checkedIconVisible="false"
+                        app:checkedIconTint="#6C5CE7"/>
 
                 </com.google.android.material.chip.ChipGroup>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnNext"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="Next"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    app:cornerRadius="18dp"
+                    app:backgroundTint="#6C5CE7"/>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnNext"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="56dp"
-            android:text="Next"
-            style="@style/Widget.Material3.Button"
-            android:layout_marginBottom="12dp" />
-
-        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnBack"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="56dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="14dp"
             android:text="Back"
-            style="@style/Widget.Material3.Button.OutlinedButton" />
+            android:textAllCaps="false"
+            app:cornerRadius="18dp"
+            app:strokeColor="#55FFFFFF"
+            android:textColor="@android:color/white"/>
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="12dp" />
+            android:layout_height="16dp" />
 
     </LinearLayout>
-
 </ScrollView>

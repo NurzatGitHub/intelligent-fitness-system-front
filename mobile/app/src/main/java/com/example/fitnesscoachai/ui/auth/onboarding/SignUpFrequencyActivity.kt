@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.fitnesscoachai.R
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
+import com.google.android.material.progressindicator.LinearProgressIndicator
 
 class SignUpFrequencyActivity : AppCompatActivity() {
 
@@ -23,6 +24,7 @@ class SignUpFrequencyActivity : AppCompatActivity() {
 
         btnNext = findViewById(R.id.btnNext)
         btnBack = findViewById(R.id.btnBack)
+        findViewById<LinearProgressIndicator>(R.id.progress).setProgressCompat(100, true) // step 8/8
 
         chip2to3 = findViewById(R.id.chip2to3)
         chip3to4 = findViewById(R.id.chip3to4)

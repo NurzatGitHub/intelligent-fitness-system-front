@@ -27,6 +27,7 @@ class SignUpAgeActivity : AppCompatActivity() {
         tilAge = findViewById(R.id.tilAge)
         etAge = findViewById(R.id.etAge)
         btnNext = findViewById(R.id.btnNext)
+        findViewById<MaterialButton>(R.id.btnBack).setOnClickListener { finish() }
 
         val email = intent.getStringExtra("email").orEmpty()
         val password = intent.getStringExtra("password").orEmpty()

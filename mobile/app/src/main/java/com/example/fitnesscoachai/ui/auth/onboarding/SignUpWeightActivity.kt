@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.fitnesscoachai.R
 import com.example.fitnesscoachai.ui.auth.SimpleTextWatcher
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
@@ -28,6 +29,7 @@ class SignUpWeightActivity : AppCompatActivity() {
         etWeight = findViewById(R.id.etWeight)
         btnNext = findViewById(R.id.btnNext)
         btnBack = findViewById(R.id.btnBack)
+        findViewById<LinearProgressIndicator>(R.id.progress).setProgressCompat(43, true) // step 4/8
 
         val email = intent.getStringExtra("email").orEmpty()
         val password = intent.getStringExtra("password").orEmpty()

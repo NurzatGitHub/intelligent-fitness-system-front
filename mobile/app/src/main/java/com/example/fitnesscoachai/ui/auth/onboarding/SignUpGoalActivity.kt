@@ -7,6 +7,7 @@ import com.example.fitnesscoachai.R
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.progressindicator.LinearProgressIndicator
 
 class SignUpGoalActivity : AppCompatActivity() {
 
@@ -21,6 +22,7 @@ class SignUpGoalActivity : AppCompatActivity() {
         chipGroup = findViewById(R.id.chipGroupGoal)
         btnNext = findViewById(R.id.btnNext)
         btnBack = findViewById(R.id.btnBack)
+        findViewById<LinearProgressIndicator>(R.id.progress).setProgressCompat(71, true) // step 6/8
 
         // default selection
         findViewById<Chip>(R.id.chipLoseWeight).isChecked = true

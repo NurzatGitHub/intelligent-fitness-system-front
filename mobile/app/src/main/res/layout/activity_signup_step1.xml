@@ -41,7 +41,7 @@
                 android:id="@+id/tvStep"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Step 1 of 2"
+                android:text="Step 1 of 8"
                 android:textSize="14sp"
                 android:textColor="#CCFFFFFF"
                 android:layout_marginBottom="12dp" />

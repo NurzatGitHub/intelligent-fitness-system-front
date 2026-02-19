@@ -110,6 +110,18 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnBack"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="14dp"
+                android:text="Back"
+                android:textAllCaps="false"
+                app:cornerRadius="18dp"
+                app:strokeColor="#55FFFFFF"
+                android:textColor="@android:color/white"/>
+
         </LinearLayout>
     </ScrollView>
 

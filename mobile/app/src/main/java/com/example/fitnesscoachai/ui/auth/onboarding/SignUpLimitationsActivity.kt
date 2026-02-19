@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.fitnesscoachai.R
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
@@ -32,6 +33,7 @@ class SignUpLimitationsActivity : AppCompatActivity() {
 
         btnNext = findViewById(R.id.btnNext)
         btnBack = findViewById(R.id.btnBack)
+        findViewById<LinearProgressIndicator>(R.id.progress).setProgressCompat(86, true) // step 7/8
 
         chipNone = findViewById(R.id.chipNone)
         chipBackPain = findViewById(R.id.chipBackPain)
