@@ -18,7 +18,7 @@ class WorkoutViewModel : ViewModel() {
     val workoutState: StateFlow<WorkoutState> = _workoutState
 
     // ВАЖНО: IP твоего ПК (где docker), НЕ localhost
-    private val wsUrlDevice = "ws://192.168.0.10:8000/ws/analyze/"
+    private val wsUrlDevice = "ws://192.168.0.11:8000/ws/analyze/"
 
     private var currentReps = 0
 
