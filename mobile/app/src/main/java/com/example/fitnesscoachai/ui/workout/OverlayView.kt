@@ -7,7 +7,6 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
 import kotlin.math.max
-import kotlin.math.min
 
 class OverlayView @JvmOverloads constructor(
     context: Context,
@@ -28,20 +27,14 @@ class OverlayView @JvmOverloads constructor(
     private var points: List<PosePoint>? = null
     private var segments: List<Segment> = emptyList()
 
-    var mirrorX: Boolean = true
+    var mirrorX: Boolean = false
 
     private var imageW: Int = 1
     private var imageH: Int = 1
 
-    private var rotationDegrees: Int = 0
-
     fun setImageSize(w: Int, h: Int) {
         imageW = max(1, w)
         imageH = max(1, h)
-    }
-
-    fun setRotationDegrees(deg: Int) {
-        rotationDegrees = ((deg % 360) + 360) % 360
     }
 
     fun updatePose(points: List<PosePoint>?, segments: List<Segment>) {
@@ -67,29 +60,16 @@ class OverlayView @JvmOverloads constructor(
         val dx = (scaledW - viewW) / 2f
         val dy = (scaledH - viewH) / 2f
 
-        fun rotateNorm(x: Float, y: Float): Pair<Float, Float> {
-            // ВАЖНО: landmarks приходят в normalized coords.
-            // Мы приводим их к ориентации экрана в зависимости от rotationDegrees.
-            val xn = x.coerceIn(0f, 1f)
-            val yn = y.coerceIn(0f, 1f)
-            return when (rotationDegrees) {
-                90  -> Pair(yn, 1f - xn)
-                180 -> Pair(1f - xn, 1f - yn)
-                270 -> Pair(1f - yn, xn)
-                else -> Pair(xn, yn)
-            }
-        }
-
-        fun mapX(xNorm: Float, yNorm: Float): Float {
-            var (xr, yr) = rotateNorm(xNorm, yNorm)
-            if (mirrorX) xr = 1f - xr
-            val xPx = xr * imgW
+        fun mapX(xNorm: Float): Float {
+            var xn = xNorm.coerceIn(0f, 1f)
+            if (mirrorX) xn = 1f - xn
+            val xPx = xn * imgW
             return xPx * scale - dx
         }
 
-        fun mapY(xNorm: Float, yNorm: Float): Float {
-            val (xr, yr) = rotateNorm(xNorm, yNorm)
-            val yPx = yr * imgH
+        fun mapY(yNorm: Float): Float {
+            val yn = yNorm.coerceIn(0f, 1f)
+            val yPx = yn * imgH
             return yPx * scale - dy
         }
 
@@ -101,8 +81,8 @@ class OverlayView @JvmOverloads constructor(
             val a = pts[s.a]
             val b = pts[s.b]
             canvas.drawLine(
-                mapX(a.x, a.y), mapY(a.x, a.y),
-                mapX(b.x, b.y), mapY(b.x, b.y),
+                mapX(a.x), mapY(a.y),
+                mapX(b.x), mapY(b.y),
                 paintLine
             )
         }
@@ -110,7 +90,7 @@ class OverlayView @JvmOverloads constructor(
         // точки
         val r = max(6f, viewW * 0.008f)
         for (p in pts) {
-            canvas.drawCircle(mapX(p.x, p.y), mapY(p.x, p.y), r, paintPoint)
+            canvas.drawCircle(mapX(p.x), mapY(p.y), r, paintPoint)
         }
     }
 }

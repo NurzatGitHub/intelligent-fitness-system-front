@@ -244,6 +244,8 @@ class WorkoutActivity : AppCompatActivity() {
                 val mpImage = com.google.mediapipe.framework.image.BitmapImageBuilder(bmp).build()
 
                 val ts = System.currentTimeMillis()
+
+                // ⚠️ Тут важно: если твой PoseLandmarkerHelper умеет rotationDegrees — передавай rot
                 val result = poseHelper?.detectVideo(mpImage, ts)
                 val firstPose = result?.landmarks()?.firstOrNull()
 
@@ -255,23 +257,24 @@ class WorkoutActivity : AppCompatActivity() {
                 val raw18 = PoseMapper.mapTo18(firstPose)
                 val stable18 = stabilizer.apply(raw18) ?: raw18
 
-                // ✅ ВАЖНО: вращаем точки ОДИН раз здесь
-                var fixed18 = PoseRotation.rotate(stable18, (360 - rot) % 360)
-
-                // ✅ если фронталка — зеркалим, чтобы совпало с Preview
-                val isFront = (lensFacing == CameraSelector.LENS_FACING_FRONT)
-                if (isFront) fixed18 = PoseRotation.mirrorX(fixed18)
+                // ✅ Поворачиваем ОДИН раз в сторону rot (НЕ 360-rot)
+                val fixed18 = PoseRotation.rotate(stable18, rot)
 
                 lastSentPoints = fixed18
                 viewModel.sendLandmarks(fixed18)
 
+                // ✅ размеры кадра для center-crop (если rot 90/270 — меняем местами)
+                val imgW = if (rot == 90 || rot == 270) imageProxy.height else imageProxy.width
+                val imgH = if (rot == 90 || rot == 270) imageProxy.width else imageProxy.height
+
                 runOnUiThread {
-                    // тут размеры можно не трогать вообще, т.к. координаты нормализованные.
-                    // но OverlayView у тебя делает center-crop через imageW/imageH — оставим реальные:
-                    overlayView.setImageSize(imageProxy.width, imageProxy.height)
+                    overlayView.setImageSize(imgW, imgH)
+
+                    // ✅ mirror делаем ТОЛЬКО через overlayView.mirrorX
+                    overlayView.mirrorX = (lensFacing == CameraSelector.LENS_FACING_FRONT)
+
                     overlayView.updatePose(fixed18, lastSegments)
                 }
-
             } finally {
                 imageProxy.close()
             }
