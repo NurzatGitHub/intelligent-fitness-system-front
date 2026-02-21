@@ -3,7 +3,6 @@ package com.example.fitnesscoachai.ui.workout
 import android.content.Context
 import com.google.mediapipe.framework.image.MPImage
 import com.google.mediapipe.tasks.core.BaseOptions
-import com.google.mediapipe.tasks.vision.core.ImageProcessingOptions
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
@@ -29,13 +28,9 @@ class PoseLandmarkerHelper(context: Context) {
         landmarker = PoseLandmarker.createFromOptions(context, options)
     }
 
-    fun detectVideo(mpImage: MPImage, rotationDegrees: Int, timestampMs: Long): PoseLandmarkerResult? {
-        val opts = ImageProcessingOptions.builder()
-            .setRotationDegrees(rotationDegrees)
-            .build()
-
-        // ВАЖНО: порядок аргументов именно такой
-        return landmarker.detectForVideo(mpImage, opts, timestampMs)
+    fun detectVideo(mpImage: MPImage, timestampMs: Long): PoseLandmarkerResult? {
+        // rotation НЕ передаём сюда
+        return landmarker.detectForVideo(mpImage, timestampMs)
     }
 
     fun close() = landmarker.close()

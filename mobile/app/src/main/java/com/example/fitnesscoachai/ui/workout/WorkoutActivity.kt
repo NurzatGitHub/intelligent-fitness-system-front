@@ -13,12 +13,12 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.fitnesscoachai.R
 import com.example.fitnesscoachai.ui.summary.SummaryActivity
-import androidx.camera.view.PreviewView
 import com.example.fitnesscoachai.ui.workout.WorkoutViewModel.WorkoutState
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
@@ -40,24 +40,22 @@ class WorkoutActivity : AppCompatActivity() {
     private lateinit var tvGuidance: TextView
     private lateinit var btnStartPause: MaterialButton
     private lateinit var btnFinish: MaterialButton
+    private lateinit var btnSwitchCamera: android.widget.ImageButton
 
     private val viewModel: WorkoutViewModel by viewModels()
     private var exerciseName: String = ""
     private var isWorkoutActive = false
-    private var workoutStartTime: Long = 0
     private var timer: CountDownTimer? = null
     private var elapsedSeconds: Long = 0
+
     private var poseHelper: PoseLandmarkerHelper? = null
     private var lastSendMs = 0L
     private var lastSentPoints: List<PosePoint>? = null
 
-    private lateinit var btnSwitchCamera: android.widget.ImageButton
     private var lensFacing = CameraSelector.LENS_FACING_FRONT
     private var cameraProvider: ProcessCameraProvider? = null
     private val stabilizer = PoseStabilizer()
 
-    // ✅ ИСПРАВЛЕНИЕ 1: Храним последние сегменты от сервера
-    // Без этого каждый новый кадр камеры стирал сегменты вызовом updatePose(..., emptyList())
     @Volatile private var lastSegments: List<Segment> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,11 +71,8 @@ class WorkoutActivity : AppCompatActivity() {
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
-        if (allPermissionsGranted()) {
-            startCamera()
-        } else {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), 10)
-        }
+        if (allPermissionsGranted()) startCamera()
+        else ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), 10)
 
         viewModel.connectWebSocket()
     }
@@ -85,12 +80,14 @@ class WorkoutActivity : AppCompatActivity() {
     private fun initializeViews() {
         previewView = findViewById(R.id.previewView)
         previewView.scaleType = PreviewView.ScaleType.FILL_CENTER
+
         tvExerciseName = findViewById(R.id.tvExerciseName)
         tvTimer = findViewById(R.id.tvTimer)
         tvAIStatus = findViewById(R.id.tvAIStatus)
         tvReps = findViewById(R.id.tvReps)
         tvFeedback = findViewById(R.id.tvFeedback)
         tvGuidance = findViewById(R.id.tvGuidance)
+
         btnSwitchCamera = findViewById(R.id.btnSwitchCamera)
         btnStartPause = findViewById(R.id.btnStartPause)
         btnFinish = findViewById(R.id.btnFinish)
@@ -130,7 +127,6 @@ class WorkoutActivity : AppCompatActivity() {
                         tvFeedback.text = state.hint
                         tvGuidance.visibility = android.view.View.VISIBLE
                         tvGuidance.text = state.hint
-                        // В SETUP сегментов нет
                         lastSegments = emptyList()
                         overlayView.updatePose(lastSentPoints, emptyList())
                     }
@@ -142,14 +138,11 @@ class WorkoutActivity : AppCompatActivity() {
                         val conf = res.confidence?.let { String.format("%.2f", it) } ?: "-"
                         tvFeedback.text = "${res.overall ?: ""} (conf=$conf)"
 
-                        // ✅ ИСПРАВЛЕНИЕ 2: Сохраняем сегменты — они не сотрутся следующим кадром
                         lastSegments = res.segments ?: emptyList()
                         overlayView.updatePose(lastSentPoints, lastSegments)
                         tvGuidance.visibility = android.view.View.GONE
                     }
-                    is WorkoutState.Info -> {
-                        tvFeedback.text = state.msg
-                    }
+                    is WorkoutState.Info -> tvFeedback.text = state.msg
                     is WorkoutState.Error -> {
                         tvAIStatus.text = "AI: Error"
                         tvFeedback.text = state.message
@@ -161,26 +154,21 @@ class WorkoutActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        btnStartPause.setOnClickListener {
-            if (!isWorkoutActive) startWorkout() else pauseWorkout()
-        }
+        btnStartPause.setOnClickListener { if (!isWorkoutActive) startWorkout() else pauseWorkout() }
+
         btnSwitchCamera.setOnClickListener {
             lensFacing = if (lensFacing == CameraSelector.LENS_FACING_FRONT)
-                CameraSelector.LENS_FACING_BACK
-            else
-                CameraSelector.LENS_FACING_FRONT
+                CameraSelector.LENS_FACING_BACK else CameraSelector.LENS_FACING_FRONT
 
             overlayView.mirrorX = (lensFacing == CameraSelector.LENS_FACING_FRONT)
             bindCameraUseCases()
         }
-        btnFinish.setOnClickListener {
-            finishWorkout()
-        }
+
+        btnFinish.setOnClickListener { finishWorkout() }
     }
 
     private fun startWorkout() {
         isWorkoutActive = true
-        workoutStartTime = System.currentTimeMillis()
         btnStartPause.text = "Pause"
         tvAIStatus.text = "AI: Tracking"
         tvFeedback.text = "Analyzing posture…"
@@ -209,12 +197,11 @@ class WorkoutActivity : AppCompatActivity() {
 
     private fun finishWorkout() {
         timer?.cancel()
-        val duration = elapsedSeconds
         val reps = viewModel.getCurrentReps()
 
         val intent = Intent(this, SummaryActivity::class.java)
         intent.putExtra("exercise_name", exerciseName)
-        intent.putExtra("duration", duration.toInt())
+        intent.putExtra("duration", elapsedSeconds.toInt())
         intent.putExtra("reps", reps)
         startActivity(intent)
         finish()
@@ -247,57 +234,50 @@ class WorkoutActivity : AppCompatActivity() {
             try {
                 if (!isWorkoutActive) return@setAnalyzer
 
-                // ✅ ИСПРАВЛЕНИЕ 3: Считаем размер кадра ДО throttle-проверки
-                // Так overlayView.setImageSize() всегда будет актуальным
                 val rot = imageProxy.imageInfo.rotationDegrees
-//                val imgW = imageProxy.width
-//                val imgH = imageProxy.height
-                val imgW = if (rot == 90 || rot == 270) imageProxy.height else imageProxy.width
-                val imgH = if (rot == 90 || rot == 270) imageProxy.width else imageProxy.height
 
                 val now = System.currentTimeMillis()
-                if (now - lastSendMs < 100) {
-                    // Даже при пропуске кадра обновляем размер
-                    runOnUiThread { overlayView.setImageSize(imgW, imgH) }
-                    return@setAnalyzer
-                }
+                if (now - lastSendMs < 100) return@setAnalyzer
                 lastSendMs = now
 
                 val bmp = RgbaToBitmap.toBitmap(imageProxy)
                 val mpImage = com.google.mediapipe.framework.image.BitmapImageBuilder(bmp).build()
 
                 val ts = System.currentTimeMillis()
-                val result = poseHelper?.detectVideo(mpImage, rot, ts)
+                val result = poseHelper?.detectVideo(mpImage, ts)
                 val firstPose = result?.landmarks()?.firstOrNull()
 
                 if (firstPose == null) {
-                    runOnUiThread {
-                        overlayView.setImageSize(imgW, imgH)
-                        overlayView.updatePose(null, emptyList())
-                    }
+                    runOnUiThread { overlayView.updatePose(null, emptyList()) }
                     return@setAnalyzer
                 }
 
                 val raw18 = PoseMapper.mapTo18(firstPose)
                 val stable18 = stabilizer.apply(raw18) ?: raw18
 
-                lastSentPoints = stable18
-                viewModel.sendLandmarks(stable18)
+                // ✅ ВАЖНО: вращаем точки ОДИН раз здесь
+                var fixed18 = PoseRotation.rotate(stable18, (360 - rot) % 360)
+
+                // ✅ если фронталка — зеркалим, чтобы совпало с Preview
+                val isFront = (lensFacing == CameraSelector.LENS_FACING_FRONT)
+                if (isFront) fixed18 = PoseRotation.mirrorX(fixed18)
+
+                lastSentPoints = fixed18
+                viewModel.sendLandmarks(fixed18)
 
                 runOnUiThread {
-                    overlayView.setImageSize(imgW, imgH)
-                    // ✅ ИСПРАВЛЕНИЕ 4: Передаём lastSegments вместо emptyList()
-                    // Так сегменты от сервера не затираются каждым новым кадром
-                    overlayView.updatePose(stable18, lastSegments)
+                    // тут размеры можно не трогать вообще, т.к. координаты нормализованные.
+                    // но OverlayView у тебя делает center-crop через imageW/imageH — оставим реальные:
+                    overlayView.setImageSize(imageProxy.width, imageProxy.height)
+                    overlayView.updatePose(fixed18, lastSegments)
                 }
+
             } finally {
                 imageProxy.close()
             }
         }
 
-        val cameraSelector = CameraSelector.Builder()
-            .requireLensFacing(lensFacing)
-            .build()
+        val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
 
         provider.unbindAll()
         provider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
@@ -309,9 +289,7 @@ class WorkoutActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 10 && allPermissionsGranted()) {
-            startCamera()
-        }
+        if (requestCode == 10 && allPermissionsGranted()) startCamera()
     }
 
     override fun onDestroy() {
