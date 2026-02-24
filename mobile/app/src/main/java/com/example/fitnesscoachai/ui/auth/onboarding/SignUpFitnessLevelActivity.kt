@@ -27,8 +27,8 @@ class SignUpFitnessLevelActivity : AppCompatActivity() {
         val email = intent.getStringExtra("email").orEmpty()
         val password = intent.getStringExtra("password").orEmpty()
         val age = intent.getIntExtra("age", -1)
-        val height = intent.getIntExtra("height", -1)
-        val weight = intent.getIntExtra("weight", -1)
+        val height = intent.getIntExtra("height_cm", -1)
+        val weight = intent.getFloatExtra("weight_kg", -1f)
 
         btnNext.isEnabled = false
 
@@ -40,15 +40,22 @@ class SignUpFitnessLevelActivity : AppCompatActivity() {
 
         btnNext.setOnClickListener {
             val selectedId = chipGroup.checkedChipId
-            val level = findViewById<Chip>(selectedId).text.toString()
+            val levelUi = findViewById<Chip>(selectedId).text.toString()
+
+            val level = when (levelUi.trim().lowercase()) {
+                "beginner" -> "beginner"
+                "intermediate" -> "intermediate"
+                "advanced" -> "advanced"
+                else -> "beginner"
+            }
 
             // NEXT STEP: Training Goal
             val i = Intent(this, SignUpGoalActivity::class.java).apply {
                 putExtra("email", email)
                 putExtra("password", password)
                 putExtra("age", age)
-                putExtra("height", height)
-                putExtra("weight", weight)
+                putExtra("height_cm", height)
+                putExtra("weight_kg", weight)
                 putExtra("fitness_level", level)
             }
             startActivity(i)

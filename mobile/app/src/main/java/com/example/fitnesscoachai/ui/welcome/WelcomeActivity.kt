@@ -14,27 +14,17 @@ class WelcomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_welcome)
 
-        btnStartTraining = findViewById(R.id.btnStartTraining)
-        btnCompleteProfileLater = findViewById(R.id.btnCompleteProfileLater)
+        val prefs = getSharedPreferences("auth", MODE_PRIVATE)
+        val isLoggedIn = prefs.getBoolean("isLoggedIn", false)
 
-        // Mark user as logged in
-        getSharedPreferences("auth", MODE_PRIVATE).edit()
-            .putBoolean("isLoggedIn", true)
-            .putBoolean("isGuest", false)
-            .apply()
-
-        btnStartTraining.setOnClickListener {
-            // Navigate to main activity (which will show home/training selection)
+        if (isLoggedIn) {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
+            return
         }
 
-        btnCompleteProfileLater.setOnClickListener {
-            // Navigate to main activity
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
-        }
+        startActivity(Intent(this, com.example.fitnesscoachai.ui.auth.AuthActivity::class.java))
+        finish()
     }
 }

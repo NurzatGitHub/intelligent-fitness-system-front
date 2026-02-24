@@ -69,7 +69,7 @@ class SignUpHeightActivity : AppCompatActivity() {
                 putExtra("email", email)
                 putExtra("password", password)
                 putExtra("age", age)
-                putExtra("height", h)
+                putExtra("height_cm", h)
             }
             startActivity(i)
         }

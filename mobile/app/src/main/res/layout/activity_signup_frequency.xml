@@ -160,6 +160,16 @@
                     app:cornerRadius="18dp"
                     app:backgroundTint="#6C5CE7"/>
 
+                <!-- ✅ ProgressBar добавлен сюда — показывается во время отправки на сервер -->
+                <ProgressBar
+                    android:id="@+id/loadingIndicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="12dp"
+                    android:visibility="gone"
+                    style="?android:attr/progressBarStyle"/>
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

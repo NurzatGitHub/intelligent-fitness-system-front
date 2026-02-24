@@ -55,7 +55,7 @@ class SignUpAgeActivity : AppCompatActivity() {
         btnNext.setOnClickListener {
             if (!validate()) return@setOnClickListener
 
-            val age = etAge.text!!.toString().trim()
+            val age = etAge.text!!.toString().trim().toInt()
 
             // next screen: Height
             val i = Intent(this, SignUpHeightActivity::class.java).apply {

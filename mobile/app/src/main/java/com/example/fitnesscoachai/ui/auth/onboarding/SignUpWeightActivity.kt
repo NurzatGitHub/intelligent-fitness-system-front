@@ -34,7 +34,7 @@ class SignUpWeightActivity : AppCompatActivity() {
         val email = intent.getStringExtra("email").orEmpty()
         val password = intent.getStringExtra("password").orEmpty()
         val age = intent.getIntExtra("age", -1)
-        val height = intent.getIntExtra("height", -1)
+        val height = intent.getIntExtra("height_cm", -1)
 
         btnNext.isEnabled = false
 
@@ -63,7 +63,7 @@ class SignUpWeightActivity : AppCompatActivity() {
                 putExtra("password", password)
                 putExtra("age", age)
                 putExtra("height", height)
-                putExtra("weight", w)
+                putExtra("weight_kg", w.toFloat())
             }
             startActivity(intent)
         }

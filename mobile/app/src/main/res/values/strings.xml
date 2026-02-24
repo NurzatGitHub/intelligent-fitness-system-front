@@ -19,6 +19,7 @@
     <string name="signup_next">Next</string>
     <string name="signup_have_account">Already have an account?</string>
     <string name="signup_login"> Log in</string>
+    <string name="default_web_client_id">689562341411-a05em2q91sj5aprh66trm7ejhfou5qaj.apps.googleusercontent.com</string>
 
 
 </resources>

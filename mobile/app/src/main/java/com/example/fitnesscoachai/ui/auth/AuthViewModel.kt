@@ -3,10 +3,13 @@ package com.example.fitnesscoachai.ui.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fitnesscoachai.data.api.RetrofitClient
+import com.example.fitnesscoachai.data.models.AuthResponse
+import com.example.fitnesscoachai.data.models.GoogleLoginRequest
 import com.example.fitnesscoachai.data.models.LoginRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class AuthViewModel : ViewModel() {
 
@@ -17,18 +20,43 @@ class AuthViewModel : ViewModel() {
         viewModelScope.launch {
             _loginState.value = LoginState.Loading
             try {
-                val response = RetrofitClient.apiService.login(
-                    LoginRequest(email, password)
-                )
+                val response = RetrofitClient.apiService.login(LoginRequest(email, password))
 
                 if (response.isSuccessful && response.body() != null) {
-                    val authResponse = response.body()!!
-                    // TODO: сохранить токен в DataStore
-                    _loginState.value = LoginState.Success(authResponse)
+                    _loginState.value = LoginState.Success(response.body()!!)
+                    return@launch
+                }
+
+                val serverMsg = response.errorBody()?.string()?.takeIf { it.isNotBlank() }
+                val code = response.code()
+
+                val pretty = when (code) {
+                    400 -> "Wrong data. ${serverMsg ?: ""}".trim()
+                    401 -> "Invalid email or password"
+                    403 -> "Account disabled"
+                    404 -> "Endpoint not found (check BASE_URL/api path)"
+                    else -> "Login failed ($code). ${serverMsg ?: response.message()}".trim()
+                }
+
+                _loginState.value = LoginState.Error(pretty)
+
+            } catch (e: HttpException) {
+                _loginState.value = LoginState.Error("HTTP error: ${e.code()}")
+            } catch (e: Exception) {
+                _loginState.value = LoginState.Error("Network error: ${e.message ?: "unknown"}")
+            }
+        }
+    }
+
+    fun loginWithGoogle(idToken: String) {
+        viewModelScope.launch {
+            _loginState.value = LoginState.Loading
+            try {
+                val response = RetrofitClient.apiService.google(GoogleLoginRequest(idToken))
+                if (response.isSuccessful && response.body() != null) {
+                    _loginState.value = LoginState.Success(response.body()!!)
                 } else {
-                    _loginState.value = LoginState.Error(
-                        "Login failed: ${response.code()} - ${response.message()}"
-                    )
+                    _loginState.value = LoginState.Error("Google login failed: ${response.code()}")
                 }
             } catch (e: Exception) {
                 _loginState.value = LoginState.Error("Network error: ${e.message}")
@@ -39,7 +67,7 @@ class AuthViewModel : ViewModel() {
     sealed class LoginState {
         object Idle : LoginState()
         object Loading : LoginState()
-        data class Success(val authResponse: com.example.fitnesscoachai.data.models.AuthResponse) : LoginState()
+        data class Success(val authResponse: AuthResponse) : LoginState()
         data class Error(val message: String) : LoginState()
     }
 }

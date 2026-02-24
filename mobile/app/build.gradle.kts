@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -58,6 +59,8 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     // MediaPipe Tasks Vision (Pose Landmarker)
     implementation("com.google.mediapipe:tasks-vision:0.10.14")
+    //    Google Sign-In зависимость
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
     
     // CameraX
     val camerax_version = "1.3.1"
