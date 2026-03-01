@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
@@ -12,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- 1. Greeting and Notifications Block -->
         <LinearLayout
             android:orientation="horizontal"
             android:gravity="center_vertical"
@@ -20,14 +20,14 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp">
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivAvatar"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:src="@android:drawable/ic_menu_myplaces"
                 android:background="?attr/colorPrimaryContainer"
                 android:padding="12dp"
-                android:contentDescription="User avatar"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
                 app:tint="?attr/colorPrimary"
                 android:layout_marginEnd="16dp"/>
 
@@ -36,14 +36,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
-
                 <TextView
                     android:text="Welcome back"
                     android:textSize="14sp"
                     android:textColor="?attr/colorOnSurfaceVariant"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
-
                 <TextView
                     android:id="@+id/tvUserName"
                     android:text="Azamat 👋"
@@ -51,36 +49,22 @@
                     android:textStyle="bold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
-
-                <TextView
-                    android:id="@+id/tvSubGreeting"
-                    android:text="Ready to train today?"
-                    android:textSize="12sp"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    android:layout_marginTop="4dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
             </LinearLayout>
 
             <ImageView
                 android:id="@+id/ivNotifications"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_info_details"
-                android:contentDescription="Notifications"
-                app:tint="?attr/colorOnSurface"
-                android:padding="4dp"/>
-
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@android:drawable/ic_popup_reminder"
+                app:tint="?attr/colorOnSurface" />
         </LinearLayout>
 
-        <!-- 2. Hero / Weekly Progress Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="6dp"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
             app:cardBackgroundColor="?attr/colorPrimaryContainer">
 
             <LinearLayout
@@ -95,166 +79,61 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1">
-
                     <TextView
                         android:text="Weekly Progress"
-                        android:textSize="18sp"
+                        android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="?attr/colorOnPrimaryContainer"
-                        android:layout_marginBottom="8dp"
+                        android:layout_marginBottom="4dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
-
                     <TextView
-                        android:id="@+id/tvWeeklyProgressSub"
-                        android:text="2 workouts completed"
+                        android:text="40% of your goal"
                         android:textSize="14sp"
                         android:textColor="?attr/colorOnPrimaryContainer"
+                        android:alpha="0.8"
                         android:layout_marginBottom="12dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
-
                     <TextView
-                        android:id="@+id/tvWeeklyProgressPercent"
+                        android:id="@+id/tvProgressText"
                         android:text="40%"
                         android:textSize="32sp"
                         android:textStyle="bold"
                         android:textColor="?attr/colorPrimary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
-
                 </LinearLayout>
 
-                <!-- Circular Progress Indicator Placeholder -->
-                <View
-                    android:id="@+id/progressRing"
+                <ProgressBar
+                    android:id="@+id/pbWeekly"
+                    style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:background="@android:drawable/ic_menu_myplaces"
-                    android:contentDescription="Progress ring"
-                    app:tint="?attr/colorPrimary"/>
-
+                    android:progress="40"
+                    android:max="100"
+                    android:progressDrawable="@android:drawable/progress_horizontal" />
             </LinearLayout>
-
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 3. Today's Activity -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="4dp">
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:padding="20dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:text="Today's Activity"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="16dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-                <LinearLayout
-                    android:id="@+id/llTodayActivity"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <!-- Activity items will be added here programmatically -->
-                    <TextView
-                        android:id="@+id/tvNoActivity"
-                        android:text="No activity today"
-                        android:textSize="14sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:layout_marginBottom="12dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnStartFirstTraining"
-                        android:text="Start your first training"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:minHeight="40dp"
-                        style="@style/Widget.Material3.Button.TextButton"
-                        android:visibility="gone"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- 4. Side Metric Card (AI Accuracy) -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="4dp">
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:padding="20dp"
-                android:gravity="center_vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@android:drawable/ic_menu_myplaces"
-                    android:contentDescription="AI icon"
-                    app:tint="?attr/colorPrimary"
-                    android:background="?attr/colorPrimaryContainer"
-                    android:padding="8dp"
-                    android:layout_marginEnd="16dp"/>
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <TextView
-                        android:text="AI Accuracy"
-                        android:textSize="14sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:layout_marginBottom="4dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-
-                    <TextView
-                        android:id="@+id/tvAIAccuracy"
-                        android:text="92%"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-
-                </LinearLayout>
-
-                <TextView
-                    android:text="Pose detection accuracy"
-                    android:textSize="12sp"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    android:gravity="end"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- 5. Overall Status -->
         <TextView
-            android:text="Overall Status"
+            android:text="@string/home_choose_category"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"/>
+
+        <com.example.fitnesscoachai.ui.home.ExpandableHeightRecyclerView
+            android:id="@+id/rvCategories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:nestedScrollingEnabled="false"
+            tools:listitem="@layout/item_category_card" />
+
+        <TextView
+            android:text="Your Stats"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginBottom="12dp"
@@ -267,104 +146,61 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp">
 
-            <!-- Total Workouts Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp">
-
+                app:cardCornerRadius="16dp">
                 <LinearLayout
                     android:orientation="vertical"
                     android:padding="16dp"
                     android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:src="@android:drawable/ic_menu_myplaces"
-                        android:contentDescription="Workouts icon"
-                        app:tint="?attr/colorPrimary"
-                        android:layout_marginBottom="8dp"/>
-
                     <TextView
                         android:id="@+id/tvTotalWorkouts"
-                        android:text="6"
+                        android:text="0"
                         android:textSize="24sp"
                         android:textStyle="bold"
-                        android:layout_marginBottom="4dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
-
                     <TextView
-                        android:text="sessions"
+                        android:text="Workouts"
                         android:textSize="12sp"
                         android:textColor="?attr/colorOnSurfaceVariant"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
-
-                    <TextView
-                        android:text="Total Workouts"
-                        android:textSize="12sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:layout_marginTop="4dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-
                 </LinearLayout>
-
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Average Form Score Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp">
-
+                app:cardCornerRadius="16dp">
                 <LinearLayout
                     android:orientation="vertical"
                     android:padding="16dp"
                     android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:src="@android:drawable/ic_menu_myplaces"
-                        android:contentDescription="Form icon"
-                        app:tint="?attr/colorPrimary"
-                        android:layout_marginBottom="8dp"/>
-
                     <TextView
                         android:id="@+id/tvAverageFormScore"
-                        android:text="78%"
+                        android:text="0%"
                         android:textSize="24sp"
                         android:textStyle="bold"
-                        android:layout_marginBottom="4dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
-
                     <TextView
-                        android:text="Average Form Score"
+                        android:text="Form Score"
                         android:textSize="12sp"
                         android:textColor="?attr/colorOnSurfaceVariant"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
-
                 </LinearLayout>
-
             </com.google.android.material.card.MaterialCardView>
-
         </LinearLayout>
-
     </LinearLayout>
-
 </ScrollView>

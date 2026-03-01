@@ -2,4 +2,16 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <!-- Цвета карточек категорий (группы мышц) -->
+    <color name="category_back">#4A90A4</color>
+    <color name="category_cardio">#E74C3C</color>
+    <color name="category_chest">#3498DB</color>
+    <color name="category_lower_arms">#9B59B6</color>
+    <color name="category_lower_legs">#1ABC9C</color>
+    <color name="category_neck">#95A5A6</color>
+    <color name="category_shoulders">#F39C12</color>
+    <color name="category_upper_arms">#E67E22</color>
+    <color name="category_upper_legs">#27AE60</color>
+    <color name="category_waist">#2ECC71</color>
+    <color name="category_other">#7F8C8D</color>
 </resources>

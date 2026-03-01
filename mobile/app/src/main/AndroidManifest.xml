@@ -62,7 +62,19 @@
             android:name=".ui.auth.AuthActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.subcategory.SubcategoryActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.exercise.ExerciseSelectActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.exercise.ExerciseListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.exercise.ExerciseDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.exercise.ExerciseInstructionActivity"
             android:exported="false" />
         <activity
             android:name=".ui.workout.WorkoutActivity"

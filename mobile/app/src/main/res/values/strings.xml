@@ -20,6 +20,41 @@
     <string name="signup_have_account">Already have an account?</string>
     <string name="signup_login"> Log in</string>
     <string name="default_web_client_id">689562341411-a05em2q91sj5aprh66trm7ejhfou5qaj.apps.googleusercontent.com</string>
-
-
+    <string name="home_choose_category">Choose category</string>
+    <string name="category_back">Back</string>
+    <string name="category_chest">Chest</string>
+    <string name="category_legs">Legs</string>
+    <string name="category_arms">Arms</string>
+    <string name="category_waist">Abs</string>
+    <string name="category_abs">Abs</string>
+    <string name="category_cardio">Cardio</string>
+    <string name="instructions_title">Instructions</string>
+    <string name="instruction_steps_title">Steps</string>
+    <string name="instruction_tips_title">Tips</string>
+    <string name="exercise_list_title">Exercises</string>
+    <string name="subcategory_title">Subcategories</string>
+    <!-- Back -->
+    <string name="sub_lats">Широчайшие</string>
+    <string name="sub_lower_back">Низ спины</string>
+    <string name="sub_traps">Трапеции</string>
+    <!-- Chest -->
+    <string name="sub_pectorals">Грудные</string>
+    <!-- Legs -->
+    <string name="sub_quads">Квадрицепсы</string>
+    <string name="sub_hamstrings">Бицепс бедра</string>
+    <string name="sub_calves">Икры</string>
+    <string name="sub_glutes">Ягодицы</string>
+    <!-- Arms -->
+    <string name="sub_biceps">Бицепс</string>
+    <string name="sub_triceps">Трицепс</string>
+    <string name="sub_forearms">Предплечья</string>
+    <!-- Waist -->
+    <string name="sub_abs">Пресс</string>
+    <string name="sub_obliques">Косые</string>
+    <!-- Cardio -->
+    <string name="sub_cardio">Кардио</string>
+    <plurals name="subcategory_count">
+        <item quantity="one">%d subcategory</item>
+        <item quantity="other">%d subcategories</item>
+    </plurals>
 </resources>
