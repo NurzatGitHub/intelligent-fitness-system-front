@@ -16,6 +16,7 @@ import com.example.fitnesscoachai.data.models.AuthResponse
 import com.example.fitnesscoachai.ui.auth.onboarding.SignUpAgeActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -49,8 +50,15 @@ class AuthActivity : AppCompatActivity() {
                 return@registerForActivityResult
             }
             viewModel.loginWithGoogle(idToken)
-        }.onFailure {
-            Toast.makeText(this, "Google sign-in failed: ${it.message}", Toast.LENGTH_LONG).show()
+        }.onFailure { e ->
+            val msg = if (e is ApiException) {
+                "Google sign-in failed: code=${e.statusCode}, message=${e.message}"
+            } else {
+                "Google sign-in failed: ${e.message}"
+            }
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+            btnGoogle.isEnabled = true
+            btnLogin.isEnabled = isFormValid()
         }
     }
 
@@ -75,7 +83,6 @@ class AuthActivity : AppCompatActivity() {
         observeState()
 
         btnLogin.setOnClickListener { submitLogin() }
-
         btnGoogle.setOnClickListener { startGoogleSignIn() }
 
         btnContinueAsGuest.setOnClickListener {
@@ -99,13 +106,15 @@ class AuthActivity : AppCompatActivity() {
     private fun startGoogleSignIn() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
-            // важно: берём web client id из strings.xml
             .requestIdToken(getString(R.string.default_web_client_id))
             .build()
 
         val client = GoogleSignIn.getClient(this, gso)
-        client.signOut() // чтобы всегда показывало аккаунт-выбор
-        googleLauncher.launch(client.signInIntent)
+
+        // signOut асинхронный — лучше запускать intent после завершения
+        client.signOut().addOnCompleteListener {
+            googleLauncher.launch(client.signInIntent)
+        }
     }
 
     private fun setupValidation() {
@@ -156,6 +165,7 @@ class AuthActivity : AppCompatActivity() {
                     when (state) {
                         is AuthViewModel.LoginState.Idle -> {
                             btnLogin.isEnabled = isFormValid()
+                            btnGoogle.isEnabled = true
                             btnLogin.text = "Log In"
                         }
 
@@ -172,12 +182,14 @@ class AuthActivity : AppCompatActivity() {
                             val auth = state.authResponse
                             saveAuthData(auth)
 
-                            // ✅ ВОТ ТУТ ЛОГИКА: новый -> onboarding, старый -> home
-                            if (auth.is_new_user) {
-                                startActivity(Intent(this@AuthActivity, SignUpAgeActivity::class.java).apply {
-                                    putExtra("email", auth.user.email)
-                                    putExtra("from_google", true)
-                                })
+                            // ✅ Главное изменение: onboarding если новый ИЛИ профиль пустой
+                            if (needsOnboarding(auth)) {
+                                startActivity(
+                                    Intent(this@AuthActivity, SignUpAgeActivity::class.java).apply {
+                                        putExtra("email", auth.user.email)
+                                        putExtra("from_google", true)
+                                    }
+                                )
                             } else {
                                 startActivity(Intent(this@AuthActivity, MainActivity::class.java))
                                 finish()
@@ -194,6 +206,26 @@ class AuthActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun needsOnboarding(auth: AuthResponse): Boolean {
+        val u = auth.user
+
+        // ПОДСТАВЬ названия полей как в твоём AuthResponse.user (если отличаются)
+        val age = u.age
+        val height = u.height
+        val weight = u.weight
+        val fitnessLevel = u.fitness_level
+        val goal = u.goal
+        val frequency = u.frequency
+
+        return auth.is_new_user ||
+                age == null ||
+                height == null ||
+                weight == null ||
+                fitnessLevel.isNullOrBlank() ||
+                goal.isNullOrBlank() ||
+                frequency.isNullOrBlank()
     }
 
     private fun saveAuthData(authResponse: AuthResponse) {

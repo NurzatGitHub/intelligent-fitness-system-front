@@ -3,13 +3,13 @@ package com.example.fitnesscoachai.ui.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fitnesscoachai.data.api.RetrofitClient
-import com.example.fitnesscoachai.data.models.AuthResponse
 import com.example.fitnesscoachai.data.models.GoogleLoginRequest
 import com.example.fitnesscoachai.data.models.LoginRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import java.io.IOException
 
 class AuthViewModel : ViewModel() {
 
@@ -42,6 +42,9 @@ class AuthViewModel : ViewModel() {
 
             } catch (e: HttpException) {
                 _loginState.value = LoginState.Error("HTTP error: ${e.code()}")
+            } catch (e: IOException) {
+                // 🔥 Это как раз твой кейс "Failed to connect..."
+                _loginState.value = LoginState.Error("Network error: ${e.message}")
             } catch (e: Exception) {
                 _loginState.value = LoginState.Error("Network error: ${e.message ?: "unknown"}")
             }
@@ -56,8 +59,13 @@ class AuthViewModel : ViewModel() {
                 if (response.isSuccessful && response.body() != null) {
                     _loginState.value = LoginState.Success(response.body()!!)
                 } else {
-                    _loginState.value = LoginState.Error("Google login failed: ${response.code()}")
+                    val body = response.errorBody()?.string()
+                    _loginState.value = LoginState.Error(
+                        "Google login failed: ${response.code()} ${body ?: ""}".trim()
+                    )
                 }
+            } catch (e: IOException) {
+                _loginState.value = LoginState.Error("Network error: ${e.message}")
             } catch (e: Exception) {
                 _loginState.value = LoginState.Error("Network error: ${e.message}")
             }
@@ -67,7 +75,7 @@ class AuthViewModel : ViewModel() {
     sealed class LoginState {
         object Idle : LoginState()
         object Loading : LoginState()
-        data class Success(val authResponse: AuthResponse) : LoginState()
+        data class Success(val authResponse: com.example.fitnesscoachai.data.models.AuthResponse) : LoginState()
         data class Error(val message: String) : LoginState()
     }
 }
