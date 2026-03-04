@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnesscoachai.R
 import com.example.fitnesscoachai.domain.model.MainCategory
-import com.example.fitnesscoachai.ui.subcategory.SubcategoryActivity
+import com.example.fitnesscoachai.ui.exercise.ExerciseListActivity
 
 class HomeFragment : Fragment() {
 
@@ -45,7 +45,7 @@ class HomeFragment : Fragment() {
     private fun setupCategoryRecyclerView(view: View) {
         val rvCategories = view.findViewById<RecyclerView>(R.id.rvCategories)
         categoryAdapter = CategoryAdapter(emptyList()) { main ->
-            startActivity(SubcategoryActivity.newIntent(requireContext(), main.id))
+            startActivity(ExerciseListActivity.newIntent(requireContext(), main.id))
         }
         rvCategories.adapter = categoryAdapter
         rvCategories.layoutManager = GridLayoutManager(requireContext(), 2)

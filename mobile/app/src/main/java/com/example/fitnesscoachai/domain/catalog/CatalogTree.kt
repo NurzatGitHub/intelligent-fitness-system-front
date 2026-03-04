@@ -27,14 +27,21 @@ object CatalogTree {
         SubCategory("lower_back", "Lower Back", MainCategory.BACK),
 
         // CHEST
-        SubCategory("pectorals", "Pectorals", MainCategory.CHEST),
+        SubCategory("upper_chest", "Upper Chest", MainCategory.CHEST),
+        SubCategory("mid_chest", "Mid Chest", MainCategory.CHEST),
+        SubCategory("lower_chest", "Lower Chest", MainCategory.CHEST),
 
         // ABS
-        SubCategory("abs_core", "Core", MainCategory.ABS),
+        SubCategory("upper_abs", "Upper Abs", MainCategory.ABS),
+        SubCategory("lower_abs", "Lower Abs", MainCategory.ABS),
+        SubCategory("obliques", "Obliques", MainCategory.ABS),
+        SubCategory("core_stability", "Core Stability", MainCategory.ABS),
 
         // CARDIO
         SubCategory("hiit", "HIIT", MainCategory.CARDIO),
-        SubCategory("endurance", "Endurance", MainCategory.CARDIO)
+        SubCategory("steady_state", "Steady State", MainCategory.CARDIO),
+        SubCategory("functional_cardio", "Functional", MainCategory.CARDIO),
+        SubCategory("sports", "Sports", MainCategory.CARDIO)
     )
 
     fun subFor(main: MainCategory): List<SubCategory> =
