@@ -41,6 +41,7 @@ class SignUpFitnessLevelActivity : AppCompatActivity() {
         btnNext.setOnClickListener {
             val selectedId = chipGroup.checkedChipId
             val levelUi = findViewById<Chip>(selectedId).text.toString()
+            val fromGoogle = intent.getBooleanExtra("from_google", false)
 
             val level = when (levelUi.trim().lowercase()) {
                 "beginner" -> "beginner"
@@ -57,6 +58,7 @@ class SignUpFitnessLevelActivity : AppCompatActivity() {
                 putExtra("height_cm", height)
                 putExtra("weight_kg", weight)
                 putExtra("fitness_level", level)
+                putExtra("from_google", fromGoogle)
             }
             startActivity(i)
         }

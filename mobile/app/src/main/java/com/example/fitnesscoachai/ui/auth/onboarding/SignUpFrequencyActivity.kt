@@ -11,6 +11,7 @@ import com.example.fitnesscoachai.MainActivity
 import com.example.fitnesscoachai.R
 import com.example.fitnesscoachai.data.api.RetrofitClient
 import com.example.fitnesscoachai.data.models.RegisterRequest
+import com.example.fitnesscoachai.data.models.UpdateProfileRequest
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.google.android.material.progressindicator.LinearProgressIndicator
@@ -41,7 +42,6 @@ class SignUpFrequencyActivity : AppCompatActivity() {
         chipEveryday = findViewById(R.id.chipEveryday)
 
         chip3to4.isChecked = true
-
         btnBack.setOnClickListener { finish() }
 
         btnNext.setOnClickListener {
@@ -52,21 +52,98 @@ class SignUpFrequencyActivity : AppCompatActivity() {
                 else -> "everyday"
             }
 
-            // Собираем все данные онбординга
-            val email       = intent.getStringExtra("email").orEmpty()
-            val password    = intent.getStringExtra("password").orEmpty()
-            val age         = intent.getIntExtra("age", -1).takeIf { it != -1 }
-            val heightCm    = intent.getIntExtra("height_cm", -1).takeIf { it != -1 }?.toFloat()
-            val weightKg    = intent.getFloatExtra("weight_kg", -1f).takeIf { it != -1f }
-            val fitnessLevel = intent.getStringExtra("fitness_level").orEmpty().ifEmpty { "beginner" }
-            val goal        = intent.getStringExtra("goal").orEmpty()
-            val limitations = intent.getStringExtra("limitations").orEmpty()
+            val fromGoogle = intent.getBooleanExtra("from_google", false)
 
-            // ✅ Отправляем на сервер
-            registerUser(
-                email, password, age, heightCm, weightKg,
-                fitnessLevel, goal, limitations, frequency
-            )
+            val email        = intent.getStringExtra("email").orEmpty()
+            val password     = intent.getStringExtra("password").orEmpty()
+
+            val age          = intent.getIntExtra("age", -1).takeIf { it != -1 }
+            val heightCmInt  = intent.getIntExtra("height_cm", -1).takeIf { it != -1 }
+            val weightKg     = intent.getFloatExtra("weight_kg", -1f).takeIf { it != -1f }
+
+            val fitnessLevel = intent.getStringExtra("fitness_level").orEmpty().ifEmpty { "beginner" }
+            val goal         = intent.getStringExtra("goal").orEmpty()
+            val limitations  = intent.getStringExtra("limitations").orEmpty()
+
+            if (fromGoogle) {
+                updateProfileForGoogle(
+                    age = age,
+                    height = heightCmInt?.toFloat(),
+                    weight = weightKg,
+                    fitnessLevel = fitnessLevel,
+                    goal = goal,
+                    limitations = limitations,
+                    frequency = frequency
+                )
+            } else {
+                registerUser(
+                    email, password, age, heightCmInt?.toFloat(), weightKg,
+                    fitnessLevel, goal, limitations, frequency
+                )
+            }
+        }
+    }
+
+    private fun updateProfileForGoogle(
+        age: Int?,
+        height: Float?,
+        weight: Float?,
+        fitnessLevel: String,
+        goal: String,
+        limitations: String,
+        frequency: String,
+    ) {
+        setLoading(true)
+
+        val token = getSharedPreferences("auth", MODE_PRIVATE)
+            .getString("access_token", null)
+
+        if (token.isNullOrBlank()) {
+            Toast.makeText(this, "No access token. Please login again.", Toast.LENGTH_LONG).show()
+            setLoading(false)
+            return
+        }
+
+        val body = UpdateProfileRequest(
+            age = age,
+            height = height,
+            weight = weight,
+            fitness_level = fitnessLevel,
+            goal = goal,
+            limitations = limitations,
+            frequency = frequency
+        )
+
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitClient.apiService.updateMe("Bearer $token", body)
+
+                if (response.isSuccessful && response.body() != null) {
+                    val user = response.body()!!
+
+                    getSharedPreferences("auth", MODE_PRIVATE).edit()
+                        .putString("user_name", user.username)
+                        .putString("user_email", user.email)
+                        .apply()
+
+                    startActivity(
+                        Intent(this@SignUpFrequencyActivity, MainActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        }
+                    )
+                } else {
+                    val err = response.errorBody()?.string() ?: "Profile update failed"
+                    Toast.makeText(this@SignUpFrequencyActivity, err, Toast.LENGTH_LONG).show()
+                    setLoading(false)
+                }
+            } catch (e: Exception) {
+                Toast.makeText(
+                    this@SignUpFrequencyActivity,
+                    "Error: ${e::class.java.simpleName}: ${e.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+                setLoading(false)
+            }
         }
     }
 
@@ -102,16 +179,15 @@ class SignUpFrequencyActivity : AppCompatActivity() {
                 if (response.isSuccessful && response.body() != null) {
                     val body = response.body()!!
 
-                    // ✅ Сохраняем только токен — НЕ пароль
                     getSharedPreferences("auth", MODE_PRIVATE).edit()
                         .putBoolean("isLoggedIn", true)
                         .putBoolean("isGuest", false)
                         .putString("access_token", body.access)
                         .putString("refresh_token", body.refresh)
                         .putString("user_email", body.user.email)
+                        .putString("user_name", body.user.username)
                         .apply()
 
-                    // Идём на главный экран
                     startActivity(
                         Intent(this@SignUpFrequencyActivity, MainActivity::class.java).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -123,11 +199,7 @@ class SignUpFrequencyActivity : AppCompatActivity() {
                     setLoading(false)
                 }
             } catch (e: Exception) {
-                Toast.makeText(
-                    this@SignUpFrequencyActivity,
-                    "Network error: ${e.message}",
-                    Toast.LENGTH_LONG
-                ).show()
+                Toast.makeText(this@SignUpFrequencyActivity, "Network error: ${e.message}", Toast.LENGTH_LONG).show()
                 setLoading(false)
             }
         }

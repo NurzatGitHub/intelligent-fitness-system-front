@@ -46,10 +46,12 @@ class SignUpGoalActivity : AppCompatActivity() {
             val height = intent.getIntExtra("height_cm", -1)
             val weight = intent.getFloatExtra("weight_kg", -1f)
             val fitnessLevel = intent.getStringExtra("fitness_level")
+            val fromGoogle = intent.getBooleanExtra("from_google", false)
 
             // TODO: следующий экран: Injuries / Limitations
             val next = Intent(this, SignUpLimitationsActivity::class.java).apply {
                 putExtra("goal", goal)
+                putExtra("from_google", fromGoogle)
 
                 // прокидываем дальше (если используешь такую схему)
                 if (email != null) putExtra("email", email)

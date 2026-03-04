@@ -82,11 +82,14 @@ class SignUpLimitationsActivity : AppCompatActivity() {
             val height = intent.getIntExtra("height_cm", -1)
             val weight = intent.getFloatExtra("weight_kg", -1f)
             val fitnessLevel = intent.getStringExtra("fitness_level")
+            val fromGoogle = intent.getBooleanExtra("from_google", false)
             val goal = intent.getStringExtra("goal")
 
             // TODO: следующий экран: Training Frequency
             val next = Intent(this, SignUpFrequencyActivity::class.java).apply {
                 putExtra("limitations", limitations)
+                putExtra("from_google", fromGoogle)
+
 
                 if (email != null) putExtra("email", email)
                 if (password != null) putExtra("password", password)

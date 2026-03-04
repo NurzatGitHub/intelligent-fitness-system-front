@@ -35,6 +35,7 @@ class SignUpWeightActivity : AppCompatActivity() {
         val password = intent.getStringExtra("password").orEmpty()
         val age = intent.getIntExtra("age", -1)
         val height = intent.getIntExtra("height_cm", -1)
+        val fromGoogle = intent.getBooleanExtra("from_google", false) // ✅ ВОТ ЭТОГО НЕ ХВАТАЛО
 
         btnNext.isEnabled = false
 
@@ -57,13 +58,13 @@ class SignUpWeightActivity : AppCompatActivity() {
             val w = safeInt(etWeight.text?.toString())
             if (!validate(showErrors = true)) return@setOnClickListener
 
-            // NEXT STEP: Fitness Level
             val intent = Intent(this, SignUpFitnessLevelActivity::class.java).apply {
                 putExtra("email", email)
                 putExtra("password", password)
                 putExtra("age", age)
-                putExtra("height", height)
+                putExtra("height_cm", height)
                 putExtra("weight_kg", w.toFloat())
+                putExtra("from_google", fromGoogle) // ✅ ПРОКИДЫВАЕМ ДАЛЬШЕ
             }
             startActivity(intent)
         }
@@ -85,6 +86,5 @@ class SignUpWeightActivity : AppCompatActivity() {
     }
 
     private fun isValidWeight(w: Int): Boolean = w in 30..250
-
     private fun safeInt(s: String?): Int = s?.trim()?.toIntOrNull() ?: -1
 }

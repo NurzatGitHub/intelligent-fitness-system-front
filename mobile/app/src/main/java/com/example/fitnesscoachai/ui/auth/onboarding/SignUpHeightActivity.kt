@@ -63,6 +63,7 @@ class SignUpHeightActivity : AppCompatActivity() {
         btnNext.setOnClickListener {
             attempted = true
             val h = safeInt(etHeight.text?.toString())
+            val fromGoogle = intent.getBooleanExtra("from_google", false)
             if (!validate(showErrors = true)) return@setOnClickListener
 
             val i = Intent(this, SignUpWeightActivity::class.java).apply {
@@ -70,6 +71,7 @@ class SignUpHeightActivity : AppCompatActivity() {
                 putExtra("password", password)
                 putExtra("age", age)
                 putExtra("height_cm", h)
+                putExtra("from_google", fromGoogle)
             }
             startActivity(i)
         }

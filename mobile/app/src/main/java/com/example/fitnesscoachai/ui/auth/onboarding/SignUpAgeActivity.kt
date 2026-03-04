@@ -56,12 +56,14 @@ class SignUpAgeActivity : AppCompatActivity() {
             if (!validate()) return@setOnClickListener
 
             val age = etAge.text!!.toString().trim().toInt()
+            val fromGoogle = intent.getBooleanExtra("from_google", false)
 
             // next screen: Height
             val i = Intent(this, SignUpHeightActivity::class.java).apply {
                 putExtra("email", email)
                 putExtra("password", password)
                 putExtra("age", age)
+                putExtra("from_google", fromGoogle)
             }
             startActivity(i)
         }
