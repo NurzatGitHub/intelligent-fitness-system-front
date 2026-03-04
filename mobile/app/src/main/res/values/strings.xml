@@ -33,6 +33,7 @@
     <string name="instruction_tips_title">Tips</string>
     <string name="exercise_list_title">Exercises</string>
     <string name="subcategory_title">Subcategories</string>
+    <string name="exercise_select_subtitle">Form analysis available</string>
     <!-- Back -->
     <string name="sub_lats">Широчайшие</string>
     <string name="sub_lower_back">Низ спины</string>
