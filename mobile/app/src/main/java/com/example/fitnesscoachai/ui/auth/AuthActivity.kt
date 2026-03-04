@@ -65,7 +65,7 @@ class AuthActivity : AppCompatActivity() {
 
         btnLogin = findViewById(R.id.btnLogin)
         btnContinueAsGuest = findViewById(R.id.btnContinueAsGuest)
-        btnGoogle = findViewById(R.id.btnGoogle) // ⚠️ убедись, что такой id есть в xml
+        btnGoogle = findViewById(R.id.btnGoogle)
         tvCreateAccount = findViewById(R.id.tvCreateAccount)
         tvForgotPassword = findViewById(R.id.tvForgotPassword)
 

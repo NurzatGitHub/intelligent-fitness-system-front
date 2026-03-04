@@ -27,7 +27,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val prefs = requireContext().getSharedPreferences("auth", android.content.Context.MODE_PRIVATE)
-        val userName = prefs.getString("user_name", "Azamat") ?: "Azamat"
+        val userName = prefs.getString("user_name", "beginner") ?: "beginner"
 
         // Set user name
         val tvUserName = view.findViewById<TextView>(R.id.tvUserName)

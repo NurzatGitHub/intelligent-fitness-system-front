@@ -53,7 +53,6 @@ class SignUpStep1Activity : AppCompatActivity() {
         btnNext.isEnabled = false
 
         val watcher = SimpleTextWatcher {
-            // кнопку обновляем всегда, ошибки — только если уже пытались/трогали
             updateButtonEnabled()
             validate(showErrors = attempted)
         }
