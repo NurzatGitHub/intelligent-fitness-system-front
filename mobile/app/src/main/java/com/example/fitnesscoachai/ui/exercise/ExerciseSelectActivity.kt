@@ -2,6 +2,9 @@ package com.example.fitnesscoachai.ui.exercise
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,11 +19,14 @@ import kotlinx.coroutines.launch
 
 class ExerciseSelectActivity : AppCompatActivity() {
 
+    private var allExercises: List<com.example.fitnesscoachai.domain.model.Exercise> = emptyList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_exercise_select)
 
         val rv = findViewById<RecyclerView>(R.id.rvExerciseSelect)
+        val etSearch = findViewById<EditText>(R.id.etSearch)
         val adapter = ExerciseAdapter(emptyList()) { exercise ->
             startWorkout(exercise.titleEn)
         }
@@ -35,8 +41,25 @@ class ExerciseSelectActivity : AppCompatActivity() {
                     repo.getExercisesByMainCategory(MainCategory.ARMS) +
                     repo.getExercisesByMainCategory(MainCategory.ABS) +
                     repo.getExercisesByMainCategory(MainCategory.CARDIO)
-            adapter.updateData(all)
+            allExercises = all
+            adapter.updateData(allExercises)
         }
+
+        etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                val query = s?.toString().orEmpty().trim()
+                val filtered = if (query.isEmpty()) {
+                    allExercises
+                } else {
+                    allExercises.filter {
+                        it.titleEn.contains(query, ignoreCase = true)
+                    }
+                }
+                adapter.updateData(filtered)
+            }
+        })
     }
 
     private fun startWorkout(exerciseName: String) {
