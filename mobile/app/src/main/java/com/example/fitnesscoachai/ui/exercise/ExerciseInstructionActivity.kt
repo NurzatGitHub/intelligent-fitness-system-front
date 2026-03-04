@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.view.View
+import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.fitnesscoachai.R
@@ -32,6 +34,8 @@ class ExerciseInstructionActivity : AppCompatActivity() {
         val repo = ExerciseRepositoryLocal()
         val stepsContainer = findViewById<LinearLayout>(R.id.stepsContainer)
         val tipsContainer = findViewById<LinearLayout>(R.id.tipsContainer)
+        val videoContainer = findViewById<View>(R.id.videoContainer)
+        val videoView = findViewById<VideoView>(R.id.videoView)
 
         lifecycleScope.launch {
             val exercise = repo.getExerciseById(exerciseId)
@@ -40,6 +44,17 @@ class ExerciseInstructionActivity : AppCompatActivity() {
                 return@launch
             }
             supportActionBar?.title = exercise.titleEn
+
+            if (!exercise.videoPath.isNullOrBlank()) {
+                videoContainer.visibility = View.VISIBLE
+                // TODO: load exercise video here from assets/videos/ using exercise.videoPath
+                // Example idea (to be implemented later):
+                // val assetFd = assets.openFd(exercise.videoPath!!)
+                // videoView.setVideoPath("...uri for asset file descriptor...")
+                // videoView.start()
+            } else {
+                videoContainer.visibility = View.GONE
+            }
 
             findViewById<TextView>(R.id.tvExerciseName).text = exercise.titleEn
             findViewById<TextView>(R.id.tvExerciseMeta).text = buildString {

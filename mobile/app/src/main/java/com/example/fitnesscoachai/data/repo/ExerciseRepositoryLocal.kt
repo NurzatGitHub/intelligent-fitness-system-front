@@ -1259,7 +1259,8 @@ class ExerciseRepositoryLocal : ExerciseRepository {
             sub = sub,
             equipment = equipment,
             difficulty = difficulty,
-            media = path?.let { ExerciseMedia.LocalAsset(it) }
+            media = path?.let { ExerciseMedia.LocalAsset(it) },
+            videoPath = "videos/$id.mp4"
         )
     }
 }

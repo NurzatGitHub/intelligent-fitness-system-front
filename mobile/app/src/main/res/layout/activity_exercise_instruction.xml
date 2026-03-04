@@ -20,6 +20,20 @@
             app:navigationIcon="?attr/homeAsUpIndicator"
             app:title="" />
 
+        <FrameLayout
+            android:id="@+id/videoContainer"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone">
+
+            <VideoView
+                android:id="@+id/videoView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/black" />
+        </FrameLayout>
+
         <TextView
             android:id="@+id/tvExerciseName"
             android:layout_width="wrap_content"

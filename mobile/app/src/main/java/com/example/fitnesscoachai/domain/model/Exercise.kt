@@ -13,7 +13,8 @@ data class Exercise(
     val sub: SubCategory,
     val equipment: String?,
     val difficulty: String?,
-    val media: ExerciseMedia?
+    val media: ExerciseMedia?,
+    val videoPath: String?
 )
 
 /**
