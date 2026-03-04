@@ -9,6 +9,7 @@ import com.example.fitnesscoachai.ui.auth.AuthActivity
 import com.example.fitnesscoachai.ui.exercise.ExerciseSelectActivity
 import com.example.fitnesscoachai.ui.home.HomeFragment
 import com.example.fitnesscoachai.ui.profile.ProfileFragment
+import com.example.fitnesscoachai.ui.assistant.AssistantFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_camera -> {
                     startActivity(Intent(this, ExerciseSelectActivity::class.java))
                 }
+                R.id.nav_assistant -> openFragment(AssistantFragment())
                 R.id.nav_profile -> openFragment(ProfileFragment())
             }
             true
