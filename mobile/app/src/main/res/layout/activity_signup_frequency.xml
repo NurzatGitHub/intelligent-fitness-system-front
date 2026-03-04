@@ -97,10 +97,11 @@
                         android:minHeight="52dp"
                         app:chipStrokeWidth="1dp"
                         app:chipStrokeColor="#55FFFFFF"
-                        app:chipBackgroundColor="#141A2A"
+                        app:chipBackgroundColor="@color/chip_choice_background"
                         android:textColor="@android:color/white"
+                        app:rippleColor="#886C5CE7"
                         app:checkedIconVisible="false"
-                        app:checkedIconTint="#6C5CE7"/>
+                        app:checkedIconTint="#FFFFFF"/>
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip3to4"
@@ -112,10 +113,11 @@
                         android:layout_marginTop="8dp"
                         app:chipStrokeWidth="1dp"
                         app:chipStrokeColor="#55FFFFFF"
-                        app:chipBackgroundColor="#141A2A"
+                        app:chipBackgroundColor="@color/chip_choice_background"
                         android:textColor="@android:color/white"
+                        app:rippleColor="#886C5CE7"
                         app:checkedIconVisible="false"
-                        app:checkedIconTint="#6C5CE7"/>
+                        app:checkedIconTint="#FFFFFF"/>
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip5to6"
@@ -127,10 +129,11 @@
                         android:layout_marginTop="8dp"
                         app:chipStrokeWidth="1dp"
                         app:chipStrokeColor="#55FFFFFF"
-                        app:chipBackgroundColor="#141A2A"
+                        app:chipBackgroundColor="@color/chip_choice_background"
                         android:textColor="@android:color/white"
+                        app:rippleColor="#886C5CE7"
                         app:checkedIconVisible="false"
-                        app:checkedIconTint="#6C5CE7"/>
+                        app:checkedIconTint="#FFFFFF"/>
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipEveryday"
@@ -142,10 +145,11 @@
                         android:layout_marginTop="8dp"
                         app:chipStrokeWidth="1dp"
                         app:chipStrokeColor="#55FFFFFF"
-                        app:chipBackgroundColor="#141A2A"
+                        app:chipBackgroundColor="@color/chip_choice_background"
                         android:textColor="@android:color/white"
+                        app:rippleColor="#886C5CE7"
                         app:checkedIconVisible="false"
-                        app:checkedIconTint="#6C5CE7"/>
+                        app:checkedIconTint="#FFFFFF"/>
 
                 </com.google.android.material.chip.ChipGroup>
 
