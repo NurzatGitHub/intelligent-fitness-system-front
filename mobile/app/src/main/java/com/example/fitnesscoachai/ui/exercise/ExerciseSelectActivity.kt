@@ -3,9 +3,15 @@ package com.example.fitnesscoachai.ui.exercise
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnesscoachai.R
-import com.google.android.material.card.MaterialCardView
+import com.example.fitnesscoachai.data.repo.ExerciseRepositoryLocal
+import com.example.fitnesscoachai.domain.model.MainCategory
+import com.example.fitnesscoachai.ui.home.ExerciseAdapter
 import com.example.fitnesscoachai.ui.workout.WorkoutActivity
+import kotlinx.coroutines.launch
 
 
 class ExerciseSelectActivity : AppCompatActivity() {
@@ -14,20 +20,22 @@ class ExerciseSelectActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_exercise_select)
 
-        val cardSquat = findViewById<MaterialCardView>(R.id.cardSquat)
-        val cardPushUp = findViewById<MaterialCardView>(R.id.cardPushUp)
-        val cardPlank = findViewById<MaterialCardView>(R.id.cardPlank)
-
-        cardSquat.setOnClickListener {
-            startWorkout("Squat")
+        val rv = findViewById<RecyclerView>(R.id.rvExerciseSelect)
+        val adapter = ExerciseAdapter(emptyList()) { exercise ->
+            startWorkout(exercise.titleEn)
         }
+        rv.adapter = adapter
+        rv.layoutManager = LinearLayoutManager(this)
 
-        cardPushUp.setOnClickListener {
-            startWorkout("Push-up")
-        }
-
-        cardPlank.setOnClickListener {
-            startWorkout("Plank")
+        val repo = ExerciseRepositoryLocal()
+        lifecycleScope.launch {
+            val all = repo.getExercisesByMainCategory(MainCategory.BACK) +
+                    repo.getExercisesByMainCategory(MainCategory.CHEST) +
+                    repo.getExercisesByMainCategory(MainCategory.LEGS) +
+                    repo.getExercisesByMainCategory(MainCategory.ARMS) +
+                    repo.getExercisesByMainCategory(MainCategory.ABS) +
+                    repo.getExercisesByMainCategory(MainCategory.CARDIO)
+            adapter.updateData(all)
         }
     }
 

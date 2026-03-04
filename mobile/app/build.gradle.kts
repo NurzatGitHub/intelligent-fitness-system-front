@@ -45,6 +45,11 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation("androidx.fragment:fragment-ktx:1.6.2")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    // Конвертер для парсинга JSON в объекты Kotlin
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    // OkHttp для логирования запросов (полезно при отладке)
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
