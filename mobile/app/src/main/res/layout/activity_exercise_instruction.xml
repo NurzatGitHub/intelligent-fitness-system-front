@@ -27,11 +27,12 @@
             android:layout_marginBottom="16dp"
             android:visibility="gone">
 
-            <VideoView
-                android:id="@+id/videoView"
+            <androidx.media3.ui.PlayerView
+                android:id="@+id/playerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/black" />
+                android:background="@android:color/black"
+                app:use_controller="true" />
         </FrameLayout>
 
         <TextView

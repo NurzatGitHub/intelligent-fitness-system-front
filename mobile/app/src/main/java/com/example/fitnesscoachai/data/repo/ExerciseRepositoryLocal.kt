@@ -480,12 +480,12 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                 "Hang from the bar and pull until your chin is over the bar.",
                 listOf("Grip the bar at shoulder width.", "Hang with arms fully extended.", "Pull yourself up, squeezing your shoulder blades.", "Lower yourself under control."),
                 listOf("Do not swing.", "Engage your core."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "pullup", imageFile = "pullup"),
             sub(subs, "lats", "ex12", "Lat Pulldown",
                 "Pull the bar down to your chest, squeezing your shoulder blades.",
                 listOf("Sit down and secure your thighs.", "Grasp the bar with a wide grip.", "Pull to the upper chest.", "Return the bar upward."),
                 listOf("Do not lean back too far.", "Elbows drive down and back."),
-                "cable", "beginner", null),
+                "cable", "beginner", null, videoFile = "lat_pulldown", imageFile = "lat_pulldown"),
             sub(subs, "lower_back", "ex13", "Deadlift",
                 "Lift the bar from the floor by extending your hips and knees.",
                 listOf("Stand in front of the bar, feet hip-width apart.", "Bend down and grip the bar just outside your legs.", "Keep your back straight.", "Stand up by extending legs and hips."),
@@ -495,7 +495,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                 "Row the bar to your waist in a bent-over position. Drive elbows along your body.",
                 listOf("Bend forward holding the bar.", "Pull the bar to your waist.", "Squeeze shoulder blades at the top.", "Lower the bar."),
                 listOf("Back parallel or at an angle to the floor.", "Do not jerk your torso up."),
-                "barbell", "beginner", null),
+                "barbell", "beginner", null, videoFile = "barbell_row", imageFile = "barbell_row"),
             // =====================
             // CHEST — MID CHEST (основные базовые)
             // =====================
@@ -1076,7 +1076,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return slowly to the start."
                 ),
                 listOf("Keep shoulders down.", "Don’t turn it into a triceps pushdown."),
-                "cable", "beginner", null),
+                "cable", "beginner", null, videoFile = "straight_arm_pulldown", imageFile = "straight_arm_pulldown"),
 
             sub(subs, "lats", "ex22", "Single-Arm Dumbbell Row",
                 "One-arm row that targets lats and builds back thickness.",
@@ -1088,7 +1088,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower under control."
                 ),
                 listOf("Row toward the hip, not the chest.", "Keep back neutral."),
-                "dumbbell", "beginner", null),
+                "dumbbell", "beginner", null, videoFile = "single_arm_dumbbell_row", imageFile = "single_arm_dumbbell_row"),
 
             sub(subs, "lats", "ex23", "Neutral-Grip Pull-up",
                 "Pull-up variation that is often easier on shoulders and targets lats.",
@@ -1100,7 +1100,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly to full extension."
                 ),
                 listOf("Avoid swinging.", "Use full range of motion."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "neutral_grip_pull_up", imageFile = "neutral_grip_pull_up"),
 
             sub(subs, "lats", "ex24", "Assisted Pull-up",
                 "Pull-up with assistance to build strength toward strict pull-ups.",
@@ -1112,7 +1112,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly."
                 ),
                 listOf("Reduce assistance over time.", "Control the lowering phase."),
-                "machine", "beginner", null),
+                "machine", "beginner", null, videoFile = "assisted_pull_up", imageFile = "assisted_pull_up"),
 
             sub(subs, "lats", "ex25", "Close-Grip Lat Pulldown",
                 "Lat pulldown variation emphasizing the lower lats.",
@@ -1124,7 +1124,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return slowly to full stretch."
                 ),
                 listOf("Keep chest up.", "Don’t lean too far back."),
-                "cable", "beginner", null),
+                "cable", "beginner", null, videoFile = "close_grip_lat_pulldown", imageFile = "close_grip_lat_pulldown"),
 
 // =====================
 // BACK — UPPER BACK (ещё)
@@ -1138,7 +1138,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return slowly with control."
                 ),
                 listOf("Don’t shrug.", "Keep chest up and core tight."),
-                "cable", "beginner", null),
+                "cable", "beginner", null, videoFile = "seated_cable_row", imageFile = "seated_cable_row"),
 
             sub(subs, "upper_back", "ex27", "Face Pull",
                 "Excellent exercise for rear delts and upper back posture.",
@@ -1150,7 +1150,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return slowly."
                 ),
                 listOf("Lead with elbows.", "Keep ribs down (no over-arch)."),
-                "cable", "beginner", null),
+                "cable", "beginner", null, videoFile = "face_pull", imageFile = "face_pull"),
 
             sub(subs, "upper_back", "ex28", "Chest-Supported Row",
                 "Row variation that reduces lower-back strain and targets upper back.",
@@ -1162,7 +1162,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly."
                 ),
                 listOf("Keep neck neutral.", "Don’t bounce at the bottom."),
-                "dumbbell", "beginner", null),
+                "dumbbell", "beginner", null, videoFile = "chest_supported_row", imageFile = "chest_supported_row"),
 
             sub(subs, "upper_back", "ex29", "Reverse Pec Deck Fly",
                 "Machine rear-delt fly for upper back and rear shoulders.",
@@ -1173,7 +1173,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return slowly."
                 ),
                 listOf("Use light weight and control.", "Avoid shrugging."),
-                "machine", "beginner", null),
+                "machine", "beginner", null, videoFile = "reverse_pec_deck_fly", imageFile = "reverse_pec_deck_fly"),
 
             sub(subs, "upper_back", "ex30", "T-Bar Row",
                 "Rowing exercise for back thickness and mid-back strength.",
@@ -1185,7 +1185,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower under control."
                 ),
                 listOf("Do not jerk the weight.", "Keep elbows close-ish to body."),
-                "machine", "intermediate", null),
+                "machine", "intermediate", null, videoFile = "t_bar_row", imageFile = "t_bar_row"),
 
 // =====================
 // BACK — LOWER BACK (ещё)
@@ -1246,9 +1246,13 @@ class ExerciseRepositoryLocal : ExerciseRepository {
         tips: List<String>,
         equipment: String?,
         difficulty: String?,
-        path: String?
+        path: String?,
+        videoFile: String? = null,
+        imageFile: String? = null
     ): Exercise {
         val sub = subs.find { it.id == subId }!!
+        val media = path?.let { ExerciseMedia.LocalAsset(it) }
+            ?: imageFile?.let { ExerciseMedia.LocalAsset("drawable/$it") }
         return Exercise(
             id = id,
             titleEn = titleEn,
@@ -1259,8 +1263,8 @@ class ExerciseRepositoryLocal : ExerciseRepository {
             sub = sub,
             equipment = equipment,
             difficulty = difficulty,
-            media = path?.let { ExerciseMedia.LocalAsset(it) },
-            videoPath = "videos/$id.mp4"
+            media = media,
+            videoPath = "videos/${videoFile ?: id}.mp4"
         )
     }
 }

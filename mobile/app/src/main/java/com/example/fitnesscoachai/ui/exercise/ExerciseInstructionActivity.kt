@@ -7,14 +7,20 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.view.View
-import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 import com.example.fitnesscoachai.R
 import com.example.fitnesscoachai.data.repo.ExerciseRepositoryLocal
 import kotlinx.coroutines.launch
-
+import java.io.File
+import java.io.IOException
 class ExerciseInstructionActivity : AppCompatActivity() {
+
+    private var player: ExoPlayer? = null
+    private var playerView: PlayerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +41,7 @@ class ExerciseInstructionActivity : AppCompatActivity() {
         val stepsContainer = findViewById<LinearLayout>(R.id.stepsContainer)
         val tipsContainer = findViewById<LinearLayout>(R.id.tipsContainer)
         val videoContainer = findViewById<View>(R.id.videoContainer)
-        val videoView = findViewById<VideoView>(R.id.videoView)
+        playerView = findViewById(R.id.playerView)
 
         lifecycleScope.launch {
             val exercise = repo.getExerciseById(exerciseId)
@@ -46,12 +52,13 @@ class ExerciseInstructionActivity : AppCompatActivity() {
             supportActionBar?.title = exercise.titleEn
 
             if (!exercise.videoPath.isNullOrBlank()) {
-                videoContainer.visibility = View.VISIBLE
-                // TODO: load exercise video here from assets/videos/ using exercise.videoPath
-                // Example idea (to be implemented later):
-                // val assetFd = assets.openFd(exercise.videoPath!!)
-                // videoView.setVideoPath("...uri for asset file descriptor...")
-                // videoView.start()
+                val cached = cacheVideoIfNeeded(exercise.videoPath!!)
+                if (cached != null && cached.exists()) {
+                    videoContainer.visibility = View.VISIBLE
+                    initializePlayer(cached)
+                } else {
+                    videoContainer.visibility = View.GONE
+                }
             } else {
                 videoContainer.visibility = View.GONE
             }
@@ -83,6 +90,52 @@ class ExerciseInstructionActivity : AppCompatActivity() {
                 tipsContainer.addView(view)
             }
         }
+    }
+
+    private fun cacheVideoIfNeeded(assetPath: String): File? {
+        return try {
+            val fileName = assetPath.substringAfterLast('/')
+            val outFile = File(cacheDir, fileName)
+            // Всегда перезаписываем из assets, чтобы при замене файла показывалась новая версия
+            assets.open(assetPath).use { input ->
+                outFile.outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
+            outFile
+        } catch (e: IOException) {
+            null
+        }
+    }
+
+    private fun initializePlayer(file: File) {
+        if (player == null) {
+            player = ExoPlayer.Builder(this).build().also { exoPlayer ->
+                playerView?.player = exoPlayer
+                val mediaItem = MediaItem.fromUri(file.toURI().toString())
+                exoPlayer.setMediaItem(mediaItem)
+                exoPlayer.repeatMode = ExoPlayer.REPEAT_MODE_ONE
+                exoPlayer.prepare()
+                exoPlayer.playWhenReady = true
+            }
+        } else {
+            val exoPlayer = player!!
+            val mediaItem = MediaItem.fromUri(file.toURI().toString())
+            exoPlayer.setMediaItem(mediaItem)
+            exoPlayer.prepare()
+            exoPlayer.playWhenReady = true
+        }
+    }
+
+    private fun releasePlayer() {
+        playerView?.player = null
+        player?.release()
+        player = null
+    }
+
+    override fun onStop() {
+        super.onStop()
+        releasePlayer()
     }
 
     companion object {

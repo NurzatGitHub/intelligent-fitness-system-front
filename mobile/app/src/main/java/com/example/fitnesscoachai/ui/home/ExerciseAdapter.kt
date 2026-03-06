@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnesscoachai.R
 import com.example.fitnesscoachai.domain.model.Exercise
+import com.example.fitnesscoachai.domain.model.ExerciseMedia
 
 class ExerciseAdapter(
     private var exercises: List<Exercise>,
@@ -33,8 +34,19 @@ class ExerciseAdapter(
             append(exercise.sub.titleEn)
             exercise.equipment?.let { append(" | ").append(it) }
         }
-        holder.ivExerciseGif.setImageDrawable(null)
-        // TODO: загрузка media (LocalAsset / RemoteUrl) когда будет нужно
+        when (val m = exercise.media) {
+            is ExerciseMedia.LocalAsset -> {
+                if (m.path.startsWith("drawable/")) {
+                    val name = m.path.removePrefix("drawable/")
+                    val resId = holder.itemView.context.resources.getIdentifier(name, "drawable", holder.itemView.context.packageName)
+                    if (resId != 0) holder.ivExerciseGif.setImageResource(resId)
+                    else holder.ivExerciseGif.setImageDrawable(null)
+                } else {
+                    holder.ivExerciseGif.setImageDrawable(null)
+                }
+            }
+            else -> holder.ivExerciseGif.setImageDrawable(null)
+        }
         holder.itemView.setOnClickListener { onExerciseClick(exercise) }
     }
 
