@@ -6,6 +6,8 @@ import com.example.fitnesscoachai.data.models.LoginRequest
 import com.example.fitnesscoachai.data.models.RegisterRequest
 import com.example.fitnesscoachai.data.models.UpdateProfileRequest
 import com.example.fitnesscoachai.data.models.User
+import com.example.fitnesscoachai.data.models.ChatRequest
+import com.example.fitnesscoachai.data.models.ChatResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Header
@@ -28,4 +30,10 @@ interface ApiService {
         @Header("Authorization") bearer: String,
         @Body body: UpdateProfileRequest
     ): Response<User>
+
+    @POST("api/assistant/chat/")
+    suspend fun assistantChat(
+        @Header("Authorization") bearer: String,
+        @Body body: ChatRequest
+    ): Response<ChatResponse>
 }

@@ -1,5 +1,6 @@
 package com.example.fitnesscoachai.ui.assistant
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -17,6 +18,11 @@ class AssistantFragment : Fragment(R.layout.fragment_assistant) {
     private val vm: AssistantViewModel by viewModels()
     private lateinit var adapter: ChatAdapter
 
+    private fun getAccessToken(): String? {
+        val sp = requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
+        return sp.getString("access_token", null)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -33,31 +39,39 @@ class AssistantFragment : Fragment(R.layout.fragment_assistant) {
 
         vm.messages.observe(viewLifecycleOwner) { list ->
             adapter.submitList(list)
-            if (list.isNotEmpty()) {
-                rv.scrollToPosition(list.size - 1)
-            }
+            if (list.isNotEmpty()) rv.scrollToPosition(list.size - 1)
         }
 
         vm.typing.observe(viewLifecycleOwner) { isTyping ->
             progress.visibility = if (isTyping) View.VISIBLE else View.GONE
+            btn.isEnabled = !isTyping
+            et.isEnabled = !isTyping
         }
 
-        btn.setOnClickListener {
+        fun sendNow() {
             val text = et.text.toString()
             et.setText("")
-            vm.sendUserMessage(text)
+            val token = getAccessToken()
+            if (token.isNullOrBlank()) {
+                // добавим сообщение в чат
+                // (быстро через current list)
+                val cur = vm.messages.value.orEmpty().toMutableList()
+                cur.add(ChatMessage("Нужно войти в аккаунт, чтобы использовать AI.", isUser = false))
+                // хак: напрямую не можем сетнуть в VM, поэтому проще:
+                // если хочешь чисто — добавь метод vm.addSystemMessage()
+                adapter.submitList(cur)
+                return
+            }
+            vm.sendUserMessage(text, token)
         }
+
+        btn.setOnClickListener { sendNow() }
 
         et.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEND) {
-                val text = et.text.toString()
-                et.setText("")
-                vm.sendUserMessage(text)
+                sendNow()
                 true
-            } else {
-                false
-            }
+            } else false
         }
     }
 }
-
