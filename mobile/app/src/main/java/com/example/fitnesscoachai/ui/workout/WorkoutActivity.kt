@@ -44,6 +44,8 @@ class WorkoutActivity : AppCompatActivity() {
 
     private val viewModel: WorkoutViewModel by viewModels()
     private var exerciseName: String = ""
+    private var exerciseCode: String = "push_up" // ✅ NEW
+
     private var isWorkoutActive = false
     private var timer: CountDownTimer? = null
     private var elapsedSeconds: Long = 0
@@ -63,6 +65,8 @@ class WorkoutActivity : AppCompatActivity() {
         setContentView(R.layout.activity_workout)
 
         exerciseName = intent.getStringExtra("exercise_name") ?: "Exercise"
+        exerciseCode = intent.getStringExtra("exercise_code") ?: "push_up" // ✅ NEW
+        viewModel.setExercise(exerciseCode) // ✅ NEW
 
         initializeViews()
         poseHelper = PoseLandmarkerHelper(this)
@@ -266,9 +270,7 @@ class WorkoutActivity : AppCompatActivity() {
 
                 runOnUiThread {
                     overlayView.setImageSize(imgW, imgH)
-
                     overlayView.mirrorX = (lensFacing == CameraSelector.LENS_FACING_FRONT)
-
                     overlayView.updatePose(fixed18, lastSegments)
                 }
             } finally {

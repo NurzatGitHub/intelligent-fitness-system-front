@@ -16,7 +16,6 @@ import com.example.fitnesscoachai.ui.home.ExerciseAdapter
 import com.example.fitnesscoachai.ui.workout.WorkoutActivity
 import kotlinx.coroutines.launch
 
-
 class ExerciseSelectActivity : AppCompatActivity() {
 
     private var allExercises: List<com.example.fitnesscoachai.domain.model.Exercise> = emptyList()
@@ -27,9 +26,11 @@ class ExerciseSelectActivity : AppCompatActivity() {
 
         val rv = findViewById<RecyclerView>(R.id.rvExerciseSelect)
         val etSearch = findViewById<EditText>(R.id.etSearch)
+
         val adapter = ExerciseAdapter(emptyList()) { exercise ->
             startWorkout(exercise.titleEn)
         }
+
         rv.adapter = adapter
         rv.layoutManager = LinearLayoutManager(this)
 
@@ -41,6 +42,7 @@ class ExerciseSelectActivity : AppCompatActivity() {
                     repo.getExercisesByMainCategory(MainCategory.ARMS) +
                     repo.getExercisesByMainCategory(MainCategory.ABS) +
                     repo.getExercisesByMainCategory(MainCategory.CARDIO)
+
             allExercises = all
             adapter.updateData(allExercises)
         }
@@ -63,8 +65,16 @@ class ExerciseSelectActivity : AppCompatActivity() {
     }
 
     private fun startWorkout(exerciseName: String) {
+
+        val code = when (exerciseName.trim().lowercase()) {
+            "push-up", "push up", "pushup" -> "push_up"
+            "squat" -> "squat"
+            else -> "push_up" // пока по умолчанию, чтобы не ломалось
+        }
+
         val intent = Intent(this, WorkoutActivity::class.java)
         intent.putExtra("exercise_name", exerciseName)
+        intent.putExtra("exercise_code", code) // ✅ NEW
         startActivity(intent)
     }
 }

@@ -18,14 +18,23 @@ class WorkoutViewModel : ViewModel() {
     val workoutState: StateFlow<WorkoutState> = _workoutState
 
     // Render WebSocket
-    private val wsUrlDevice =
-        "wss://intelligent-fitness-system.onrender.com/ws/analyze/"
+//    private val wsUrlDevice = "wss://intelligent-fitness-system.onrender.com/ws/analyze/"
+
+    private val wsUrlDevice = "ws://192.168.0.11:8000/ws/analyze/"
 
     private var currentReps = 0
+
+    // ✅ Текущее упражнение для WS (по умолчанию push_up)
+    private var currentExercise = "push_up"
 
     // Ограничение FPS отправки
     private var lastSendTime = 0L
     private val sendInterval = 100L // 100 ms = 10 FPS
+
+    // ✅ Устанавливаем упражнение из Activity
+    fun setExercise(exercise: String) {
+        currentExercise = exercise
+    }
 
     fun connectWebSocket() {
 
@@ -65,7 +74,7 @@ class WorkoutViewModel : ViewModel() {
 
                     "SETUP" -> {
                         _workoutState.value =
-                            WorkoutState.Setup(res.hint ?: "Примите позицию push-up")
+                            WorkoutState.Setup(res.hint ?: "Примите исходную позицию")
                     }
 
                     "ACTIVE" -> {
@@ -105,7 +114,8 @@ class WorkoutViewModel : ViewModel() {
         lastSendTime = now
 
         val payload = mapOf(
-            "exercise" to "push_up",
+            // ✅ раньше было всегда "push_up"
+            "exercise" to currentExercise,
             "ts" to (now / 1000),
             "points" to points
         )

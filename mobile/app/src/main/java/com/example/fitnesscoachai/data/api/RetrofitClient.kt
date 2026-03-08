@@ -8,11 +8,9 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
     // ДЛЯ РЕАЛЬНОГО УСТРОЙСТВА:
-    private const val BASE_URL = "https://intelligent-fitness-system.onrender.com/"
-
-    // ИЛИ просто меняй эту строку:
-    // Для эмулятора: "http://10.0.2.2:8000/api/"
-    // Для устройства: "http://192.168.0.12:8000/api/"
+//    private const val BASE_URL = "https://intelligent-fitness-system.onrender.com/"
+    private const val BASE_URL = "http://192.168.0.11:8000/"
+//    BASE_URL = "http://192.168.0.10:8000/"
 
     private val client = OkHttpClient.Builder()
         .addInterceptor(HttpLoggingInterceptor().apply {
