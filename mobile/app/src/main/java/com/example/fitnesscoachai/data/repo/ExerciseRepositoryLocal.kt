@@ -490,7 +490,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                 "Lift the bar from the floor by extending your hips and knees.",
                 listOf("Stand in front of the bar, feet hip-width apart.", "Bend down and grip the bar just outside your legs.", "Keep your back straight.", "Stand up by extending legs and hips."),
                 listOf("Do not round your back.", "Keep the bar close to your legs."),
-                "barbell", "intermediate", null),
+                "barbell", "intermediate", null, videoFile = "deadlift", imageFile = "deadlift"),
             sub(subs, "upper_back", "ex14", "Barbell Row",
                 "Row the bar to your waist in a bent-over position. Drive elbows along your body.",
                 listOf("Bend forward holding the bar.", "Pull the bar to your waist.", "Squeeze shoulder blades at the top.", "Lower the bar."),
@@ -1199,7 +1199,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Raise until body forms a straight line."
                 ),
                 listOf("Avoid hyperextension.", "Move from hips, not the spine."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "back_extension", imageFile = "back_extension"),
 
             sub(subs, "lower_back", "ex32", "Good Morning",
                 "Hip hinge movement strengthening lower back and hamstrings.",
@@ -1210,7 +1210,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return to standing by driving hips forward."
                 ),
                 listOf("Start light.", "Keep core tight and back neutral."),
-                "barbell", "intermediate", null),
+                "barbell", "intermediate", null, videoFile = "good_morning", imageFile = "good_morning"),
 
             sub(subs, "lower_back", "ex33", "Bird Dog",
                 "Core stability drill that supports lower back health.",
@@ -1221,7 +1221,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return and switch sides."
                 ),
                 listOf("Keep hips level.", "Move slowly and controlled."),
-                "none", "beginner", null),
+                "none", "beginner", null, videoFile = "bird_dog", imageFile = "bird_dog"),
 
             sub(subs, "lower_back", "ex34", "Superman Hold",
                 "Bodyweight hold to engage lower back and glutes.",
