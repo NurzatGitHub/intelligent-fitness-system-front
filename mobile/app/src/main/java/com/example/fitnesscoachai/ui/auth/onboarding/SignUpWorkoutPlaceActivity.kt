@@ -9,36 +9,39 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.progressindicator.LinearProgressIndicator
 
-class SignUpGoalActivity : AppCompatActivity() {
+class SignUpWorkoutPlaceActivity : AppCompatActivity() {
 
     private lateinit var chipGroup: ChipGroup
+    private lateinit var chipHome: Chip
+    private lateinit var chipOutdoor: Chip
+    private lateinit var chipGym: Chip
     private lateinit var btnNext: MaterialButton
     private lateinit var btnBack: MaterialButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_signup_goal)
+        setContentView(R.layout.activity_signup_workout_place)
 
-        chipGroup = findViewById(R.id.chipGroupGoal)
+        chipGroup = findViewById(R.id.chipGroupWorkoutPlace)
+        chipHome = findViewById(R.id.chipHome)
+        chipOutdoor = findViewById(R.id.chipOutdoor)
+        chipGym = findViewById(R.id.chipGym)
         btnNext = findViewById(R.id.btnNext)
         btnBack = findViewById(R.id.btnBack)
 
-        // now this step is before workout place
-        findViewById<LinearProgressIndicator>(R.id.progress).setProgressCompat(67, true)
-
-        // default selection
-        findViewById<Chip>(R.id.chipLoseWeight).isChecked = true
+        findViewById<LinearProgressIndicator>(R.id.progress).setProgressCompat(75, true)
+        btnNext.isEnabled = false
 
         btnBack.setOnClickListener { finish() }
-
+        chipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
+            btnNext.isEnabled = checkedIds.isNotEmpty()
+        }
         btnNext.setOnClickListener {
-            val goal = when (chipGroup.checkedChipId) {
-                R.id.chipLoseWeight -> "Lose weight"
-                R.id.chipBuildMuscle -> "Build muscle"
-                R.id.chipGetStronger -> "Get stronger"
-                R.id.chipImproveEndurance -> "Improve endurance"
-                R.id.chipStayHealthy -> "Stay healthy"
-                else -> "Lose weight"
+            val workoutPlace = when (chipGroup.checkedChipId) {
+                R.id.chipHome -> "home"
+                R.id.chipOutdoor -> "outdoor"
+                R.id.chipGym -> "gym"
+                else -> return@setOnClickListener
             }
 
             val email = intent.getStringExtra("email")
@@ -47,11 +50,11 @@ class SignUpGoalActivity : AppCompatActivity() {
             val height = intent.getIntExtra("height_cm", -1)
             val weight = intent.getFloatExtra("weight_kg", -1f)
             val fitnessLevel = intent.getStringExtra("fitness_level")
+            val goal = intent.getStringExtra("goal")
             val fromGoogle = intent.getBooleanExtra("from_google", false)
-            val enduranceLevel = intent.getStringExtra("endurance_level")
 
-            val next = Intent(this, SignUpWorkoutPlaceActivity::class.java).apply {
-                putExtra("goal", goal)
+            val next = Intent(this, SignUpLimitationsActivity::class.java).apply {
+                putExtra("workout_place", workoutPlace)
                 putExtra("from_google", fromGoogle)
 
                 if (email != null) putExtra("email", email)
@@ -60,8 +63,9 @@ class SignUpGoalActivity : AppCompatActivity() {
                 if (height != -1) putExtra("height_cm", height)
                 if (weight != -1f) putExtra("weight_kg", weight)
                 if (fitnessLevel != null) putExtra("fitness_level", fitnessLevel)
-                if (enduranceLevel != null) putExtra("endurance_level", enduranceLevel)
+                if (goal != null) putExtra("goal", goal)
             }
+
             startActivity(next)
         }
     }

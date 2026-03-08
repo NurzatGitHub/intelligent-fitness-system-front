@@ -33,7 +33,9 @@ class SignUpLimitationsActivity : AppCompatActivity() {
 
         btnNext = findViewById(R.id.btnNext)
         btnBack = findViewById(R.id.btnBack)
-        findViewById<LinearProgressIndicator>(R.id.progress).setProgressCompat(86, true) // step 7/8
+
+        // after adding workout place, this step shifted
+        findViewById<LinearProgressIndicator>(R.id.progress).setProgressCompat(83, true)
 
         chipNone = findViewById(R.id.chipNone)
         chipBackPain = findViewById(R.id.chipBackPain)
@@ -45,7 +47,6 @@ class SignUpLimitationsActivity : AppCompatActivity() {
         tilOther = findViewById(R.id.tilOther)
         etOther = findViewById(R.id.etOther)
 
-        // По умолчанию: No issues включен
         chipNone.isChecked = true
         syncNoneRule()
 
@@ -60,7 +61,6 @@ class SignUpLimitationsActivity : AppCompatActivity() {
         }
         chipOther.setOnClickListener(otherListener)
 
-        // если выбираем любую боль — снимаем "No issues"
         val painChips = listOf(chipBackPain, chipKneePain, chipShoulderPain, chipWristPain, chipOther)
         painChips.forEach { chip ->
             chip.setOnCheckedChangeListener { _, isChecked ->
@@ -75,7 +75,6 @@ class SignUpLimitationsActivity : AppCompatActivity() {
         btnNext.setOnClickListener {
             val limitations = buildLimitationsString() ?: return@setOnClickListener
 
-            // забираем ранее данные
             val email = intent.getStringExtra("email")
             val password = intent.getStringExtra("password")
             val age = intent.getIntExtra("age", -1)
@@ -84,12 +83,11 @@ class SignUpLimitationsActivity : AppCompatActivity() {
             val fitnessLevel = intent.getStringExtra("fitness_level")
             val fromGoogle = intent.getBooleanExtra("from_google", false)
             val goal = intent.getStringExtra("goal")
+            val workoutPlace = intent.getStringExtra("workout_place")
 
-            // TODO: следующий экран: Training Frequency
             val next = Intent(this, SignUpFrequencyActivity::class.java).apply {
                 putExtra("limitations", limitations)
                 putExtra("from_google", fromGoogle)
-
 
                 if (email != null) putExtra("email", email)
                 if (password != null) putExtra("password", password)
@@ -98,6 +96,7 @@ class SignUpLimitationsActivity : AppCompatActivity() {
                 if (weight != -1f) putExtra("weight_kg", weight)
                 if (fitnessLevel != null) putExtra("fitness_level", fitnessLevel)
                 if (goal != null) putExtra("goal", goal)
+                if (workoutPlace != null) putExtra("workout_place", workoutPlace)
             }
             startActivity(next)
         }

@@ -56,8 +56,10 @@
         <activity
             android:name=".ui.auth.onboarding.SignUpFrequencyActivity"
             android:exported="false" />
-
-
+        <activity android:name=".ui.auth.onboarding.SignUpDurationActivity" />
+        <activity android:name=".ui.auth.onboarding.SignUpWorkoutPlaceActivity" />
+        <activity android:name=".ui.auth.onboarding.SignUpEnduranceLevelActivity" />
+        <activity android:name=".ui.auth.onboarding.SignUpGenderActivity" />
         <activity
             android:name=".ui.auth.AuthActivity"
             android:exported="false" />

@@ -24,7 +24,7 @@ class SignUpHeightActivity : AppCompatActivity() {
 
     // Настрой под свой flow
     private val step = 3
-    private val totalSteps = 8
+    private val totalSteps = 12
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -30,7 +30,7 @@
             android:id="@+id/tvStep"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Step 6 of 12"
+            android:text="Step 9 of 12"
             android:textColor="#BFFFFFFF"
             android:textSize="14sp"
             android:layout_gravity="center_horizontal"
@@ -41,21 +41,21 @@
             android:id="@+id/progress"
             android:layout_width="match_parent"
             android:layout_height="6dp"
+            android:max="100"
             android:layout_marginBottom="18dp"
-            app:trackCornerRadius="100dp"
-            app:trackThickness="6dp"
-            app:trackColor="#33FFFFFF"
             app:indicatorColor="#6C5CE7"
-            android:max="100" />
+            app:trackColor="#33FFFFFF"
+            app:trackCornerRadius="100dp"
+            app:trackThickness="6dp"/>
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:cardBackgroundColor="#1AFFFFFF"
             app:cardCornerRadius="22dp"
             app:cardUseCompatPadding="true"
-            app:strokeWidth="1dp"
             app:strokeColor="#2AFFFFFF"
-            app:cardBackgroundColor="#1AFFFFFF">
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -66,7 +66,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Fitness Level"
+                    android:text="Workout Place"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
                     android:textSize="20sp"
@@ -75,62 +75,58 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Choose your current level"
+                    android:text="Where do you usually train?"
                     android:textColor="#BFFFFFFF"
                     android:textSize="14sp"
-                    android:layout_marginBottom="12dp"/>
+                    android:layout_marginBottom="14dp"/>
 
                 <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/chipGroup"
+                    android:id="@+id/chipGroupWorkoutPlace"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:singleSelection="true"
-                    app:selectionRequired="true"
-                    android:layout_marginBottom="16dp">
+                    app:selectionRequired="false">
 
                     <com.google.android.material.chip.Chip
-                        android:id="@+id/chipBeginner"
+                        android:id="@+id/chipHome"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Beginner"
+                        android:text="Home"
                         android:checkable="true"
-                        android:minHeight="52dp"
-                        app:chipStrokeWidth="1dp"
-                        app:chipStrokeColor="#55FFFFFF"
-                        app:chipBackgroundColor="@color/chip_choice_background"
                         android:textColor="@android:color/white"
-                        app:rippleColor="#886C5CE7"
-                        app:checkedIconTint="#FFFFFF"/>
+                        android:minHeight="52dp"
+                        app:checkedIconVisible="false"
+                        app:chipBackgroundColor="@color/chip_choice_background"
+                        app:chipStrokeColor="#55FFFFFF"
+                        app:chipStrokeWidth="1dp"/>
 
                     <com.google.android.material.chip.Chip
-                        android:id="@+id/chipIntermediate"
+                        android:id="@+id/chipOutdoor"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Intermediate"
-                        android:checkable="true"
-                        android:minHeight="52dp"
                         android:layout_marginTop="8dp"
-                        app:chipStrokeWidth="1dp"
-                        app:chipStrokeColor="#55FFFFFF"
-                        app:chipBackgroundColor="@color/chip_choice_background"
+                        android:text="Outdoor"
+                        android:checkable="true"
                         android:textColor="@android:color/white"
-                        app:rippleColor="#886C5CE7"
-                        app:checkedIconTint="#FFFFFF"/>
+                        android:minHeight="52dp"
+                        app:checkedIconVisible="false"
+                        app:chipBackgroundColor="@color/chip_choice_background"
+                        app:chipStrokeColor="#55FFFFFF"
+                        app:chipStrokeWidth="1dp"/>
 
                     <com.google.android.material.chip.Chip
-                        android:id="@+id/chipAdvanced"
+                        android:id="@+id/chipGym"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Advanced"
-                        android:checkable="true"
-                        android:minHeight="52dp"
                         android:layout_marginTop="8dp"
-                        app:chipStrokeWidth="1dp"
-                        app:chipStrokeColor="#55FFFFFF"
-                        app:chipBackgroundColor="@color/chip_choice_background"
+                        android:text="Gym"
+                        android:checkable="true"
                         android:textColor="@android:color/white"
-                        app:rippleColor="#886C5CE7"
-                        app:checkedIconTint="#FFFFFF"/>
+                        android:minHeight="52dp"
+                        app:checkedIconVisible="false"
+                        app:chipBackgroundColor="@color/chip_choice_background"
+                        app:chipStrokeColor="#55FFFFFF"
+                        app:chipStrokeWidth="1dp"/>
 
                 </com.google.android.material.chip.ChipGroup>
 
@@ -138,12 +134,12 @@
                     android:id="@+id/btnNext"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
+                    android:layout_marginTop="16dp"
                     android:text="Next"
                     android:textAllCaps="false"
-                    android:enabled="false"
                     android:textColor="@android:color/white"
-                    app:cornerRadius="18dp"
-                    app:backgroundTint="#6C5CE7"/>
+                    app:backgroundTint="#6C5CE7"
+                    app:cornerRadius="18dp"/>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -156,13 +152,13 @@
             android:layout_marginTop="14dp"
             android:text="Back"
             android:textAllCaps="false"
+            android:textColor="@android:color/white"
             app:cornerRadius="18dp"
-            app:strokeColor="#55FFFFFF"
-            android:textColor="@android:color/white"/>
+            app:strokeColor="#55FFFFFF"/>
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="16dp" />
+            android:layout_height="16dp"/>
 
     </LinearLayout>
 </ScrollView>
