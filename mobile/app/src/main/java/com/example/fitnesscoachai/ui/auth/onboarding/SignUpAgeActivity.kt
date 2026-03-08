@@ -22,8 +22,7 @@ class SignUpAgeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_signup_age)
 
         // progress (2/8 = 25)
-        findViewById<LinearProgressIndicator>(R.id.progress).setProgressCompat(25, true)
-
+        findViewById<LinearProgressIndicator>(R.id.progress).setProgressCompat(17, true)
         tilAge = findViewById(R.id.tilAge)
         etAge = findViewById(R.id.etAge)
         btnNext = findViewById(R.id.btnNext)

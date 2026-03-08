@@ -29,6 +29,10 @@ data class RegisterRequest(
     val goal: String,
     val limitations: String,
     val frequency: String,
+    val workout_duration: String? = null,
+    val workout_place: String? = null,
+    val endurance_level: String? = null,
+    val gender: String? = null
 )
 
 data class AuthResponse(

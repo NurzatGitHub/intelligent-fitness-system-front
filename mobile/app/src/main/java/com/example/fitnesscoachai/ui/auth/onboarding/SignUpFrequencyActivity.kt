@@ -2,20 +2,11 @@ package com.example.fitnesscoachai.ui.auth.onboarding
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import com.example.fitnesscoachai.MainActivity
 import com.example.fitnesscoachai.R
-import com.example.fitnesscoachai.data.api.RetrofitClient
-import com.example.fitnesscoachai.data.models.RegisterRequest
-import com.example.fitnesscoachai.data.models.UpdateProfileRequest
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.google.android.material.progressindicator.LinearProgressIndicator
-import kotlinx.coroutines.launch
 
 class SignUpFrequencyActivity : AppCompatActivity() {
 
@@ -25,7 +16,6 @@ class SignUpFrequencyActivity : AppCompatActivity() {
     private lateinit var chip3to4: Chip
     private lateinit var chip5to6: Chip
     private lateinit var chipEveryday: Chip
-    private lateinit var loadingIndicator: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,8 +23,8 @@ class SignUpFrequencyActivity : AppCompatActivity() {
 
         btnNext = findViewById(R.id.btnNext)
         btnBack = findViewById(R.id.btnBack)
-        loadingIndicator = findViewById(R.id.loadingIndicator)
-        findViewById<LinearProgressIndicator>(R.id.progress).setProgressCompat(100, true)
+
+        findViewById<LinearProgressIndicator>(R.id.progress).setProgressCompat(92, true)
 
         chip2to3 = findViewById(R.id.chip2to3)
         chip3to4 = findViewById(R.id.chip3to4)
@@ -42,6 +32,7 @@ class SignUpFrequencyActivity : AppCompatActivity() {
         chipEveryday = findViewById(R.id.chipEveryday)
 
         chip3to4.isChecked = true
+
         btnBack.setOnClickListener { finish() }
 
         btnNext.setOnClickListener {
@@ -54,160 +45,33 @@ class SignUpFrequencyActivity : AppCompatActivity() {
 
             val fromGoogle = intent.getBooleanExtra("from_google", false)
 
-            val email        = intent.getStringExtra("email").orEmpty()
-            val password     = intent.getStringExtra("password").orEmpty()
+            val email = intent.getStringExtra("email").orEmpty()
+            val password = intent.getStringExtra("password").orEmpty()
 
-            val age          = intent.getIntExtra("age", -1).takeIf { it != -1 }
-            val heightCmInt  = intent.getIntExtra("height_cm", -1).takeIf { it != -1 }
-            val weightKg     = intent.getFloatExtra("weight_kg", -1f).takeIf { it != -1f }
+            val age = intent.getIntExtra("age", -1)
+            val heightCmInt = intent.getIntExtra("height_cm", -1)
+            val weightKg = intent.getFloatExtra("weight_kg", -1f)
 
             val fitnessLevel = intent.getStringExtra("fitness_level").orEmpty().ifEmpty { "beginner" }
-            val goal         = intent.getStringExtra("goal").orEmpty()
-            val limitations  = intent.getStringExtra("limitations").orEmpty()
+            val goal = intent.getStringExtra("goal").orEmpty()
+            val limitations = intent.getStringExtra("limitations").orEmpty()
 
-            if (fromGoogle) {
-                updateProfileForGoogle(
-                    age = age,
-                    height = heightCmInt?.toFloat(),
-                    weight = weightKg,
-                    fitnessLevel = fitnessLevel,
-                    goal = goal,
-                    limitations = limitations,
-                    frequency = frequency
-                )
-            } else {
-                registerUser(
-                    email, password, age, heightCmInt?.toFloat(), weightKg,
-                    fitnessLevel, goal, limitations, frequency
-                )
+            val i = Intent(this, SignUpDurationActivity::class.java).apply {
+                putExtra("email", email)
+                putExtra("password", password)
+
+                if (age != -1) putExtra("age", age)
+                if (heightCmInt != -1) putExtra("height_cm", heightCmInt)
+                if (weightKg != -1f) putExtra("weight_kg", weightKg)
+
+                putExtra("fitness_level", fitnessLevel)
+                putExtra("goal", goal)
+                putExtra("limitations", limitations)
+                putExtra("frequency", frequency)
+                putExtra("from_google", fromGoogle)
             }
+
+            startActivity(i)
         }
-    }
-
-    private fun updateProfileForGoogle(
-        age: Int?,
-        height: Float?,
-        weight: Float?,
-        fitnessLevel: String,
-        goal: String,
-        limitations: String,
-        frequency: String,
-    ) {
-        setLoading(true)
-
-        val token = getSharedPreferences("auth", MODE_PRIVATE)
-            .getString("access_token", null)
-
-        if (token.isNullOrBlank()) {
-            Toast.makeText(this, "No access token. Please login again.", Toast.LENGTH_LONG).show()
-            setLoading(false)
-            return
-        }
-
-        val body = UpdateProfileRequest(
-            age = age,
-            height = height,
-            weight = weight,
-            fitness_level = fitnessLevel,
-            goal = goal,
-            limitations = limitations,
-            frequency = frequency
-        )
-
-        lifecycleScope.launch {
-            try {
-                val response = RetrofitClient.apiService.updateMe("Bearer $token", body)
-
-                if (response.isSuccessful && response.body() != null) {
-                    val user = response.body()!!
-
-                    getSharedPreferences("auth", MODE_PRIVATE).edit()
-                        .putString("user_name", user.username)
-                        .putString("user_email", user.email)
-                        .apply()
-
-                    startActivity(
-                        Intent(this@SignUpFrequencyActivity, MainActivity::class.java).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        }
-                    )
-                } else {
-                    val err = response.errorBody()?.string() ?: "Profile update failed"
-                    Toast.makeText(this@SignUpFrequencyActivity, err, Toast.LENGTH_LONG).show()
-                    setLoading(false)
-                }
-            } catch (e: Exception) {
-                Toast.makeText(
-                    this@SignUpFrequencyActivity,
-                    "Error: ${e::class.java.simpleName}: ${e.message}",
-                    Toast.LENGTH_LONG
-                ).show()
-                setLoading(false)
-            }
-        }
-    }
-
-    private fun registerUser(
-        email: String,
-        password: String,
-        age: Int?,
-        height: Float?,
-        weight: Float?,
-        fitnessLevel: String,
-        goal: String,
-        limitations: String,
-        frequency: String,
-    ) {
-        setLoading(true)
-
-        val request = RegisterRequest(
-            email = email,
-            password = password,
-            age = age,
-            height = height,
-            weight = weight,
-            fitness_level = fitnessLevel,
-            goal = goal,
-            limitations = limitations,
-            frequency = frequency,
-        )
-
-        lifecycleScope.launch {
-            try {
-                val response = RetrofitClient.apiService.register(request)
-
-                if (response.isSuccessful && response.body() != null) {
-                    val body = response.body()!!
-
-                    getSharedPreferences("auth", MODE_PRIVATE).edit()
-                        .putBoolean("isLoggedIn", true)
-                        .putBoolean("isGuest", false)
-                        .putString("access_token", body.access)
-                        .putString("refresh_token", body.refresh)
-                        .putString("user_email", body.user.email)
-                        .putString("user_name", body.user.username)
-                        .apply()
-
-                    startActivity(
-                        Intent(this@SignUpFrequencyActivity, MainActivity::class.java).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        }
-                    )
-                } else {
-                    val errorMsg = response.errorBody()?.string() ?: "Registration failed"
-                    Toast.makeText(this@SignUpFrequencyActivity, errorMsg, Toast.LENGTH_LONG).show()
-                    setLoading(false)
-                }
-            } catch (e: Exception) {
-                Toast.makeText(this@SignUpFrequencyActivity, "Network error: ${e.message}", Toast.LENGTH_LONG).show()
-                setLoading(false)
-            }
-        }
-    }
-
-    private fun setLoading(loading: Boolean) {
-        loadingIndicator.visibility = if (loading) View.VISIBLE else View.GONE
-        btnNext.isEnabled = !loading
-        btnBack.isEnabled = !loading
     }
 }

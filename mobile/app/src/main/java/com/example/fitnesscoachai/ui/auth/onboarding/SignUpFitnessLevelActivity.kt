@@ -22,13 +22,14 @@ class SignUpFitnessLevelActivity : AppCompatActivity() {
         chipGroup = findViewById(R.id.chipGroup)
         btnNext = findViewById(R.id.btnNext)
         btnBack = findViewById(R.id.btnBack)
-        findViewById<LinearProgressIndicator>(R.id.progress).setProgressCompat(57, true) // step 5/8
+        findViewById<LinearProgressIndicator>(R.id.progress).setProgressCompat(50, true)
 
         val email = intent.getStringExtra("email").orEmpty()
         val password = intent.getStringExtra("password").orEmpty()
         val age = intent.getIntExtra("age", -1)
         val height = intent.getIntExtra("height_cm", -1)
         val weight = intent.getFloatExtra("weight_kg", -1f)
+        val gender = intent.getStringExtra("gender").orEmpty()
 
         btnNext.isEnabled = false
 
@@ -50,8 +51,7 @@ class SignUpFitnessLevelActivity : AppCompatActivity() {
                 else -> "beginner"
             }
 
-            // NEXT STEP: Training Goal
-            val i = Intent(this, SignUpGoalActivity::class.java).apply {
+            val i = Intent(this, SignUpEnduranceLevelActivity::class.java).apply {
                 putExtra("email", email)
                 putExtra("password", password)
                 putExtra("age", age)
@@ -59,6 +59,7 @@ class SignUpFitnessLevelActivity : AppCompatActivity() {
                 putExtra("weight_kg", weight)
                 putExtra("fitness_level", level)
                 putExtra("from_google", fromGoogle)
+                putExtra("gender", gender)
             }
             startActivity(i)
         }
