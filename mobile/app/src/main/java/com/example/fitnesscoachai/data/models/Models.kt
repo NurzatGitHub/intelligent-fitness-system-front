@@ -11,6 +11,10 @@ data class User(
     val goal: String = "",
     val limitations: String = "",
     val frequency: String = "",
+    val workout_duration: String = "",
+    val workout_place: String = "",
+    val endurance_level: String = "",
+    val gender: String = "",
 )
 
 data class LoginRequest(
@@ -18,7 +22,6 @@ data class LoginRequest(
     val password: String,
 )
 
-// ✅ Новая модель для регистрации — включает все данные онбординга
 data class RegisterRequest(
     val email: String,
     val password: String,
@@ -41,4 +44,5 @@ data class AuthResponse(
     val access: String,
     val is_new_user: Boolean = false
 )
+
 data class GoogleLoginRequest(val id_token: String)

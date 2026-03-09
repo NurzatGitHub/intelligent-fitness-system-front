@@ -36,6 +36,7 @@ class SignUpWorkoutPlaceActivity : AppCompatActivity() {
         chipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
             btnNext.isEnabled = checkedIds.isNotEmpty()
         }
+
         btnNext.setOnClickListener {
             val workoutPlace = when (chipGroup.checkedChipId) {
                 R.id.chipHome -> "home"
@@ -51,6 +52,8 @@ class SignUpWorkoutPlaceActivity : AppCompatActivity() {
             val weight = intent.getFloatExtra("weight_kg", -1f)
             val fitnessLevel = intent.getStringExtra("fitness_level")
             val goal = intent.getStringExtra("goal")
+            val enduranceLevel = intent.getStringExtra("endurance_level")
+            val gender = intent.getStringExtra("gender")
             val fromGoogle = intent.getBooleanExtra("from_google", false)
 
             val next = Intent(this, SignUpLimitationsActivity::class.java).apply {
@@ -64,6 +67,8 @@ class SignUpWorkoutPlaceActivity : AppCompatActivity() {
                 if (weight != -1f) putExtra("weight_kg", weight)
                 if (fitnessLevel != null) putExtra("fitness_level", fitnessLevel)
                 if (goal != null) putExtra("goal", goal)
+                if (enduranceLevel != null) putExtra("endurance_level", enduranceLevel)
+                if (gender != null) putExtra("gender", gender)
             }
 
             startActivity(next)

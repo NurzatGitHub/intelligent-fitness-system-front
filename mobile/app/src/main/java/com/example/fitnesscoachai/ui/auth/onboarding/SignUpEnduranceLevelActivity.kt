@@ -46,8 +46,10 @@ class SignUpEnduranceLevelActivity : AppCompatActivity() {
         val height = intent.getIntExtra("height_cm", -1)
         val weight = intent.getFloatExtra("weight_kg", -1f)
         val fitnessLevel = intent.getStringExtra("fitness_level").orEmpty()
+        val gender = intent.getStringExtra("gender").orEmpty()
         val fromGoogle = intent.getBooleanExtra("from_google", false)
 
+        btnNext.isEnabled = false
         btnBack.setOnClickListener { finish() }
 
         optionLow.setOnClickListener { selectOption("low") }
@@ -65,6 +67,7 @@ class SignUpEnduranceLevelActivity : AppCompatActivity() {
                 putExtra("weight_kg", weight)
                 putExtra("fitness_level", fitnessLevel)
                 putExtra("endurance_level", enduranceLevel)
+                putExtra("gender", gender)
                 putExtra("from_google", fromGoogle)
             }
             startActivity(i)

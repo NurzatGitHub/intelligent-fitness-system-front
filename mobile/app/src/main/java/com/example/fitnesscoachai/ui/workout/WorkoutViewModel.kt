@@ -18,9 +18,9 @@ class WorkoutViewModel : ViewModel() {
     val workoutState: StateFlow<WorkoutState> = _workoutState
 
     // Render WebSocket
-//    private val wsUrlDevice = "wss://intelligent-fitness-system.onrender.com/ws/analyze/"
+    private val wsUrlDevice = "wss://intelligent-fitness-system.onrender.com/ws/analyze/"
 
-    private val wsUrlDevice = "ws://192.168.0.11:8000/ws/analyze/"
+//    private val wsUrlDevice = "ws://192.168.0.11:8000/ws/analyze/"
 
     private var currentReps = 0
 

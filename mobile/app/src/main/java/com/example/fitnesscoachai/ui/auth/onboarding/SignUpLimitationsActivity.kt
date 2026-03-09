@@ -82,6 +82,8 @@ class SignUpLimitationsActivity : AppCompatActivity() {
             val weight = intent.getFloatExtra("weight_kg", -1f)
             val fitnessLevel = intent.getStringExtra("fitness_level")
             val fromGoogle = intent.getBooleanExtra("from_google", false)
+            val enduranceLevel = intent.getStringExtra("endurance_level")
+            val gender = intent.getStringExtra("gender")
             val goal = intent.getStringExtra("goal")
             val workoutPlace = intent.getStringExtra("workout_place")
 
@@ -95,6 +97,8 @@ class SignUpLimitationsActivity : AppCompatActivity() {
                 if (height != -1) putExtra("height_cm", height)
                 if (weight != -1f) putExtra("weight_kg", weight)
                 if (fitnessLevel != null) putExtra("fitness_level", fitnessLevel)
+                if (enduranceLevel != null) putExtra("endurance_level", enduranceLevel)
+                if (gender != null) putExtra("gender", gender)
                 if (goal != null) putExtra("goal", goal)
                 if (workoutPlace != null) putExtra("workout_place", workoutPlace)
             }

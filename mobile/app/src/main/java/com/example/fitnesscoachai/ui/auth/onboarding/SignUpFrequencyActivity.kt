@@ -55,6 +55,9 @@ class SignUpFrequencyActivity : AppCompatActivity() {
             val fitnessLevel = intent.getStringExtra("fitness_level").orEmpty().ifEmpty { "beginner" }
             val goal = intent.getStringExtra("goal").orEmpty()
             val limitations = intent.getStringExtra("limitations").orEmpty()
+            val workoutPlace = intent.getStringExtra("workout_place").orEmpty()
+            val enduranceLevel = intent.getStringExtra("endurance_level").orEmpty()
+            val gender = intent.getStringExtra("gender").orEmpty()
 
             val i = Intent(this, SignUpDurationActivity::class.java).apply {
                 putExtra("email", email)
@@ -68,6 +71,9 @@ class SignUpFrequencyActivity : AppCompatActivity() {
                 putExtra("goal", goal)
                 putExtra("limitations", limitations)
                 putExtra("frequency", frequency)
+                putExtra("workout_place", workoutPlace)
+                putExtra("endurance_level", enduranceLevel)
+                putExtra("gender", gender)
                 putExtra("from_google", fromGoogle)
             }
 

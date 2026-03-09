@@ -55,6 +55,9 @@ class SignUpDurationActivity : AppCompatActivity() {
         val goal = intent.getStringExtra("goal").orEmpty()
         val limitations = intent.getStringExtra("limitations").orEmpty()
         val frequency = intent.getStringExtra("frequency").orEmpty()
+        val workoutPlace = intent.getStringExtra("workout_place").orEmpty()
+        val enduranceLevel = intent.getStringExtra("endurance_level").orEmpty()
+        val gender = intent.getStringExtra("gender").orEmpty()
         val fromGoogle = intent.getBooleanExtra("from_google", false)
 
         fun updateDurationUI(value: Float) {
@@ -95,7 +98,10 @@ class SignUpDurationActivity : AppCompatActivity() {
                     goal = goal,
                     limitations = limitations,
                     frequency = frequency,
-                    duration = selectedDuration
+                    duration = selectedDuration,
+                    workoutPlace = workoutPlace,
+                    enduranceLevel = enduranceLevel,
+                    gender = gender
                 )
             } else {
                 registerUser(
@@ -108,7 +114,10 @@ class SignUpDurationActivity : AppCompatActivity() {
                     goal = goal,
                     limitations = limitations,
                     frequency = frequency,
-                    duration = selectedDuration
+                    duration = selectedDuration,
+                    workoutPlace = workoutPlace,
+                    enduranceLevel = enduranceLevel,
+                    gender = gender
                 )
             }
         }
@@ -122,7 +131,10 @@ class SignUpDurationActivity : AppCompatActivity() {
         goal: String,
         limitations: String,
         frequency: String,
-        duration: String
+        duration: String,
+        workoutPlace: String,
+        enduranceLevel: String,
+        gender: String
     ) {
         setLoading(true)
 
@@ -143,7 +155,10 @@ class SignUpDurationActivity : AppCompatActivity() {
             goal = goal,
             limitations = limitations,
             frequency = frequency,
-            workout_duration = duration
+            workout_duration = duration,
+            workout_place = workoutPlace,
+            endurance_level = enduranceLevel,
+            gender = gender
         )
 
         lifecycleScope.launch {
@@ -189,7 +204,10 @@ class SignUpDurationActivity : AppCompatActivity() {
         goal: String,
         limitations: String,
         frequency: String,
-        duration: String
+        duration: String,
+        workoutPlace: String,
+        enduranceLevel: String,
+        gender: String
     ) {
         setLoading(true)
 
@@ -203,7 +221,10 @@ class SignUpDurationActivity : AppCompatActivity() {
             goal = goal,
             limitations = limitations,
             frequency = frequency,
-            workout_duration = duration
+            workout_duration = duration,
+            workout_place = workoutPlace,
+            endurance_level = enduranceLevel,
+            gender = gender
         )
 
         lifecycleScope.launch {

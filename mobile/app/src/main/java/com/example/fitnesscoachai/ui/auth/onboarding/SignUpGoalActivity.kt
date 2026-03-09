@@ -23,10 +23,7 @@ class SignUpGoalActivity : AppCompatActivity() {
         btnNext = findViewById(R.id.btnNext)
         btnBack = findViewById(R.id.btnBack)
 
-        // now this step is before workout place
         findViewById<LinearProgressIndicator>(R.id.progress).setProgressCompat(67, true)
-
-        // default selection
         findViewById<Chip>(R.id.chipLoseWeight).isChecked = true
 
         btnBack.setOnClickListener { finish() }
@@ -47,8 +44,9 @@ class SignUpGoalActivity : AppCompatActivity() {
             val height = intent.getIntExtra("height_cm", -1)
             val weight = intent.getFloatExtra("weight_kg", -1f)
             val fitnessLevel = intent.getStringExtra("fitness_level")
-            val fromGoogle = intent.getBooleanExtra("from_google", false)
             val enduranceLevel = intent.getStringExtra("endurance_level")
+            val gender = intent.getStringExtra("gender")
+            val fromGoogle = intent.getBooleanExtra("from_google", false)
 
             val next = Intent(this, SignUpWorkoutPlaceActivity::class.java).apply {
                 putExtra("goal", goal)
@@ -61,6 +59,7 @@ class SignUpGoalActivity : AppCompatActivity() {
                 if (weight != -1f) putExtra("weight_kg", weight)
                 if (fitnessLevel != null) putExtra("fitness_level", fitnessLevel)
                 if (enduranceLevel != null) putExtra("endurance_level", enduranceLevel)
+                if (gender != null) putExtra("gender", gender)
             }
             startActivity(next)
         }
