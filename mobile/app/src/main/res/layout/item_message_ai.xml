@@ -9,26 +9,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
+        android:layout_marginEnd="56dp"
         android:orientation="vertical"
-        android:padding="10dp"
-        android:background="@android:drawable/dialog_holo_dark_frame">
+        android:paddingHorizontal="14dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="10dp"
+        android:background="@drawable/bg_message_ai">
 
         <TextView
             android:id="@+id/tvText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxWidth="260dp"
+            android:textColor="#F5F5F5"
             android:textSize="15sp"
-            android:textColor="@android:color/white"/>
+            android:lineSpacingExtra="2dp" />
 
         <TextView
             android:id="@+id/tvTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="11sp"
-            android:textColor="@android:color/white"
-            android:alpha="0.7"
             android:layout_gravity="start"
-            android:paddingTop="4dp"/>
+            android:paddingTop="6dp"
+            android:textColor="#B8B8C5"
+            android:textSize="11sp" />
     </LinearLayout>
 </FrameLayout>
-

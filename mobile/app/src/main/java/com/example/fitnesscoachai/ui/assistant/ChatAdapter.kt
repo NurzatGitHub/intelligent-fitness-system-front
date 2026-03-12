@@ -1,5 +1,9 @@
 package com.example.fitnesscoachai.ui.assistant
 
+import android.graphics.Typeface
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +13,7 @@ import com.example.fitnesscoachai.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.regex.Pattern
 
 class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -55,7 +60,7 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             holder.tvText.text = msg.text
             holder.tvTime.text = timeStr
         } else if (holder is AiVH) {
-            holder.tvText.text = msg.text
+            holder.tvText.text = renderSimpleMarkdown(msg.text)
             holder.tvTime.text = timeStr
         }
     }
@@ -63,6 +68,35 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private fun formatTime(ms: Long): String {
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
         return sdf.format(Date(ms))
+    }
+
+    private fun renderSimpleMarkdown(text: String): CharSequence {
+        val normalized = text
+            .replace(Regex("""(?m)^\* (.+)$"""), "• $1")
+
+        val builder = SpannableStringBuilder(normalized)
+
+        val pattern = Pattern.compile("\\*\\*(.+?)\\*\\*")
+        val matcher = pattern.matcher(normalized)
+
+        val boldRanges = mutableListOf<Pair<Int, Int>>()
+        while (matcher.find()) {
+            boldRanges.add(matcher.start() to matcher.end())
+        }
+
+        for (i in boldRanges.indices.reversed()) {
+            val (start, end) = boldRanges[i]
+            val inner = normalized.substring(start + 2, end - 2)
+            builder.replace(start, end, inner)
+            builder.setSpan(
+                StyleSpan(Typeface.BOLD),
+                start,
+                start + inner.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+
+        return builder
     }
 
     class UserVH(view: View) : RecyclerView.ViewHolder(view) {
@@ -75,4 +109,3 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val tvTime: TextView = view.findViewById(R.id.tvTime)
     }
 }
-
