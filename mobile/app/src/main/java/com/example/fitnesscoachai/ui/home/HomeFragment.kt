@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.HorizontalScrollView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -20,7 +20,9 @@ import com.example.fitnesscoachai.domain.model.MainCategory
 import com.example.fitnesscoachai.ui.exercise.ExerciseListActivity
 import com.google.android.material.card.MaterialCardView
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 class HomeFragment : Fragment() {
 
@@ -93,8 +95,8 @@ class HomeFragment : Fragment() {
     private fun setLoadingState(view: View) {
         view.findViewById<TextView>(R.id.tvAiPlanTitle)?.text = "AI Weekly Plan"
         view.findViewById<TextView>(R.id.tvAiPlanSummary)?.text = "Generating your personalized plan..."
-        view.findViewById<TextView>(R.id.tvTodayPlan)?.text = "Loading..."
-        view.findViewById<TextView>(R.id.tvTodayMeta)?.text = "Please wait"
+        view.findViewById<TextView>(R.id.tvTodayPlan)?.text = "Today"
+        view.findViewById<TextView>(R.id.tvTodayMeta)?.text = "Loading..."
 
         dayBindings(view).forEachIndexed { index, binding ->
             binding.label.text = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")[index]
@@ -106,7 +108,7 @@ class HomeFragment : Fragment() {
     private fun showGuestPlan(view: View) {
         view.findViewById<TextView>(R.id.tvAiPlanTitle)?.text = "AI Weekly Plan"
         view.findViewById<TextView>(R.id.tvAiPlanSummary)?.text = "Login to get a personalized weekly plan"
-        view.findViewById<TextView>(R.id.tvTodayPlan)?.text = "Today"
+        view.findViewById<TextView>(R.id.tvTodayPlan)?.text = buildTodayHeader()
         view.findViewById<TextView>(R.id.tvTodayMeta)?.text = "Sign in and complete onboarding"
 
         dayBindings(view).forEachIndexed { index, binding ->
@@ -119,7 +121,7 @@ class HomeFragment : Fragment() {
     private fun showPlanError(view: View) {
         view.findViewById<TextView>(R.id.tvAiPlanTitle)?.text = "AI Weekly Plan"
         view.findViewById<TextView>(R.id.tvAiPlanSummary)?.text = "Could not load your plan right now"
-        view.findViewById<TextView>(R.id.tvTodayPlan)?.text = "Today"
+        view.findViewById<TextView>(R.id.tvTodayPlan)?.text = buildTodayHeader()
         view.findViewById<TextView>(R.id.tvTodayMeta)?.text = "Try reopening the app"
 
         dayBindings(view).forEachIndexed { index, binding ->
@@ -152,16 +154,16 @@ class HomeFragment : Fragment() {
         }
 
         val today = plan.days.getOrNull(todayIndex) ?: plan.days.firstOrNull()
-        if (today != null) {
-            view.findViewById<TextView>(R.id.tvTodayPlan)?.text =
-                "Today: ${today.title}"
+        view.findViewById<TextView>(R.id.tvTodayPlan)?.text = buildTodayHeader()
 
+        if (today != null) {
             view.findViewById<TextView>(R.id.tvTodayMeta)?.text =
                 "${today.label} • ${today.type.replaceFirstChar { it.uppercase() }} • ${today.duration_min} min • ${today.note}"
         } else {
-            view.findViewById<TextView>(R.id.tvTodayPlan)?.text = "Today"
             view.findViewById<TextView>(R.id.tvTodayMeta)?.text = plan.today_tip
         }
+
+        centerTodayCard(view, todayIndex)
     }
 
     private fun bindDay(binding: DayCardBinding, day: WeeklyPlanDay, isToday: Boolean) {
@@ -171,7 +173,27 @@ class HomeFragment : Fragment() {
 
         binding.card.strokeWidth = if (isToday) dp(2) else dp(1)
         binding.card.alpha = if (isToday) 1f else 0.92f
+        binding.card.scaleX = if (isToday) 1.03f else 1f
+        binding.card.scaleY = if (isToday) 1.03f else 1f
         binding.label.setTypeface(null, if (isToday) Typeface.BOLD else Typeface.NORMAL)
+        binding.title.setTypeface(null, if (isToday) Typeface.BOLD else Typeface.NORMAL)
+    }
+
+    private fun centerTodayCard(view: View, todayIndex: Int) {
+        val scroll = view.findViewById<HorizontalScrollView>(R.id.hsvWeekDays)
+        val bindings = dayBindings(view)
+        val todayCard = bindings.getOrNull(todayIndex)?.card ?: return
+
+        scroll.post {
+            val targetX = todayCard.left - (scroll.width - todayCard.width) / 2
+            scroll.smoothScrollTo(targetX.coerceAtLeast(0), 0)
+        }
+    }
+
+    private fun buildTodayHeader(): String {
+        val calendar = Calendar.getInstance()
+        val formatter = SimpleDateFormat("EEEE, d MMMM", Locale.ENGLISH)
+        return "Today • ${formatter.format(calendar.time)}"
     }
 
     private fun dayBindings(view: View): List<DayCardBinding> {
