@@ -1,15 +1,17 @@
 package com.example.fitnesscoachai.data.api
 
 import com.example.fitnesscoachai.data.models.AuthResponse
+import com.example.fitnesscoachai.data.models.ChatRequest
+import com.example.fitnesscoachai.data.models.ChatResponse
 import com.example.fitnesscoachai.data.models.GoogleLoginRequest
 import com.example.fitnesscoachai.data.models.LoginRequest
 import com.example.fitnesscoachai.data.models.RegisterRequest
 import com.example.fitnesscoachai.data.models.UpdateProfileRequest
 import com.example.fitnesscoachai.data.models.User
-import com.example.fitnesscoachai.data.models.ChatRequest
-import com.example.fitnesscoachai.data.models.ChatResponse
+import com.example.fitnesscoachai.data.models.WeeklyPlanResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -36,4 +38,9 @@ interface ApiService {
         @Header("Authorization") bearer: String,
         @Body body: ChatRequest
     ): Response<ChatResponse>
+
+    @GET("api/assistant/weekly-plan/")
+    suspend fun getWeeklyPlan(
+        @Header("Authorization") bearer: String
+    ): Response<WeeklyPlanResponse>
 }

@@ -211,21 +211,17 @@ class AuthActivity : AppCompatActivity() {
     private fun needsOnboarding(auth: AuthResponse): Boolean {
         val u = auth.user
 
-        // ПОДСТАВЬ названия полей как в твоём AuthResponse.user (если отличаются)
-        val age = u.age
-        val height = u.height
-        val weight = u.weight
-        val fitnessLevel = u.fitness_level
-        val goal = u.goal
-        val frequency = u.frequency
-
         return auth.is_new_user ||
-                age == null ||
-                height == null ||
-                weight == null ||
-                fitnessLevel.isNullOrBlank() ||
-                goal.isNullOrBlank() ||
-                frequency.isNullOrBlank()
+                u.age == null ||
+                u.height == null ||
+                u.weight == null ||
+                u.fitness_level.isBlank() ||
+                u.goal.isBlank() ||
+                u.frequency.isBlank() ||
+                u.workout_duration.isBlank() ||
+                u.workout_place.isBlank() ||
+                u.endurance_level.isBlank() ||
+                u.gender.isBlank()
     }
 
     private fun saveAuthData(authResponse: AuthResponse) {
