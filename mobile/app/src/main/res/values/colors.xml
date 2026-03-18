@@ -14,4 +14,18 @@
     <color name="category_upper_legs">#27AE60</color>
     <color name="category_waist">#2ECC71</color>
     <color name="category_other">#7F8C8D</color>
+
+    <!-- Profile hero card palette -->
+    <color name="profile_card_surface">#111320</color>
+    <color name="profile_card_border">#332C3F6E</color>
+    <color name="profile_divider">#1A3A4160</color>
+
+    <color name="profile_text_primary">#FFFFFFFF</color>
+    <color name="profile_text_secondary">#B3FFFFFF</color>
+    <color name="profile_text_tertiary">#80FFFFFF</color>
+
+    <color name="profile_accent">#B38CFF</color>
+    <color name="profile_accent_soft">#664E3BB8</color>
+    <color name="profile_badge_border">#66FFFFFF</color>
+    <color name="profile_on_accent">#0B0715</color>
 </resources>

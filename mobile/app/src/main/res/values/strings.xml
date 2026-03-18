@@ -54,6 +54,10 @@
     <string name="sub_obliques">Косые</string>
     <!-- Cardio -->
     <string name="sub_cardio">Кардио</string>
+
+    <!-- Profile -->
+    <string name="profile_avatar">Profile avatar</string>
+    <string name="edit_profile_photo">Edit profile photo</string>
     <plurals name="subcategory_count">
         <item quantity="one">%d subcategory</item>
         <item quantity="other">%d subcategories</item>
