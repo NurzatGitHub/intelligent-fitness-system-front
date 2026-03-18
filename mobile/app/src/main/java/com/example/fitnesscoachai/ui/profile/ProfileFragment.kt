@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.util.Log
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import androidx.activity.result.contract.ActivityResultContracts
@@ -28,28 +29,37 @@ import java.util.Calendar
 
 class ProfileFragment : Fragment() {
 
+    private val tag = "ProfileFragment"
+
     private val avatarPicker =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
             if (uri != null) {
+                // 1) Пытаемся персистить URI-доступ (может упасть на некоторых устройствах/SDK).
                 try {
                     requireContext().contentResolver.takePersistableUriPermission(
                         uri,
                         Intent.FLAG_GRANT_READ_URI_PERMISSION
                     )
+                } catch (e: SecurityException) {
+                    Log.w(tag, "Не удалось персистить Uri для аватара: $uri", e)
+                }
 
-                    requireContext()
-                        .getSharedPreferences("user_profile", AppCompatActivity.MODE_PRIVATE)
-                        .edit()
-                        .putString("avatar_uri", uri.toString())
-                        .apply()
+                // 2) Сохраняем строку URI в SharedPreferences.
+                requireContext()
+                    .getSharedPreferences("user_profile", AppCompatActivity.MODE_PRIVATE)
+                    .edit()
+                    .putString("avatar_uri", uri.toString())
+                    .apply()
 
-                    val ivAvatar = view?.findViewById<ImageView>(R.id.ivAvatar)
-                    ivAvatar?.setImageURI(uri)
-                    ivAvatar?.clearColorFilter()
-                    ivAvatar?.background = null
-
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                // 3) Всегда обновляем ImageView (чтобы пользователь видел результат сразу).
+                val ivAvatar = view?.findViewById<ImageView>(R.id.ivAvatar)
+                ivAvatar?.let {
+                    it.setImageURI(uri)
+                    it.background = null
+                    it.clearColorFilter()
+                    // Отключаем tint из layout, иначе фото может выглядеть "погашенным".
+                    it.imageTintList = null
+                    it.invalidate()
                 }
             }
         }
@@ -101,8 +111,10 @@ class ProfileFragment : Fragment() {
         val ivAvatar = view.findViewById<ImageView>(R.id.ivAvatar)
         if (!avatarUri.isNullOrBlank()) {
             ivAvatar.setImageURI(Uri.parse(avatarUri))
-            ivAvatar.clearColorFilter()
             ivAvatar.background = null
+            ivAvatar.clearColorFilter()
+            ivAvatar.imageTintList = null
+            ivAvatar.invalidate()
         }
     }
 
