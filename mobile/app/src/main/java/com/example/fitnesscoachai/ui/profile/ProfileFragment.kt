@@ -6,10 +6,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -123,11 +124,31 @@ class ProfileFragment : Fragment() {
 
     private fun loadFitnessProfile(view: View) {
         val prefs = requireContext().getSharedPreferences("user_profile", AppCompatActivity.MODE_PRIVATE)
+        val settingsPrefs =
+            requireContext().getSharedPreferences("app_settings", AppCompatActivity.MODE_PRIVATE)
+        val units = settingsPrefs.getString("units", "kg / cm") ?: "kg / cm"
 
-        view.findViewById<TextView>(R.id.tvAge).text = prefs.getInt("age", 25).toString()
-        view.findViewById<TextView>(R.id.tvGender).text = prefs.getString("gender", "Male") ?: "Male"
-        view.findViewById<TextView>(R.id.tvWeight).text = "${prefs.getFloat("weight", 75f).toInt()} kg"
-        view.findViewById<TextView>(R.id.tvHeight).text = "${prefs.getFloat("height", 180f).toInt()} cm"
+        val age = prefs.getInt("age", 25)
+        val gender = prefs.getString("gender", "Male") ?: "Male"
+        val weightKg = prefs.getFloat("weight", 75f)
+        val heightCm = prefs.getFloat("height", 180f)
+
+        view.findViewById<TextView>(R.id.tvAge).text = age.toString()
+        view.findViewById<TextView>(R.id.tvGender).text = gender
+
+        if (units == "lb / ft") {
+            val weightLb = weightKg * 2.20462f
+            val totalInches = heightCm / 2.54f
+            val feet = (totalInches / 12f).toInt()
+            val inches = (totalInches % 12f).toInt()
+
+            view.findViewById<TextView>(R.id.tvWeight).text = "${weightLb.toInt()} lb"
+            view.findViewById<TextView>(R.id.tvHeight).text = "${feet} ft ${inches} in"
+        } else {
+            view.findViewById<TextView>(R.id.tvWeight).text = "${weightKg.toInt()} kg"
+            view.findViewById<TextView>(R.id.tvHeight).text = "${heightCm.toInt()} cm"
+        }
+
         view.findViewById<TextView>(R.id.tvTrainingFrequency).text =
             prefs.getString("training_frequency", "3-4 times per week") ?: "3-4 times per week"
         view.findViewById<TextView>(R.id.tvWorkoutDuration).text =
@@ -344,6 +365,9 @@ class ProfileFragment : Fragment() {
             .setSingleChoiceItems(items, checked) { dialog, which ->
                 prefs.edit().putString("units", items[which]).apply()
                 view?.findViewById<TextView>(R.id.tvUnits)?.text = items[which]
+                view?.let {
+                    loadFitnessProfile(it)
+                }
                 dialog.dismiss()
             }
             .show()
@@ -351,69 +375,156 @@ class ProfileFragment : Fragment() {
 
     private fun showEditProfileDialog() {
         val prefs = requireContext().getSharedPreferences("user_profile", AppCompatActivity.MODE_PRIVATE)
+        val settingsPrefs = requireContext().getSharedPreferences("app_settings", AppCompatActivity.MODE_PRIVATE)
+        val units = settingsPrefs.getString("units", "kg / cm") ?: "kg / cm"
+        val isImperial = units == "lb / ft"
+        val ctx = requireContext()
+        val fieldParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply { topMargin = 16 }
 
-        val container = LinearLayout(requireContext()).apply {
+        val weightKg = prefs.getFloat("weight", 75f)
+        val heightCm = prefs.getFloat("height", 180f)
+
+        val container = LinearLayout(ctx).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(48, 24, 48, 0)
+            setPadding(48, 24, 48, 24)
         }
 
-        val etName = EditText(requireContext()).apply {
+        val tilName = TextInputLayout(ctx).apply {
             hint = "Name"
-            setText(
-                requireContext()
-                    .getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
-                    .getString("user_name", "Azamat") ?: "Azamat"
-            )
+            layoutParams = fieldParams
+            isErrorEnabled = true
+            addView(TextInputEditText(ctx).apply {
+                setText(
+                    ctx.getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
+                        .getString("user_name", "Azamat") ?: "Azamat"
+                )
+            })
         }
+        val etName = tilName.getEditText()!!
 
-        val etAge = EditText(requireContext()).apply {
+        val tilAge = TextInputLayout(ctx).apply {
             hint = "Age"
-            inputType = android.text.InputType.TYPE_CLASS_NUMBER
-            setText(prefs.getInt("age", 25).toString())
+            layoutParams = fieldParams
+            isErrorEnabled = true
+            addView(TextInputEditText(ctx).apply {
+                inputType = android.text.InputType.TYPE_CLASS_NUMBER
+                setText(prefs.getInt("age", 25).toString())
+            })
         }
+        val etAge = tilAge.getEditText()!!
 
-        val etWeight = EditText(requireContext()).apply {
-            hint = "Weight (kg)"
-            inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
-            setText(prefs.getFloat("weight", 75f).toString())
+        val tilWeight = TextInputLayout(ctx).apply {
+            hint = "Weight"
+            suffixText = if (isImperial) " lb" else " kg"
+            layoutParams = fieldParams
+            isErrorEnabled = true
+            addView(TextInputEditText(ctx).apply {
+                inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+                setText(
+                    if (isImperial) (weightKg * 2.20462f).toString()
+                    else weightKg.toString()
+                )
+            })
         }
+        val etWeight = tilWeight.getEditText()!!
 
-        val etHeight = EditText(requireContext()).apply {
-            hint = "Height (cm)"
-            inputType = android.text.InputType.TYPE_CLASS_NUMBER
-            setText(prefs.getFloat("height", 180f).toInt().toString())
+        val tilHeight = TextInputLayout(ctx).apply {
+            hint = "Height"
+            suffixText = if (isImperial) " in" else " cm"
+            layoutParams = fieldParams
+            isErrorEnabled = true
+            addView(TextInputEditText(ctx).apply {
+                inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+                setText(
+                    if (isImperial) (heightCm / 2.54f).toString()
+                    else heightCm.toInt().toString()
+                )
+            })
         }
+        val etHeight = tilHeight.getEditText()!!
 
-        container.addView(etName)
-        container.addView(etAge)
-        container.addView(etWeight)
-        container.addView(etHeight)
+        container.addView(tilName)
+        container.addView(tilAge)
+        container.addView(tilWeight)
+        container.addView(tilHeight)
 
-        MaterialAlertDialogBuilder(requireContext())
+        MaterialAlertDialogBuilder(ctx)
             .setTitle("Edit Personal Data")
             .setView(container)
             .setNegativeButton("Cancel", null)
-            .setPositiveButton("Save") { _, _ ->
-                val name = etName.text.toString().trim().ifBlank { "Azamat" }
-                val age = etAge.text.toString().toIntOrNull() ?: 25
-                val weight = etWeight.text.toString().toFloatOrNull() ?: 75f
-                val height = etHeight.text.toString().toFloatOrNull() ?: 180f
+            .setPositiveButton("Save") { dialogInterface, _ ->
+                tilName.error = null
+                tilAge.error = null
+                tilWeight.error = null
+                tilHeight.error = null
 
-                requireContext().getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
+                val name = etName.text.toString().trim()
+                val ageStr = etAge.text.toString().trim()
+                val weightStr = etWeight.text.toString().trim()
+                val heightStr = etHeight.text.toString().trim()
+
+                var hasError = false
+                if (name.isBlank()) {
+                    tilName.error = "Enter your name"
+                    hasError = true
+                }
+                val age = ageStr.toIntOrNull()
+                if (age == null || age !in 10..120) {
+                    tilAge.error = "Age must be between 10 and 120"
+                    hasError = true
+                }
+                val weightVal: Float
+                val heightVal: Float
+                if (isImperial) {
+                    val weightLb = weightStr.toFloatOrNull()
+                    if (weightLb == null || weightLb !in 44f..660f) {
+                        tilWeight.error = "Weight must be between 44 and 660 lb"
+                        hasError = true
+                    }
+                    val heightIn = heightStr.toFloatOrNull()
+                    if (heightIn == null || heightIn !in 39f..98f) {
+                        tilHeight.error = "Height must be between 39 and 98 in"
+                        hasError = true
+                    }
+                    weightVal = (weightLb ?: 165f) / 2.20462f
+                    heightVal = (heightIn ?: 70f) * 2.54f
+                } else {
+                    val weight = weightStr.toFloatOrNull()
+                    if (weight == null || weight !in 20f..300f) {
+                        tilWeight.error = "Weight must be between 20 and 300 kg"
+                        hasError = true
+                    }
+                    val height = heightStr.toFloatOrNull()
+                    if (height == null || height !in 100f..250f) {
+                        tilHeight.error = "Height must be between 100 and 250 cm"
+                        hasError = true
+                    }
+                    weightVal = weight ?: 75f
+                    heightVal = height ?: 180f
+                }
+                if (hasError) return@setPositiveButton
+
+                val ageVal = age ?: 25
+
+                ctx.getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
                     .edit()
-                    .putString("user_name", name)
+                    .putString("user_name", name.ifBlank { "Azamat" })
                     .apply()
 
                 prefs.edit()
-                    .putInt("age", age)
-                    .putFloat("weight", weight)
-                    .putFloat("height", height)
+                    .putInt("age", ageVal)
+                    .putFloat("weight", weightVal)
+                    .putFloat("height", heightVal)
                     .apply()
 
                 view?.let {
                     loadUserProfile(it)
                     loadFitnessProfile(it)
                 }
+                (dialogInterface as? android.app.AlertDialog)?.dismiss()
             }
             .show()
     }

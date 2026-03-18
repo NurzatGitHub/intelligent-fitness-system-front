@@ -27,15 +27,29 @@ class MainActivity : AppCompatActivity() {
         
         setContentView(R.layout.activity_main)
 
-        openFragment(HomeFragment())
-
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        val savedNavId = getSharedPreferences("app_settings", MODE_PRIVATE)
+            .getInt("selected_nav_id", R.id.nav_home)
+        when (savedNavId) {
+            R.id.nav_home -> openFragment(HomeFragment())
+            R.id.nav_camera -> openFragment(ExerciseSelectFragment())
+            R.id.nav_assistant -> openFragment(AssistantFragment())
+            R.id.nav_profile -> openFragment(ProfileFragment())
+            else -> openFragment(HomeFragment())
+        }
+        bottomNavigation.selectedItemId = savedNavId
+
         bottomNavigation.setOnItemSelectedListener {
+            getSharedPreferences("app_settings", MODE_PRIVATE)
+                .edit()
+                .putInt("selected_nav_id", it.itemId)
+                .apply()
             when (it.itemId) {
                 R.id.nav_home -> openFragment(HomeFragment())
                 R.id.nav_camera -> openFragment(ExerciseSelectFragment())
                 R.id.nav_assistant -> openFragment(AssistantFragment())
                 R.id.nav_profile -> openFragment(ProfileFragment())
+                else -> { }
             }
             true
         }
