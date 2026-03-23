@@ -1051,7 +1051,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "With slight elbow bend, sweep arms down and together toward hips."
                 ),
                 listOf("Keep shoulders down and chest up.", "Use light to moderate weight for control."),
-                "cable", "intermediate", null),
+                "cable", "intermediate", null, videoFile = "high_to_low_cable_fly", imageFile = "high_to_low_cable_fly"),
             sub(subs, "lower_chest", "ex44", "Chest Dip",
                 "Bodyweight or assisted dip leaning forward to emphasize lower chest.",
                 listOf(
@@ -1061,7 +1061,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press back up to the starting position."
                 ),
                 listOf("Do not drop too fast into the bottom.", "Use assistance if you cannot control full body weight."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "chest_dip", imageFile = "chest_dip"),
 
             // =====================
             // BACK — LATS (ещё)
