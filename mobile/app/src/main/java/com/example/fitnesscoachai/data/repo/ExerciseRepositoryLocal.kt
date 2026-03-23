@@ -508,7 +508,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press the bar back up until elbows are extended."
                 ),
                 listOf("Keep shoulder blades retracted and feet planted.", "Do not bounce the bar off your chest."),
-                "barbell", "beginner", null),
+                "barbell", "beginner", null, videoFile = "bench_press", imageFile = "bench_press"),
             sub(subs, "mid_chest", "ex16", "Push-up",
                 "Bodyweight push-up emphasizing mid-chest on a flat body line.",
                 listOf(
@@ -518,7 +518,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Push back up to the starting position."
                 ),
                 listOf("Do not let hips sag.", "Brace your core and keep neck neutral."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "push_up", imageFile = "push_up"),
             // =====================
             // ABS — UPPER ABS
             // =====================
@@ -683,7 +683,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return to start and alternate sides."
                 ),
                 listOf("Do not let lower back sag or rotate.", "Move slowly; prioritize balance over range."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "bird_dog", imageFile = "bird_dog"),
             sub(subs, "core_stability", "ex91", "Pallof Press",
                 "Anti-rotation press using a cable or band to challenge core stability.",
                 listOf(
@@ -963,7 +963,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press the bar up until elbows are extended."
                 ),
                 listOf("Avoid too steep of an incline to protect shoulders.", "Keep shoulder blades pulled back on the bench."),
-                "barbell", "intermediate", null),
+                "barbell", "intermediate", null, videoFile = "incline_bench_press", imageFile = "incline_bench_press"),
             sub(subs, "upper_chest", "ex36", "Incline Dumbbell Press",
                 "Incline dumbbell press for upper chest with greater range of motion.",
                 listOf(
@@ -973,7 +973,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press back up, bringing dumbbells together above chest."
                 ),
                 listOf("Keep wrists neutral.", "Do not let elbows drop too low behind the body."),
-                "dumbbell", "intermediate", null),
+                "dumbbell", "intermediate", null, videoFile = "incline_dumbbell_press", imageFile = "incline_dumbbell_press"),
             sub(subs, "upper_chest", "ex37", "Low-to-High Cable Fly",
                 "Cable fly from low pulleys upward to target upper chest fibers.",
                 listOf(
@@ -983,7 +983,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "With slight elbow bend, sweep arms up and together toward eye level."
                 ),
                 listOf("Keep movement controlled; do not swing.", "Squeeze chest at the top of each rep."),
-                "cable", "intermediate", null),
+                "cable", "intermediate", null, videoFile = "low_to_high_cable_fly", imageFile = "low_to_high_cable_fly"),
             sub(subs, "upper_chest", "ex38", "Decline Push-up",
                 "Feet-elevated push-up variation that shifts emphasis to upper chest and shoulders.",
                 listOf(
@@ -993,7 +993,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Push back up until arms are straight."
                 ),
                 listOf("Do not over-arch lower back.", "Choose height that allows solid form."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "decline_push_up", imageFile = "decline_push_up"),
 
             // =====================
             // CHEST — MID CHEST (дополнительные)
@@ -1007,7 +1007,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press dumbbells back up and slightly toward each other."
                 ),
                 listOf("Use full but comfortable range of motion.", "Avoid bouncing elbows off the bench."),
-                "dumbbell", "beginner", null),
+                "dumbbell", "beginner", null, videoFile = "dumbbell_bench_press", imageFile = "dumbbell_bench_press"),
             sub(subs, "mid_chest", "ex40", "Pec Deck Fly",
                 "Machine chest fly targeting mid-chest with fixed path.",
                 listOf(
@@ -1017,7 +1017,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Slowly return to starting position with stretch."
                 ),
                 listOf("Do not let weights slam down.", "Keep chest up and shoulders down."),
-                "machine", "beginner", null),
+                "machine", "beginner", null, videoFile = "pec_deck_fly", imageFile = "pec_deck_fly"),
             sub(subs, "mid_chest", "ex41", "Cable Crossover",
                 "Standing cable crossover at chest height for continuous tension on mid-chest.",
                 listOf(
@@ -1027,7 +1027,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return slowly until you feel a stretch in the chest."
                 ),
                 listOf("Cross hands slightly for extra squeeze if comfortable.", "Keep torso stable; do not rock."),
-                "cable", "intermediate", null),
+                "cable", "intermediate", null, videoFile = "cable_crossover", imageFile = "cable_crossover"),
 
             // =====================
             // CHEST — LOWER CHEST
@@ -1041,7 +1041,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press the bar back up to arms’ length."
                 ),
                 listOf("Keep hips secured and do not lift back off the bench.", "Control the bar path and avoid bouncing."),
-                "barbell", "intermediate", null),
+                "barbell", "intermediate", null, videoFile = "decline_bench_press", imageFile = "decline_bench_press"),
             sub(subs, "lower_chest", "ex43", "High-to-Low Cable Fly",
                 "Cable fly from high pulleys down to hips, targeting lower chest.",
                 listOf(
@@ -1232,7 +1232,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower and rest."
                 ),
                 listOf("Keep neck neutral.", "Avoid holding your breath."),
-                "none", "beginner", null),
+                "none", "beginner", null, videoFile = "superman_hold", imageFile = "superman_hold"),
         )
     }
 
