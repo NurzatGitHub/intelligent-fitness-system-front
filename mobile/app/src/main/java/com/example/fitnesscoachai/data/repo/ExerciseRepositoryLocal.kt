@@ -273,12 +273,12 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Drive through your feet to return to standing."
                 ),
                 listOf("Keep your chest up and back neutral.", "Do not let knees cave inward."),
-                "barbell", "beginner", null),
+                "barbell", "beginner", null, videoFile = "squat", imageFile = "squat"),
             sub(subs, "quads", "ex7", "Leg Extension",
                 "Extend your legs at the knee in the machine.",
                 listOf("Sit in the machine, shins under the pad.", "Extend your legs at the knees.", "Hold the top briefly.", "Lower the weight."),
                 listOf("Do not lift your hips off the seat.", "Move smoothly."),
-                "machine", "beginner", null),
+                "machine", "beginner", null, videoFile = "leg_extention", imageFile = "leg_extention"),
             sub(subs, "quads", "ex45", "Front Squat",
                 "Front-loaded squat variation emphasizing the quads and upper back.",
                 listOf(
@@ -288,7 +288,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Stand back up by driving through mid‑foot."
                 ),
                 listOf("Do not let elbows drop.", "Use lighter weight than the back squat at first."),
-                "barbell", "intermediate", null),
+                "barbell", "intermediate", null, videoFile = "front_squat", imageFile = "front_squat"),
             sub(subs, "quads", "ex46", "Leg Press",
                 "Machine leg press focusing on quad strength with back support.",
                 listOf(
@@ -298,7 +298,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press the platform back up without locking knees hard."
                 ),
                 listOf("Keep lower back against the pad.", "Do not let knees collapse inward."),
-                "machine", "beginner", null),
+                "machine", "beginner", null, videoFile = "leg_press", imageFile = "leg_press"),
             sub(subs, "quads", "ex47", "Bulgarian Split Squat",
                 "Single-leg squat variation with rear foot elevated, strongly loading the quads.",
                 listOf(
@@ -308,7 +308,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press through the front foot to stand back up."
                 ),
                 listOf("Keep torso slightly forward but controlled.", "Use bodyweight first, then add dumbbells."),
-                "body weight / dumbbell", "intermediate", null),
+                "body weight / dumbbell", "intermediate", null, videoFile = "bulgarian_split_squat", imageFile = "bulgarian_split_squat"),
             sub(subs, "quads", "ex48", "Step-up",
                 "Stepping onto a box or bench to target quads and glutes.",
                 listOf(
@@ -318,7 +318,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Step down under control and alternate legs."
                 ),
                 listOf("Do not push off too much with the back leg.", "Choose a box height you can control."),
-                "body weight / dumbbell", "beginner", null),
+                "body weight / dumbbell", "beginner", null, videoFile = "step_up", imageFile = "step_up"),
             sub(subs, "quads", "ex49", "Goblet Squat",
                 "Squat holding a kettlebell or dumbbell at chest height.",
                 listOf(
@@ -328,7 +328,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Drive back up to standing."
                 ),
                 listOf("Keep heels on the floor.", "Use this as a technique builder for deeper squats."),
-                "kettlebell / dumbbell", "beginner", null),
+                "kettlebell / dumbbell", "beginner", null, videoFile = "goblet_squat", imageFile = "goblet_squat"),
             sub(subs, "quads", "ex50", "Hack Squat",
                 "Machine or barbell hack squat emphasizing the front of the thighs.",
                 listOf(
@@ -338,7 +338,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press back up, focusing on driving through quads."
                 ),
                 listOf("Keep knees tracking over toes.", "Control the movement at the bottom."),
-                "machine", "intermediate", null),
+                "machine", "intermediate", null, videoFile = "hack_squat", imageFile = "hack_squat"),
 
             // =====================
             // LEGS — HAMSTRINGS
