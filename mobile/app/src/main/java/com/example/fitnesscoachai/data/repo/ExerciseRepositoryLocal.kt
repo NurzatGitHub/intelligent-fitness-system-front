@@ -575,7 +575,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower them toward the floor without letting your lower back arch excessively."
                 ),
                 listOf("Press your lower back gently into the floor.", "Use a comfortable range if hamstrings are tight."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "leg_raise", imageFile = "leg_raise"),
             sub(subs, "lower_abs", "ex82", "Hanging Knee Raise",
                 "Hanging knee raise targeting lower abs from a pull-up bar.",
                 listOf(
@@ -585,7 +585,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower legs back to the starting position with control."
                 ),
                 listOf("Avoid swinging; keep the movement strict.", "Use straps if grip is a limiting factor."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "hanging_knee_raise", imageFile = "hanging_knee_raise"),
             sub(subs, "lower_abs", "ex83", "Reverse Crunch",
                 "Reverse crunch focusing on curling the pelvis toward the ribcage.",
                 listOf(
@@ -595,7 +595,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly back to the starting position."
                 ),
                 listOf("Do not swing your legs.", "Think about rolling the spine off the mat segment by segment."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "reverse_crunch", imageFile = "reverse_crunch"),
             sub(subs, "lower_abs", "ex84", "Flutter Kicks",
                 "Alternating leg kicks performed just above the floor to challenge lower abs.",
                 listOf(
@@ -605,7 +605,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Maintain a steady breathing pattern throughout."
                 ),
                 listOf("Keep lower back from arching excessively.", "Use shorter sets to maintain quality."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "flutter_kicks", imageFile = "flutter_kicks"),
 
             // =====================
             // ABS — OBLIQUES
