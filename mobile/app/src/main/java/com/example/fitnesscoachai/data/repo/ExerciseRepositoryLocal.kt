@@ -619,7 +619,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Continue alternating sides for reps or time."
                 ),
                 listOf("Rotate through the torso, not just arms.", "Keep movements controlled, not jerky."),
-                "body weight / weight plate", "beginner", null),
+                "body weight / weight plate", "beginner", null, videoFile = "russian_twist", imageFile = "russian_twist"),
             sub(subs, "obliques", "ex86", "Side Plank",
                 "Static hold on one side to strengthen obliques and lateral core.",
                 listOf(
@@ -629,7 +629,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Repeat on the other side."
                 ),
                 listOf("Do not let hips sag.", "Keep neck in line with the spine."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "side_plank", imageFile = "side_plank"),
             sub(subs, "obliques", "ex87", "Bicycle Crunch",
                 "Alternating elbow-to-knee crunch targeting rectus abdominis and obliques.",
                 listOf(
@@ -639,7 +639,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Alternate sides in a pedaling motion."
                 ),
                 listOf("Keep lower back supported on the floor.", "Move in a controlled, not rushed, tempo."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "bicycle_crunch", imageFile = "bicycle_crunch"),
             sub(subs, "obliques", "ex88", "Woodchoppers",
                 "Diagonal cable or band chop engaging obliques and full core.",
                 listOf(
@@ -649,7 +649,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Control the return back to the start."
                 ),
                 listOf("Turn hips and shoulders together, not just arms.", "Keep core braced throughout."),
-                "cable / band", "intermediate", null),
+                "cable / band", "intermediate", null, videoFile = "woodchoppers", imageFile = "woodchoppers"),
 
             // =====================
             // ABS — CORE STABILITY
