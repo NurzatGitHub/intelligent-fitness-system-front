@@ -52,7 +52,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly to the starting position."
                 ),
                 listOf("Do not swing your body.", "Keep upper arms fixed."),
-                "barbell", "beginner", null),
+                "barbell", "beginner", null, videoFile = "barbell_curl", imageFile = "barbell_curl"),
             sub(subs, "biceps", "ex2", "Hammer Curl",
                 "Neutral-grip dumbbell curl targeting biceps and brachialis.",
                 listOf(
@@ -445,7 +445,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                 "Standing calf raise. Rise as high as you can on your toes.",
                 listOf("Stand on a platform with balls of feet on the edge.", "Lower your heels below the platform.", "Rise up on your toes as high as possible.", "Lower back down."),
                 listOf("Use full range at the bottom for a stretch.", "Pause at the top."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "standing_calf_raise", imageFile = "standing_calf_raise"),
             sub(subs, "calves", "ex59", "Seated Calf Raise",
                 "Seated calf raise focusing more on soleus muscle.",
                 listOf(
@@ -455,7 +455,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Raise heels as high as possible, then repeat."
                 ),
                 listOf("Do not bounce at the bottom.", "Control the top squeeze."),
-                "machine", "beginner", null),
+                "machine", "beginner", null, videoFile = "seated_calf_raise", imageFile = "seated_calf_raise"),
             sub(subs, "calves", "ex60", "Donkey Calf Raise",
                 "Hip‑hinged calf raise variation to increase calf stretch.",
                 listOf(
@@ -465,7 +465,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Raise heels as high as you can."
                 ),
                 listOf("Keep hips fixed; movement comes from ankles.", "Use bodyweight or added load as appropriate."),
-                "body weight / machine", "intermediate", null),
+                "body weight / machine", "intermediate", null, videoFile = "donkey_calf_raise", imageFile = "donkey_calf_raise"),
             sub(subs, "calves", "ex61", "Single-Leg Calf Raise",
                 "Unilateral standing calf raise to fix imbalances.",
                 listOf(
@@ -475,7 +475,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press up onto the ball of the foot and repeat."
                 ),
                 listOf("Perform the same reps on each leg.", "Focus on full range of motion."),
-                "body weight / dumbbell", "intermediate", null),
+                "body weight / dumbbell", "intermediate", null, videoFile = "single_leg_calf_raise", imageFile = "single_leg_calf_raise"),
             sub(subs, "lats", "ex11", "Pull-up",
                 "Hang from the bar and pull until your chin is over the bar.",
                 listOf("Grip the bar at shoulder width.", "Hang with arms fully extended.", "Pull yourself up, squeezing your shoulder blades.", "Lower yourself under control."),
