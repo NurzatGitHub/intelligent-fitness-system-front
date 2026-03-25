@@ -910,7 +910,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Repeat sequences for several rounds."
                 ),
                 listOf("Use proper basketball shoes.", "Scale intensity to your conditioning level."),
-                "basketball + court", "intermediate", null, videoFile = "", imageFile = ""),
+                "basketball + court", "intermediate", null, videoFile = "basketball_drills", imageFile = "basketball_drills"),
             sub(subs, "sports", "ex110", "Soccer Drills",
                 "Interval-style soccer drills using sprints, ball control and agility.",
                 listOf(
@@ -920,7 +920,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Rest briefly between sets."
                 ),
                 listOf("Train on a safe surface.", "Warm up ankles and hips thoroughly."),
-                "soccer ball + field", "intermediate", null, videoFile = "", imageFile = ""),
+                "soccer ball + field", "intermediate", null, videoFile = "soccer_drills", imageFile = "soccer_drills"),
             sub(subs, "sports", "ex111", "Boxing Rounds",
                 "Timed boxing rounds on a heavy bag or with shadowboxing.",
                 listOf(
@@ -930,7 +930,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Repeat for multiple rounds."
                 ),
                 listOf("Keep hands up and protect wrists with wraps/gloves.", "Control breathing, exhaling on punches."),
-                "boxing gloves + bag", "intermediate", null, videoFile = "", imageFile = ""),
+                "boxing gloves + bag", "intermediate", null, videoFile = "boxing_rounds", imageFile = "boxing_rounds"),
             sub(subs, "sports", "ex112", "Jump Rope",
                 "Skipping rope at varied intensities for conditioning.",
                 listOf(
@@ -940,7 +940,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Adjust pace for intervals or steady work."
                 ),
                 listOf("Land softly on the balls of your feet.", "Use proper rope length for your height."),
-                "jump rope", "beginner", null, videoFile = "", imageFile = ""),
+                "jump rope", "beginner", null, videoFile = "jump_rope", imageFile = "jump_rope"),
             sub(subs, "sports", "ex113", "Shadow Boxing",
                 "Free-form striking and movement without equipment to simulate fight rounds.",
                 listOf(
@@ -950,7 +950,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Work in timed rounds."
                 ),
                 listOf("Stay light on your feet.", "Maintain guard and technique even as you fatigue."),
-                "body weight", "beginner", null, videoFile = "", imageFile = ""),
+                "body weight", "beginner", null, videoFile = "shadow_boxing", imageFile = "shadow_boxing"),
             // =====================
             // CHEST — UPPER CHEST
             // =====================
