@@ -531,7 +531,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower back down without fully relaxing."
                 ),
                 listOf("Do not pull on your neck.", "Exhale as you crunch up."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "crunch", imageFile = "crunch"),
             sub(subs, "upper_abs", "ex78", "Cable Crunch",
                 "Kneeling cable crunch to load the upper abs with external resistance.",
                 listOf(
@@ -541,7 +541,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return slowly to the starting position."
                 ),
                 listOf("Move through the spine, not the hips.", "Do not pull with your arms."),
-                "cable", "intermediate", null),
+                "cable", "intermediate", null, videoFile = "cable_crunch", imageFile = "cable_crunch"),
             sub(subs, "upper_abs", "ex79", "Sit-up",
                 "Traditional sit-up moving through a larger range of motion for the upper abs.",
                 listOf(
@@ -551,7 +551,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower back down with control."
                 ),
                 listOf("Avoid jerking or pulling the neck.", "Control the descent as much as the ascent."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "sit_up", imageFile = "sit_up"),
             sub(subs, "upper_abs", "ex80", "Machine Crunch",
                 "Crunch performed on an ab machine with adjustable resistance.",
                 listOf(
@@ -561,7 +561,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return slowly to the start without letting the weight stack slam."
                 ),
                 listOf("Adjust the seat so pivot lines up with your core.", "Use moderate weight and full control."),
-                "machine", "beginner", null),
+                "machine", "beginner", null, videoFile = "machine_crunch", imageFile = "machine_crunch"),
 
             // =====================
             // ABS — LOWER ABS
