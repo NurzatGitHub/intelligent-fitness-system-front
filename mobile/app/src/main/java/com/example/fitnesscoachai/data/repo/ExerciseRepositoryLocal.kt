@@ -708,7 +708,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Explosively jump up with arms overhead."
                 ),
                 listOf("Keep a steady but powerful rhythm.", "Land softly to protect your joints."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "burpees", imageFile = "burpees"),
             sub(subs, "hiit", "ex92", "Jump Squats",
                 "Squat with an explosive jump to spike heart rate.",
                 listOf(
@@ -718,7 +718,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Land softly and immediately go into the next rep."
                 ),
                 listOf("Absorb impact through hips and knees.", "Use smaller jumps if needed for control."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "jump_squats", imageFile = "jump_squats"),
             sub(subs, "hiit", "ex93", "Mountain Climbers",
                 "Fast alternating knee drives from a plank position.",
                 listOf(
@@ -728,7 +728,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Maintain a strong plank throughout."
                 ),
                 listOf("Do not let hips pike up.", "Keep shoulders stacked over wrists."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "mountain_climbers", imageFile = "mountain_climbers"),
             sub(subs, "hiit", "ex94", "High Knees",
                 "On-the-spot running bringing knees high to chest level.",
                 listOf(
@@ -738,7 +738,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Maintain quick, light foot contacts."
                 ),
                 listOf("Stay on the balls of your feet.", "Use a moderate volume if impact is high."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "high_knees", imageFile = "high_knees"),
             sub(subs, "hiit", "ex95", "Jump Lunges",
                 "Alternating lunge jumps for intense lower-body cardio.",
                 listOf(
@@ -748,7 +748,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Land in the opposite lunge and repeat."
                 ),
                 listOf("Keep torso upright and core tight.", "Use smaller jumps or step-back lunges if impact is too high."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "jump_lunges", imageFile = "jump_lunges"),
             sub(subs, "hiit", "ex96", "Box Jumps",
                 "Explosive jump onto a box or platform.",
                 listOf(
@@ -758,7 +758,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Step or lightly jump back down."
                 ),
                 listOf("Choose a box height you can land on safely.", "Focus on quality landings, not just height."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "box_jumps", imageFile = "box_jumps"),
             sub(subs, "hiit", "ex97", "Battle Ropes",
                 "Intervals with heavy ropes to combine strength and cardio.",
                 listOf(
@@ -768,7 +768,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Work in short, intense intervals."
                 ),
                 listOf("Keep core braced and chest up.", "Do not overextend your lower back."),
-                "battle ropes", "intermediate", null),
+                "battle ropes", "intermediate", null, videoFile = "battle_ropes", imageFile = "battle_ropes"),
             sub(subs, "hiit", "ex98", "Sprint Intervals",
                 "Short sprints alternated with rest or easy movement.",
                 listOf(
@@ -778,7 +778,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Repeat for several rounds."
                 ),
                 listOf("Use flat, safe surfaces.", "Start with moderate intensity if you are new to sprints."),
-                "body weight", "advanced", null),
+                "body weight", "advanced", null, videoFile = "sprint_intervals", imageFile = "sprint_intervals"),
 
             // =====================
             // CARDIO — STEADY STATE
@@ -792,7 +792,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Cool down with an easy walk and light stretching."
                 ),
                 listOf("Increase duration gradually over weeks.", "Avoid sudden spikes in pace."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "", imageFile = ""),
             sub(subs, "steady_state", "ex99", "Jogging",
                 "Easy, low-impact continuous jog for basic endurance.",
                 listOf(
@@ -802,7 +802,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Finish with a walk to bring heart rate down."
                 ),
                 listOf("Keep shoulders relaxed and arms swinging naturally.", "Use cushioned shoes and safe terrain."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "", imageFile = ""),
             sub(subs, "steady_state", "ex100", "Cycling",
                 "Steady cycling session outdoors or on a bike trainer.",
                 listOf(
@@ -812,7 +812,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Cool down at a lighter intensity."
                 ),
                 listOf("Keep cadence smooth (e.g., 80–90 RPM).", "Use appropriate resistance to avoid knee strain."),
-                "bike", "beginner", null),
+                "bike", "beginner", null, videoFile = "", imageFile = ""),
             sub(subs, "steady_state", "ex101", "Treadmill Walk",
                 "Incline or flat treadmill walking for low-impact cardio.",
                 listOf(
@@ -822,7 +822,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Gradually reduce speed and incline to cool down."
                 ),
                 listOf("Avoid holding onto the handrails excessively.", "Use shoes with good grip."),
-                "treadmill", "beginner", null),
+                "treadmill", "beginner", null, videoFile = "", imageFile = ""),
             sub(subs, "steady_state", "ex102", "Stair Climber",
                 "Continuous stepping on a stair climber machine.",
                 listOf(
@@ -832,7 +832,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Maintain consistent stepping rhythm."
                 ),
                 listOf("Do not lean heavily on the rails.", "Start with shorter sessions to build endurance."),
-                "machine", "beginner", null),
+                "machine", "beginner", null, videoFile = "", imageFile = ""),
             sub(subs, "steady_state", "ex103", "Rowing Machine",
                 "Full-body steady-state cardio on a rower.",
                 listOf(
@@ -842,7 +842,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Maintain a smooth, continuous stroke rate."
                 ),
                 listOf("Keep lower back neutral.", "Drive primarily with legs, not just arms."),
-                "rowing machine", "beginner", null),
+                "rowing machine", "beginner", null, videoFile = "", imageFile = ""),
 
             // =====================
             // CARDIO — FUNCTIONAL
@@ -856,7 +856,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Let kettlebell swing to about chest height and repeat."
                 ),
                 listOf("Do not squat the movement; hinge instead.", "Keep shoulders packed and back neutral."),
-                "kettlebell", "intermediate", null),
+                "kettlebell", "intermediate", null, videoFile = "", imageFile = ""),
             sub(subs, "functional_cardio", "ex105", "Medicine Ball Slams",
                 "Powerful overhead slam with a medicine ball for full-body conditioning.",
                 listOf(
@@ -866,7 +866,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Maintain a strong stance throughout."
                 ),
                 listOf("Use a non-bouncing ball if possible.", "Avoid flexing spine excessively when picking the ball up."),
-                "medicine ball", "beginner", null),
+                "medicine ball", "beginner", null, videoFile = "", imageFile = ""),
             sub(subs, "functional_cardio", "ex106", "Farmer’s Carry (Cardio)",
                 "Heavier, longer-distance farmer’s walks for conditioning.",
                 listOf(
@@ -876,7 +876,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Set weights down safely and rest."
                 ),
                 listOf("Keep chest up and core braced.", "Choose distances that challenge breathing but keep form solid."),
-                "dumbbell / farmer’s handles", "intermediate", null),
+                "dumbbell / farmer’s handles", "intermediate", null, videoFile = "", imageFile = ""),
             sub(subs, "functional_cardio", "ex107", "Sled Push",
                 "Pushing a loaded sled for functional strength and cardio.",
                 listOf(
@@ -886,7 +886,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Push for distance or time, then rest."
                 ),
                 listOf("Keep hips and shoulders aligned.", "Use appropriate load to maintain good mechanics."),
-                "sled", "intermediate", null),
+                "sled", "intermediate", null, videoFile = "", imageFile = ""),
             sub(subs, "functional_cardio", "ex108", "Agility Ladder",
                 "Footwork drills through a floor ladder to develop speed and coordination.",
                 listOf(
@@ -896,7 +896,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Maintain quick feet and light contacts."
                 ),
                 listOf("Start slow to learn patterns.", "Focus on quality before speed."),
-                "ladder", "beginner", null),
+                "ladder", "beginner", null, videoFile = "", imageFile = ""),
 
             // =====================
             // CARDIO — SPORTS
@@ -910,7 +910,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Repeat sequences for several rounds."
                 ),
                 listOf("Use proper basketball shoes.", "Scale intensity to your conditioning level."),
-                "basketball + court", "intermediate", null),
+                "basketball + court", "intermediate", null, videoFile = "", imageFile = ""),
             sub(subs, "sports", "ex110", "Soccer Drills",
                 "Interval-style soccer drills using sprints, ball control and agility.",
                 listOf(
@@ -920,7 +920,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Rest briefly between sets."
                 ),
                 listOf("Train on a safe surface.", "Warm up ankles and hips thoroughly."),
-                "soccer ball + field", "intermediate", null),
+                "soccer ball + field", "intermediate", null, videoFile = "", imageFile = ""),
             sub(subs, "sports", "ex111", "Boxing Rounds",
                 "Timed boxing rounds on a heavy bag or with shadowboxing.",
                 listOf(
@@ -930,7 +930,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Repeat for multiple rounds."
                 ),
                 listOf("Keep hands up and protect wrists with wraps/gloves.", "Control breathing, exhaling on punches."),
-                "boxing gloves + bag", "intermediate", null),
+                "boxing gloves + bag", "intermediate", null, videoFile = "", imageFile = ""),
             sub(subs, "sports", "ex112", "Jump Rope",
                 "Skipping rope at varied intensities for conditioning.",
                 listOf(
@@ -940,7 +940,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Adjust pace for intervals or steady work."
                 ),
                 listOf("Land softly on the balls of your feet.", "Use proper rope length for your height."),
-                "jump rope", "beginner", null),
+                "jump rope", "beginner", null, videoFile = "", imageFile = ""),
             sub(subs, "sports", "ex113", "Shadow Boxing",
                 "Free-form striking and movement without equipment to simulate fight rounds.",
                 listOf(
@@ -950,7 +950,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Work in timed rounds."
                 ),
                 listOf("Stay light on your feet.", "Maintain guard and technique even as you fatigue."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "", imageFile = ""),
             // =====================
             // CHEST — UPPER CHEST
             // =====================
