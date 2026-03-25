@@ -396,7 +396,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                 "Drive your hips up from a seated position, upper back on a bench.",
                 listOf("Sit on the floor with your back to the bench, bar on your hips.", "Press your upper back into the bench.", "Drive your hips up.", "Squeeze glutes at the top and lower."),
                 listOf("Tuck your chin slightly.", "Do not over-arch your lower back."),
-                "barbell", "beginner", null),
+                "barbell", "beginner", null, videoFile = "hip_thrust", imageFile = "hip_thrust"),
             sub(subs, "glutes", "ex55", "Glute Bridge",
                 "Floor bridge focusing on glutes with less load on the spine.",
                 listOf(
@@ -406,7 +406,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower hips back down with control."
                 ),
                 listOf("Do not over-arch lower back.", "Press through heels, not toes."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "glute_bridge", imageFile = "glute_bridge"),
             sub(subs, "glutes", "ex56", "Cable Kickback",
                 "Standing hip extension with cable to isolate the glutes.",
                 listOf(
@@ -416,7 +416,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Pause and squeeze glute at the end range, then return."
                 ),
                 listOf("Avoid swinging your torso.", "Use light to moderate weight for control."),
-                "cable", "beginner", null),
+                "cable", "beginner", null, videoFile = "cable_kickback", imageFile = "cable_kickback"),
             sub(subs, "glutes", "ex57", "Bulgarian Split Squat (Glutes)",
                 "Rear-foot-elevated split squat variation with more emphasis on glutes.",
                 listOf(
@@ -426,7 +426,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Drive through front heel to stand back up."
                 ),
                 listOf("Think about pushing the floor away with your front heel.", "Choose load that allows stable control."),
-                "body weight / dumbbell", "intermediate", null),
+                "body weight / dumbbell", "intermediate", null, videoFile = "bulgarian_split_squat_glutes", imageFile = "bulgarian_split_squat_glutes"),
             sub(subs, "glutes", "ex58", "Step-up (Glutes)",
                 "Step-up variation focusing on driving through the heel to target glutes.",
                 listOf(
@@ -436,7 +436,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower back down under control."
                 ),
                 listOf("Avoid pushing off with the trailing leg.", "Keep knee tracking over toes."),
-                "body weight / dumbbell", "intermediate", null),
+                "body weight / dumbbell", "intermediate", null, videoFile = "step_up_glutes", imageFile = "step_up_glutes"),
 
             // =====================
             // LEGS — CALVES
