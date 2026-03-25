@@ -62,7 +62,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower the dumbbells under control."
                 ),
                 listOf("Avoid using momentum.", "Keep wrists neutral."),
-                "dumbbell", "beginner", null),
+                "dumbbell", "beginner", null, videoFile = "hammer_curl", imageFile = "hammer_curl"),
             sub(subs, "biceps", "ex62", "Dumbbell Curl",
                 "Classic alternating or simultaneous dumbbell curl for biceps.",
                 listOf(
@@ -72,7 +72,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower the weight slowly."
                 ),
                 listOf("Do not let shoulders roll forward.", "Use full but controlled range."),
-                "dumbbell", "beginner", null),
+                "dumbbell", "beginner", null, videoFile = "dumbbell_curl", imageFile = "dumbbell_curl"),
             sub(subs, "biceps", "ex63", "Incline Dumbbell Curl",
                 "Seated incline curl emphasizing the long head of the biceps.",
                 listOf(
@@ -82,7 +82,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly to a full stretch."
                 ),
                 listOf("Keep upper arms vertical.", "Do not swing the weights."),
-                "dumbbell", "intermediate", null),
+                "dumbbell", "intermediate", null, videoFile = "incline_dumbbell_curl", imageFile = "incline_dumbbell_curl"),
             sub(subs, "biceps", "ex64", "Concentration Curl",
                 "Single-arm curl with elbow braced on inner thigh for strict form.",
                 listOf(
@@ -92,7 +92,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Squeeze at the top and lower under control."
                 ),
                 listOf("Avoid moving your upper arm.", "Focus on a strong peak contraction."),
-                "dumbbell", "beginner", null),
+                "dumbbell", "beginner", null, videoFile = "concentration_curl", imageFile = "concentration_curl"),
             sub(subs, "biceps", "ex65", "Cable Curl",
                 "Standing curl using a low cable for constant tension.",
                 listOf(
@@ -102,7 +102,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly until arms are almost straight."
                 ),
                 listOf("Keep torso upright.", "Control both up and down phases."),
-                "cable", "beginner", null),
+                "cable", "beginner", null, videoFile = "cable_curl", imageFile = "cable_curl"),
             sub(subs, "biceps", "ex66", "Preacher Curl",
                 "Curl performed on a preacher bench to reduce cheating.",
                 listOf(
@@ -112,7 +112,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower until arms are almost straight without locking elbows."
                 ),
                 listOf("Do not bounce out of the bottom position.", "Use a weight that allows control."),
-                "barbell / EZ bar", "intermediate", null),
+                "barbell / EZ bar", "intermediate", null, videoFile = "preacher_curl", imageFile = "preacher_curl"),
             sub(subs, "biceps", "ex67", "Chin-up (Biceps Emphasis)",
                 "Underhand-grip chin-up emphasizing biceps as well as back.",
                 listOf(
@@ -122,7 +122,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly to full extension."
                 ),
                 listOf("Think about pulling with elbows and biceps.", "Avoid swinging or kipping."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "chin_up_biceps_emphasis)", imageFile = "chin_up_biceps_emphasis"),
 
             // =====================
             // ARMS — TRICEPS
