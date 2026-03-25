@@ -347,7 +347,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                 "Hinge forward with a straight back. Stretches and loads the hamstrings.",
                 listOf("Stand holding the bar.", "Hinge forward, pushing hips back.", "Lower the bar along your legs.", "Return to upright by driving through the hips."),
                 listOf("Keep your back straight; do not round your lower back.", "Feel the stretch in the back of your legs."),
-                "barbell", "intermediate", null),
+                "barbell", "intermediate", null, videoFile = "romanian_deadlift", imageFile = "romanian_deadlift"),
             sub(subs, "hamstrings", "ex51", "Lying Leg Curl",
                 "Machine leg curl performed lying face down to isolate hamstrings.",
                 listOf(
@@ -357,7 +357,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly back to the start."
                 ),
                 listOf("Do not lift hips off the pad.", "Control the lowering phase."),
-                "machine", "beginner", null),
+                "machine", "beginner", null, videoFile = "lying_leg_curl", imageFile = "lying_leg_curl"),
             sub(subs, "hamstrings", "ex52", "Seated Leg Curl",
                 "Seated machine curl that targets the hamstrings with hip flexed.",
                 listOf(
@@ -367,7 +367,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return slowly to full knee extension."
                 ),
                 listOf("Keep torso still against the back pad.", "Avoid using momentum."),
-                "machine", "beginner", null),
+                "machine", "beginner", null, videoFile = "seated_leg_curl", imageFile = "seated_leg_curl"),
             sub(subs, "hamstrings", "ex53", "Glute Ham Raise",
                 "Bodyweight or assisted raise emphasizing hamstrings and glutes.",
                 listOf(
@@ -377,7 +377,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Contract hamstrings and glutes to return to the top."
                 ),
                 listOf("Use assistance or partial range if needed.", "Maintain a neutral spine."),
-                "body weight / machine", "advanced", null),
+                "body weight / machine", "advanced", null, videoFile = "glute_ham_raise", imageFile = "glute_ham_raise"),
             sub(subs, "hamstrings", "ex54", "Nordic Curl",
                 "Partner or anchored hamstring curl from a tall-kneeling position.",
                 listOf(
@@ -387,7 +387,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Use hands to catch yourself and push lightly to return if needed."
                 ),
                 listOf("Focus on slow lowering at first.", "Do not drop suddenly; protect your knees."),
-                "body weight", "advanced", null),
+                "body weight", "advanced", null, videoFile = "nordic_curl", imageFile = "nordic_curl"),
 
             // =====================
             // LEGS — GLUTES
