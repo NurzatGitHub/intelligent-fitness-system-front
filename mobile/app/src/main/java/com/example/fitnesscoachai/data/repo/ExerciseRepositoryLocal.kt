@@ -122,7 +122,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly to full extension."
                 ),
                 listOf("Think about pulling with elbows and biceps.", "Avoid swinging or kipping."),
-                "body weight", "intermediate", null, videoFile = "chin_up_biceps_emphasis)", imageFile = "chin_up_biceps_emphasis"),
+                "body weight", "intermediate", null, videoFile = "chin_up_biceps_emphasis", imageFile = "chin_up_biceps_emphasis"),
 
             // =====================
             // ARMS — TRICEPS
@@ -136,7 +136,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return the handle to about 90° elbow bend."
                 ),
                 listOf("Do not let elbows drift forward.", "Keep shoulders relaxed."),
-                "cable", "beginner", null),
+                "cable", "beginner", null, videoFile = "tricep_pushdown", imageFile = "tricep_pushdown"),
             sub(subs, "triceps", "ex4", "Close-Grip Bench Press",
                 "Narrow-grip bench press to load the triceps heavily.",
                 listOf(
@@ -146,7 +146,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press the bar back up to full arm extension."
                 ),
                 listOf("Keep wrists stacked over elbows.", "Do not flare elbows out too wide."),
-                "barbell", "intermediate", null),
+                "barbell", "intermediate", null, videoFile = "close_grip_bench_press", imageFile = "close_grip_bench_press"),
             sub(subs, "triceps", "ex68", "Overhead Tricep Extension",
                 "Overhead extension with dumbbell or cable to train the long head of triceps.",
                 listOf(
@@ -156,7 +156,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Extend elbows to return to the starting position."
                 ),
                 listOf("Avoid arching your lower back.", "Keep elbows pointing mostly forward."),
-                "dumbbell / cable", "beginner", null),
+                "dumbbell / cable", "beginner", null, videoFile = "overhead_tricep_extension", imageFile = "overhead_tricep_extension"),
             sub(subs, "triceps", "ex69", "Skull Crushers",
                 "Lying tricep extension, often with an EZ bar, targeting all three heads.",
                 listOf(
@@ -166,7 +166,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Extend elbows back to the starting position."
                 ),
                 listOf("Use a spotter with heavy loads.", "Move only at the elbows, not shoulders."),
-                "EZ bar / dumbbell", "intermediate", null),
+                "EZ bar / dumbbell", "intermediate", null, videoFile = "skull_crushers", imageFile = "skull_crushers"),
             sub(subs, "triceps", "ex70", "Dips (Triceps Focus)",
                 "Parallel bar or bench dips emphasizing triceps by keeping torso more upright.",
                 listOf(
@@ -176,7 +176,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press back up to full extension."
                 ),
                 listOf("Avoid dropping too deep if shoulders are sensitive.", "Use assistance if needed."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "dips_triceps_focus", imageFile = "dips_triceps_focus"),
             sub(subs, "triceps", "ex71", "Rope Pushdown",
                 "Cable pushdown using a rope to allow more natural wrist position.",
                 listOf(
@@ -186,7 +186,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return to the start with control."
                 ),
                 listOf("Keep upper arms fixed.", "Do not let shoulders roll forward."),
-                "cable", "beginner", null),
+                "cable", "beginner", null, videoFile = "rope_pushdown", imageFile = "rope_pushdown"),
             sub(subs, "triceps", "ex72", "Tricep Kickback",
                 "Bent-over dumbbell kickback for triceps isolation.",
                 listOf(
@@ -196,7 +196,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return to the starting position with control."
                 ),
                 listOf("Keep upper arm fixed in place.", "Use light weight to avoid swinging."),
-                "dumbbell", "beginner", null),
+                "dumbbell", "beginner", null, videoFile = "tricep_kickback", imageFile = "tricep_kickback"),
 
             // =====================
             // ARMS — FOREARMS
