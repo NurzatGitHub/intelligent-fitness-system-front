@@ -663,7 +663,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Stop when form begins to break."
                 ),
                 listOf("Do not let hips sag or pike up.", "Avoid holding your breath."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "plank", imageFile = "plank"),
             sub(subs, "core_stability", "ex89", "Dead Bug",
                 "Anti-extension core drill coordinating opposite arm and leg movement.",
                 listOf(
@@ -673,7 +673,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return to the start and alternate sides."
                 ),
                 listOf("Move slowly and with control.", "Only extend as far as you can while keeping back flat."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "dead_bug", imageFile = "dead_bug"),
             sub(subs, "core_stability", "ex90", "Bird Dog (Core)",
                 "Quadruped stability drill for core and hip control.",
                 listOf(
@@ -693,7 +693,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Hold briefly, resisting rotation, then return to your chest."
                 ),
                 listOf("Keep shoulders and hips squared forward.", "Use light resistance to maintain perfect control."),
-                "cable / band", "intermediate", null),
+                "cable / band", "intermediate", null, videoFile = "pallof_press", imageFile = "pallof_press"),
 
             // =====================
             // CARDIO — HIIT
