@@ -210,7 +210,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly back to the stretch position."
                 ),
                 listOf("Use a controlled range of motion.", "Do not bounce the bar."),
-                "barbell", "beginner", null),
+                "barbell", "beginner", null, videoFile = "wrist_curl", imageFile = "wrist_curl"),
             sub(subs, "forearms", "ex73", "Reverse Wrist Curl",
                 "Reverse-grip wrist curl focusing on wrist extensors.",
                 listOf(
@@ -220,7 +220,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly to the starting position."
                 ),
                 listOf("Keep forearms planted on your legs.", "Use lighter weight than normal wrist curls."),
-                "barbell", "beginner", null),
+                "barbell", "beginner", null, videoFile = "reverse_wrist_curl", imageFile = "reverse_wrist_curl"),
             sub(subs, "forearms", "ex74", "Farmer’s Carry",
                 "Loaded carry that challenges grip, forearms and core.",
                 listOf(
@@ -230,7 +230,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Set the weights down safely."
                 ),
                 listOf("Do not let shoulders shrug up toward ears.", "Maintain a steady, controlled walk."),
-                "dumbbell / farmer’s handles", "intermediate", null),
+                "dumbbell / farmer’s handles", "intermediate", null, videoFile = "farmers_carry", imageFile = "farmers_carry"),
             sub(subs, "forearms", "ex75", "Plate Pinch",
                 "Static grip exercise pinching weight plates together.",
                 listOf(
@@ -240,7 +240,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Set down carefully when grip fails."
                 ),
                 listOf("Use lighter plates with smooth sides to start.", "Keep wrist neutral."),
-                "weight plates", "intermediate", null),
+                "weight plates", "intermediate", null, videoFile = "plate_pinch", imageFile = "plate_pinch"),
             sub(subs, "forearms", "ex76", "Dead Hang",
                 "Hanging from a pull-up bar to build grip endurance.",
                 listOf(
@@ -250,7 +250,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Drop down safely when grip gives out."
                 ),
                 listOf("Do not let shoulders shrug up uncontrolled.", "Avoid swinging."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "dead_hang", imageFile = "dead_hang"),
             sub(subs, "forearms", "ex77", "Reverse Curl",
                 "Curl with overhand grip emphasizing forearms and brachialis.",
                 listOf(
@@ -260,7 +260,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly back to start."
                 ),
                 listOf("Use moderate weight to avoid wrist strain.", "Keep wrists straight, not bent."),
-                "barbell / EZ bar", "beginner", null),
+                "barbell / EZ bar", "beginner", null, videoFile = "reverse_curl", imageFile = "reverse_curl"),
             // =====================
             // LEGS — QUADS
             // =====================
