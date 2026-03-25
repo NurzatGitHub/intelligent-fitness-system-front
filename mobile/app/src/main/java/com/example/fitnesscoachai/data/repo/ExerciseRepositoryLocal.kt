@@ -856,7 +856,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Let kettlebell swing to about chest height and repeat."
                 ),
                 listOf("Do not squat the movement; hinge instead.", "Keep shoulders packed and back neutral."),
-                "kettlebell", "intermediate", null, videoFile = "", imageFile = ""),
+                "kettlebell", "intermediate", null, videoFile = "kettlebell_swings", imageFile = "kettlebell_swings"),
             sub(subs, "functional_cardio", "ex105", "Medicine Ball Slams",
                 "Powerful overhead slam with a medicine ball for full-body conditioning.",
                 listOf(
@@ -866,7 +866,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Maintain a strong stance throughout."
                 ),
                 listOf("Use a non-bouncing ball if possible.", "Avoid flexing spine excessively when picking the ball up."),
-                "medicine ball", "beginner", null, videoFile = "", imageFile = ""),
+                "medicine ball", "beginner", null, videoFile = "medicine_ball_slams", imageFile = "medicine_ball_slams"),
             sub(subs, "functional_cardio", "ex106", "Farmer’s Carry (Cardio)",
                 "Heavier, longer-distance farmer’s walks for conditioning.",
                 listOf(
@@ -876,7 +876,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Set weights down safely and rest."
                 ),
                 listOf("Keep chest up and core braced.", "Choose distances that challenge breathing but keep form solid."),
-                "dumbbell / farmer’s handles", "intermediate", null, videoFile = "", imageFile = ""),
+                "dumbbell / farmer’s handles", "intermediate", null, videoFile = "farmers_carry_cardio", imageFile = "farmers_carry_cardio"),
             sub(subs, "functional_cardio", "ex107", "Sled Push",
                 "Pushing a loaded sled for functional strength and cardio.",
                 listOf(
@@ -886,7 +886,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Push for distance or time, then rest."
                 ),
                 listOf("Keep hips and shoulders aligned.", "Use appropriate load to maintain good mechanics."),
-                "sled", "intermediate", null, videoFile = "", imageFile = ""),
+                "sled", "intermediate", null, videoFile = "sled_push", imageFile = "sled_push"),
             sub(subs, "functional_cardio", "ex108", "Agility Ladder",
                 "Footwork drills through a floor ladder to develop speed and coordination.",
                 listOf(
@@ -896,7 +896,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Maintain quick feet and light contacts."
                 ),
                 listOf("Start slow to learn patterns.", "Focus on quality before speed."),
-                "ladder", "beginner", null, videoFile = "", imageFile = ""),
+                "ladder", "beginner", null, videoFile = "agility_ladder", imageFile = "agility_ladder"),
 
             // =====================
             // CARDIO — SPORTS
