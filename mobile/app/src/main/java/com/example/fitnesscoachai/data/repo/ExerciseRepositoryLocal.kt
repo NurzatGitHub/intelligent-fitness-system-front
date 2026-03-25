@@ -792,7 +792,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Cool down with an easy walk and light stretching."
                 ),
                 listOf("Increase duration gradually over weeks.", "Avoid sudden spikes in pace."),
-                "body weight", "beginner", null, videoFile = "", imageFile = ""),
+                "body weight", "beginner", null, videoFile = "running", imageFile = "running"),
             sub(subs, "steady_state", "ex99", "Jogging",
                 "Easy, low-impact continuous jog for basic endurance.",
                 listOf(
@@ -802,7 +802,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Finish with a walk to bring heart rate down."
                 ),
                 listOf("Keep shoulders relaxed and arms swinging naturally.", "Use cushioned shoes and safe terrain."),
-                "body weight", "beginner", null, videoFile = "", imageFile = ""),
+                "body weight", "beginner", null, videoFile = "jogging", imageFile = "jogging"),
             sub(subs, "steady_state", "ex100", "Cycling",
                 "Steady cycling session outdoors or on a bike trainer.",
                 listOf(
@@ -812,7 +812,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Cool down at a lighter intensity."
                 ),
                 listOf("Keep cadence smooth (e.g., 80–90 RPM).", "Use appropriate resistance to avoid knee strain."),
-                "bike", "beginner", null, videoFile = "", imageFile = ""),
+                "bike", "beginner", null, videoFile = "cycling", imageFile = "cycling"),
             sub(subs, "steady_state", "ex101", "Treadmill Walk",
                 "Incline or flat treadmill walking for low-impact cardio.",
                 listOf(
@@ -822,7 +822,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Gradually reduce speed and incline to cool down."
                 ),
                 listOf("Avoid holding onto the handrails excessively.", "Use shoes with good grip."),
-                "treadmill", "beginner", null, videoFile = "", imageFile = ""),
+                "treadmill", "beginner", null, videoFile = "treadmill_walk", imageFile = "treadmill_walk"),
             sub(subs, "steady_state", "ex102", "Stair Climber",
                 "Continuous stepping on a stair climber machine.",
                 listOf(
@@ -832,7 +832,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Maintain consistent stepping rhythm."
                 ),
                 listOf("Do not lean heavily on the rails.", "Start with shorter sessions to build endurance."),
-                "machine", "beginner", null, videoFile = "", imageFile = ""),
+                "machine", "beginner", null, videoFile = "stair_climber", imageFile = "stair_climber"),
             sub(subs, "steady_state", "ex103", "Rowing Machine",
                 "Full-body steady-state cardio on a rower.",
                 listOf(
@@ -842,7 +842,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Maintain a smooth, continuous stroke rate."
                 ),
                 listOf("Keep lower back neutral.", "Drive primarily with legs, not just arms."),
-                "rowing machine", "beginner", null, videoFile = "", imageFile = ""),
+                "rowing machine", "beginner", null, videoFile = "rowing_machine", imageFile = "rowing_machine"),
 
             // =====================
             // CARDIO — FUNCTIONAL
