@@ -60,6 +60,7 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     // WebSocket
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.microsoft.onnxruntime:onnxruntime-android:1.17.0")
     // Gson
     implementation("com.google.code.gson:gson:2.10.1")
     // MediaPipe Tasks Vision (Pose Landmarker)

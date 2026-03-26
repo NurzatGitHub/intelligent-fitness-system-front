@@ -59,6 +59,7 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
+        <!-- Камера -->
         <androidx.camera.view.PreviewView
             android:id="@+id/previewView"
             android:layout_width="match_parent"
@@ -66,31 +67,36 @@
             app:scaleType="fillCenter"
             app:implementationMode="compatible"/>
 
-        <!-- Overlay for skeleton and guidance -->
-        <com.example.fitnesscoachai.ui.workout.OverlayView
+        <!-- Скелет -->
+        <com.example.fitnesscoachai.ui.workout.shared.OverlayView
             android:id="@+id/overlayView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/transparent"/>
 
-        <!-- Guidance overlay text -->
+        <!-- tvFeedback — строго по центру камеры -->
         <TextView
-            android:id="@+id/tvGuidance"
-            android:text="Stand fully in frame\nMake sure your whole body is visible"
-            android:textSize="16sp"
-            android:textColor="@android:color/white"
+            android:id="@+id/tvFeedback"
+            android:text=""
+            android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@android:color/white"
             android:gravity="center"
-            android:background="#80000000"
-            android:padding="16dp"
+            android:shadowColor="#000000"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="6"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"/>
+            android:layout_gravity="center"/>
 
     </FrameLayout>
 
-    <!-- Live Feedback Panel -->
+    <!-- Bottom Panel: Reps + Buttons -->
     <LinearLayout
         android:orientation="vertical"
         android:padding="20dp"
@@ -106,7 +112,7 @@
             android:textStyle="bold"
             android:textColor="@android:color/white"
             android:gravity="center"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="4dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
@@ -119,56 +125,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <!-- Live Feedback Section -->
-        <TextView
-            android:text="Live Feedback"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:layout_marginBottom="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:id="@+id/tvFeedback"
-            android:text="Tap Start to begin training"
-            android:textSize="15sp"
-            android:textColor="#E0FFFFFF"
-            android:minHeight="56dp"
-            android:gravity="center_vertical"
+        <!-- Buttons -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:gravity="center"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
 
-    </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnStartPause"
+                android:text="Start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:minHeight="56dp"
+                style="@style/Widget.Material3.Button"/>
 
-    <!-- Bottom Controls -->
-    <LinearLayout
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:background="#80000000"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFinish"
+                android:text="Finish"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:minHeight="56dp"
+                style="@style/Widget.Material3.Button.OutlinedButton"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnStartPause"
-            android:text="Start"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:minHeight="56dp"
-            style="@style/Widget.Material3.Button"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnFinish"
-            android:text="Finish"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            android:minHeight="56dp"
-            style="@style/Widget.Material3.Button.OutlinedButton"/>
+        </LinearLayout>
 
     </LinearLayout>
 

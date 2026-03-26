@@ -1,4 +1,4 @@
-package com.example.fitnesscoachai.ui.workout
+package com.example.fitnesscoachai.ui.workout.shared
 
 import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 import kotlin.math.min

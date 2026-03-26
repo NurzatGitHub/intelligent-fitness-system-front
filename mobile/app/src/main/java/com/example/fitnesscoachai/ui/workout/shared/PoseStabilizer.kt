@@ -1,4 +1,4 @@
-package com.example.fitnesscoachai.ui.workout
+package com.example.fitnesscoachai.ui.workout.shared
 
 import kotlin.math.sqrt
 

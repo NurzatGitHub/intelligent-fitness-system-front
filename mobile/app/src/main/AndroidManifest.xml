@@ -74,7 +74,13 @@
             android:name=".ui.exercise.ExerciseInstructionActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.workout.WorkoutActivity"
+            android:name=".ui.workout.pushup.PushupActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.workout.squat.SquatActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.workout.plank.PlankActivity"
             android:exported="false" />
         <activity
             android:name=".ui.summary.SummaryActivity"

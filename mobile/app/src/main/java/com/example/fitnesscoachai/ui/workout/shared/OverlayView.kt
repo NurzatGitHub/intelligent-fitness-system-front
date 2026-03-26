@@ -1,4 +1,4 @@
-package com.example.fitnesscoachai.ui.workout
+package com.example.fitnesscoachai.ui.workout.shared
 
 import android.content.Context
 import android.graphics.Canvas
