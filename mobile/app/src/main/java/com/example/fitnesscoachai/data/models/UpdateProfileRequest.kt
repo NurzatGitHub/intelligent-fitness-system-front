@@ -7,5 +7,9 @@ data class UpdateProfileRequest(
     val fitness_level: String? = null,
     val goal: String? = null,
     val limitations: String? = null,
-    val frequency: String? = null
+    val frequency: String? = null,
+    val workout_duration: String? = null,
+    val workout_place: String? = null,
+    val endurance_level: String? = null,
+    val gender: String? = null
 )

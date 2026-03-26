@@ -29,13 +29,14 @@ class SignUpWeightActivity : AppCompatActivity() {
         etWeight = findViewById(R.id.etWeight)
         btnNext = findViewById(R.id.btnNext)
         btnBack = findViewById(R.id.btnBack)
-        findViewById<LinearProgressIndicator>(R.id.progress).setProgressCompat(43, true) // step 4/8
+
+        findViewById<LinearProgressIndicator>(R.id.progress).setProgressCompat(33, true)
 
         val email = intent.getStringExtra("email").orEmpty()
         val password = intent.getStringExtra("password").orEmpty()
         val age = intent.getIntExtra("age", -1)
         val height = intent.getIntExtra("height_cm", -1)
-        val fromGoogle = intent.getBooleanExtra("from_google", false) // ✅ ВОТ ЭТОГО НЕ ХВАТАЛО
+        val fromGoogle = intent.getBooleanExtra("from_google", false)
 
         btnNext.isEnabled = false
 
@@ -58,13 +59,13 @@ class SignUpWeightActivity : AppCompatActivity() {
             val w = safeInt(etWeight.text?.toString())
             if (!validate(showErrors = true)) return@setOnClickListener
 
-            val intent = Intent(this, SignUpFitnessLevelActivity::class.java).apply {
+            val intent = Intent(this, SignUpGenderActivity::class.java).apply {
                 putExtra("email", email)
                 putExtra("password", password)
                 putExtra("age", age)
                 putExtra("height_cm", height)
                 putExtra("weight_kg", w.toFloat())
-                putExtra("from_google", fromGoogle) // ✅ ПРОКИДЫВАЕМ ДАЛЬШЕ
+                putExtra("from_google", fromGoogle)
             }
             startActivity(intent)
         }

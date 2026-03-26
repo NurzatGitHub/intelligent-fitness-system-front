@@ -32,6 +32,7 @@ class ExerciseSelectActivity : AppCompatActivity() {
         val adapter = ExerciseAdapter(emptyList()) { exercise ->
             routeToWorkout(exercise)
         }
+
         rv.adapter = adapter
         rv.layoutManager = LinearLayoutManager(this)
 
@@ -43,6 +44,7 @@ class ExerciseSelectActivity : AppCompatActivity() {
                     repo.getExercisesByMainCategory(MainCategory.ARMS) +
                     repo.getExercisesByMainCategory(MainCategory.ABS) +
                     repo.getExercisesByMainCategory(MainCategory.CARDIO)
+
             allExercises = all
             adapter.updateData(allExercises)
         }
@@ -59,18 +61,10 @@ class ExerciseSelectActivity : AppCompatActivity() {
         })
     }
 
-    /**
-     * Маршрутизация по exercise.id:
-     *   ex16 → PushupActivity
-     *   ex6  → SquatActivity
-     *   ex18 → PlankActivity  (добавить когда будет готов)
-     *   все остальные → ExerciseInstructionActivity (инструкция)
-     */
     private fun routeToWorkout(exercise: Exercise) {
         val intent = when (exercise.id) {
             "ex16" -> Intent(this, PushupActivity::class.java)
             "ex6"  -> Intent(this, SquatActivity::class.java)
-            // "ex18" -> Intent(this, PlankActivity::class.java)  // раскомментировать когда PlankActivity будет готов
             else   -> ExerciseInstructionActivity.newIntent(this, exercise.id)
         }
         intent.putExtra("exercise_name", exercise.titleEn)

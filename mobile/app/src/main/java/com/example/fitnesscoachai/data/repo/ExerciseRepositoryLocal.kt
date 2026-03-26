@@ -52,7 +52,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly to the starting position."
                 ),
                 listOf("Do not swing your body.", "Keep upper arms fixed."),
-                "barbell", "beginner", null),
+                "barbell", "beginner", null, videoFile = "barbell_curl", imageFile = "barbell_curl"),
             sub(subs, "biceps", "ex2", "Hammer Curl",
                 "Neutral-grip dumbbell curl targeting biceps and brachialis.",
                 listOf(
@@ -62,7 +62,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower the dumbbells under control."
                 ),
                 listOf("Avoid using momentum.", "Keep wrists neutral."),
-                "dumbbell", "beginner", null),
+                "dumbbell", "beginner", null, videoFile = "hammer_curl", imageFile = "hammer_curl"),
             sub(subs, "biceps", "ex62", "Dumbbell Curl",
                 "Classic alternating or simultaneous dumbbell curl for biceps.",
                 listOf(
@@ -72,7 +72,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower the weight slowly."
                 ),
                 listOf("Do not let shoulders roll forward.", "Use full but controlled range."),
-                "dumbbell", "beginner", null),
+                "dumbbell", "beginner", null, videoFile = "dumbbell_curl", imageFile = "dumbbell_curl"),
             sub(subs, "biceps", "ex63", "Incline Dumbbell Curl",
                 "Seated incline curl emphasizing the long head of the biceps.",
                 listOf(
@@ -82,7 +82,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly to a full stretch."
                 ),
                 listOf("Keep upper arms vertical.", "Do not swing the weights."),
-                "dumbbell", "intermediate", null),
+                "dumbbell", "intermediate", null, videoFile = "incline_dumbbell_curl", imageFile = "incline_dumbbell_curl"),
             sub(subs, "biceps", "ex64", "Concentration Curl",
                 "Single-arm curl with elbow braced on inner thigh for strict form.",
                 listOf(
@@ -92,7 +92,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Squeeze at the top and lower under control."
                 ),
                 listOf("Avoid moving your upper arm.", "Focus on a strong peak contraction."),
-                "dumbbell", "beginner", null),
+                "dumbbell", "beginner", null, videoFile = "concentration_curl", imageFile = "concentration_curl"),
             sub(subs, "biceps", "ex65", "Cable Curl",
                 "Standing curl using a low cable for constant tension.",
                 listOf(
@@ -102,7 +102,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly until arms are almost straight."
                 ),
                 listOf("Keep torso upright.", "Control both up and down phases."),
-                "cable", "beginner", null),
+                "cable", "beginner", null, videoFile = "cable_curl", imageFile = "cable_curl"),
             sub(subs, "biceps", "ex66", "Preacher Curl",
                 "Curl performed on a preacher bench to reduce cheating.",
                 listOf(
@@ -112,7 +112,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower until arms are almost straight without locking elbows."
                 ),
                 listOf("Do not bounce out of the bottom position.", "Use a weight that allows control."),
-                "barbell / EZ bar", "intermediate", null),
+                "barbell / EZ bar", "intermediate", null, videoFile = "preacher_curl", imageFile = "preacher_curl"),
             sub(subs, "biceps", "ex67", "Chin-up (Biceps Emphasis)",
                 "Underhand-grip chin-up emphasizing biceps as well as back.",
                 listOf(
@@ -122,7 +122,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly to full extension."
                 ),
                 listOf("Think about pulling with elbows and biceps.", "Avoid swinging or kipping."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "chin_up_biceps_emphasis", imageFile = "chin_up_biceps_emphasis"),
 
             // =====================
             // ARMS — TRICEPS
@@ -136,7 +136,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return the handle to about 90° elbow bend."
                 ),
                 listOf("Do not let elbows drift forward.", "Keep shoulders relaxed."),
-                "cable", "beginner", null),
+                "cable", "beginner", null, videoFile = "tricep_pushdown", imageFile = "tricep_pushdown"),
             sub(subs, "triceps", "ex4", "Close-Grip Bench Press",
                 "Narrow-grip bench press to load the triceps heavily.",
                 listOf(
@@ -146,7 +146,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press the bar back up to full arm extension."
                 ),
                 listOf("Keep wrists stacked over elbows.", "Do not flare elbows out too wide."),
-                "barbell", "intermediate", null),
+                "barbell", "intermediate", null, videoFile = "close_grip_bench_press", imageFile = "close_grip_bench_press"),
             sub(subs, "triceps", "ex68", "Overhead Tricep Extension",
                 "Overhead extension with dumbbell or cable to train the long head of triceps.",
                 listOf(
@@ -156,7 +156,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Extend elbows to return to the starting position."
                 ),
                 listOf("Avoid arching your lower back.", "Keep elbows pointing mostly forward."),
-                "dumbbell / cable", "beginner", null),
+                "dumbbell / cable", "beginner", null, videoFile = "overhead_tricep_extension", imageFile = "overhead_tricep_extension"),
             sub(subs, "triceps", "ex69", "Skull Crushers",
                 "Lying tricep extension, often with an EZ bar, targeting all three heads.",
                 listOf(
@@ -166,7 +166,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Extend elbows back to the starting position."
                 ),
                 listOf("Use a spotter with heavy loads.", "Move only at the elbows, not shoulders."),
-                "EZ bar / dumbbell", "intermediate", null),
+                "EZ bar / dumbbell", "intermediate", null, videoFile = "skull_crushers", imageFile = "skull_crushers"),
             sub(subs, "triceps", "ex70", "Dips (Triceps Focus)",
                 "Parallel bar or bench dips emphasizing triceps by keeping torso more upright.",
                 listOf(
@@ -176,7 +176,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press back up to full extension."
                 ),
                 listOf("Avoid dropping too deep if shoulders are sensitive.", "Use assistance if needed."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "dips_triceps_focus", imageFile = "dips_triceps_focus"),
             sub(subs, "triceps", "ex71", "Rope Pushdown",
                 "Cable pushdown using a rope to allow more natural wrist position.",
                 listOf(
@@ -186,7 +186,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return to the start with control."
                 ),
                 listOf("Keep upper arms fixed.", "Do not let shoulders roll forward."),
-                "cable", "beginner", null),
+                "cable", "beginner", null, videoFile = "rope_pushdown", imageFile = "rope_pushdown"),
             sub(subs, "triceps", "ex72", "Tricep Kickback",
                 "Bent-over dumbbell kickback for triceps isolation.",
                 listOf(
@@ -196,7 +196,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return to the starting position with control."
                 ),
                 listOf("Keep upper arm fixed in place.", "Use light weight to avoid swinging."),
-                "dumbbell", "beginner", null),
+                "dumbbell", "beginner", null, videoFile = "tricep_kickback", imageFile = "tricep_kickback"),
 
             // =====================
             // ARMS — FOREARMS
@@ -210,7 +210,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly back to the stretch position."
                 ),
                 listOf("Use a controlled range of motion.", "Do not bounce the bar."),
-                "barbell", "beginner", null),
+                "barbell", "beginner", null, videoFile = "wrist_curl", imageFile = "wrist_curl"),
             sub(subs, "forearms", "ex73", "Reverse Wrist Curl",
                 "Reverse-grip wrist curl focusing on wrist extensors.",
                 listOf(
@@ -220,7 +220,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly to the starting position."
                 ),
                 listOf("Keep forearms planted on your legs.", "Use lighter weight than normal wrist curls."),
-                "barbell", "beginner", null),
+                "barbell", "beginner", null, videoFile = "reverse_wrist_curl", imageFile = "reverse_wrist_curl"),
             sub(subs, "forearms", "ex74", "Farmer’s Carry",
                 "Loaded carry that challenges grip, forearms and core.",
                 listOf(
@@ -230,7 +230,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Set the weights down safely."
                 ),
                 listOf("Do not let shoulders shrug up toward ears.", "Maintain a steady, controlled walk."),
-                "dumbbell / farmer’s handles", "intermediate", null),
+                "dumbbell / farmer’s handles", "intermediate", null, videoFile = "farmers_carry", imageFile = "farmers_carry"),
             sub(subs, "forearms", "ex75", "Plate Pinch",
                 "Static grip exercise pinching weight plates together.",
                 listOf(
@@ -240,7 +240,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Set down carefully when grip fails."
                 ),
                 listOf("Use lighter plates with smooth sides to start.", "Keep wrist neutral."),
-                "weight plates", "intermediate", null),
+                "weight plates", "intermediate", null, videoFile = "plate_pinch", imageFile = "plate_pinch"),
             sub(subs, "forearms", "ex76", "Dead Hang",
                 "Hanging from a pull-up bar to build grip endurance.",
                 listOf(
@@ -250,7 +250,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Drop down safely when grip gives out."
                 ),
                 listOf("Do not let shoulders shrug up uncontrolled.", "Avoid swinging."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "dead_hang", imageFile = "dead_hang"),
             sub(subs, "forearms", "ex77", "Reverse Curl",
                 "Curl with overhand grip emphasizing forearms and brachialis.",
                 listOf(
@@ -260,7 +260,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly back to start."
                 ),
                 listOf("Use moderate weight to avoid wrist strain.", "Keep wrists straight, not bent."),
-                "barbell / EZ bar", "beginner", null),
+                "barbell / EZ bar", "beginner", null, videoFile = "reverse_curl", imageFile = "reverse_curl"),
             // =====================
             // LEGS — QUADS
             // =====================
@@ -273,12 +273,12 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Drive through your feet to return to standing."
                 ),
                 listOf("Keep your chest up and back neutral.", "Do not let knees cave inward."),
-                "barbell", "beginner", null),
+                "barbell", "beginner", null, videoFile = "squat", imageFile = "squat"),
             sub(subs, "quads", "ex7", "Leg Extension",
                 "Extend your legs at the knee in the machine.",
                 listOf("Sit in the machine, shins under the pad.", "Extend your legs at the knees.", "Hold the top briefly.", "Lower the weight."),
                 listOf("Do not lift your hips off the seat.", "Move smoothly."),
-                "machine", "beginner", null),
+                "machine", "beginner", null, videoFile = "leg_extention", imageFile = "leg_extention"),
             sub(subs, "quads", "ex45", "Front Squat",
                 "Front-loaded squat variation emphasizing the quads and upper back.",
                 listOf(
@@ -288,7 +288,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Stand back up by driving through mid‑foot."
                 ),
                 listOf("Do not let elbows drop.", "Use lighter weight than the back squat at first."),
-                "barbell", "intermediate", null),
+                "barbell", "intermediate", null, videoFile = "front_squat", imageFile = "front_squat"),
             sub(subs, "quads", "ex46", "Leg Press",
                 "Machine leg press focusing on quad strength with back support.",
                 listOf(
@@ -298,7 +298,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press the platform back up without locking knees hard."
                 ),
                 listOf("Keep lower back against the pad.", "Do not let knees collapse inward."),
-                "machine", "beginner", null),
+                "machine", "beginner", null, videoFile = "leg_press", imageFile = "leg_press"),
             sub(subs, "quads", "ex47", "Bulgarian Split Squat",
                 "Single-leg squat variation with rear foot elevated, strongly loading the quads.",
                 listOf(
@@ -308,7 +308,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press through the front foot to stand back up."
                 ),
                 listOf("Keep torso slightly forward but controlled.", "Use bodyweight first, then add dumbbells."),
-                "body weight / dumbbell", "intermediate", null),
+                "body weight / dumbbell", "intermediate", null, videoFile = "bulgarian_split_squat", imageFile = "bulgarian_split_squat"),
             sub(subs, "quads", "ex48", "Step-up",
                 "Stepping onto a box or bench to target quads and glutes.",
                 listOf(
@@ -318,7 +318,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Step down under control and alternate legs."
                 ),
                 listOf("Do not push off too much with the back leg.", "Choose a box height you can control."),
-                "body weight / dumbbell", "beginner", null),
+                "body weight / dumbbell", "beginner", null, videoFile = "step_up", imageFile = "step_up"),
             sub(subs, "quads", "ex49", "Goblet Squat",
                 "Squat holding a kettlebell or dumbbell at chest height.",
                 listOf(
@@ -328,7 +328,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Drive back up to standing."
                 ),
                 listOf("Keep heels on the floor.", "Use this as a technique builder for deeper squats."),
-                "kettlebell / dumbbell", "beginner", null),
+                "kettlebell / dumbbell", "beginner", null, videoFile = "goblet_squat", imageFile = "goblet_squat"),
             sub(subs, "quads", "ex50", "Hack Squat",
                 "Machine or barbell hack squat emphasizing the front of the thighs.",
                 listOf(
@@ -338,7 +338,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press back up, focusing on driving through quads."
                 ),
                 listOf("Keep knees tracking over toes.", "Control the movement at the bottom."),
-                "machine", "intermediate", null),
+                "machine", "intermediate", null, videoFile = "hack_squat", imageFile = "hack_squat"),
 
             // =====================
             // LEGS — HAMSTRINGS
@@ -347,7 +347,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                 "Hinge forward with a straight back. Stretches and loads the hamstrings.",
                 listOf("Stand holding the bar.", "Hinge forward, pushing hips back.", "Lower the bar along your legs.", "Return to upright by driving through the hips."),
                 listOf("Keep your back straight; do not round your lower back.", "Feel the stretch in the back of your legs."),
-                "barbell", "intermediate", null),
+                "barbell", "intermediate", null, videoFile = "romanian_deadlift", imageFile = "romanian_deadlift"),
             sub(subs, "hamstrings", "ex51", "Lying Leg Curl",
                 "Machine leg curl performed lying face down to isolate hamstrings.",
                 listOf(
@@ -357,7 +357,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly back to the start."
                 ),
                 listOf("Do not lift hips off the pad.", "Control the lowering phase."),
-                "machine", "beginner", null),
+                "machine", "beginner", null, videoFile = "lying_leg_curl", imageFile = "lying_leg_curl"),
             sub(subs, "hamstrings", "ex52", "Seated Leg Curl",
                 "Seated machine curl that targets the hamstrings with hip flexed.",
                 listOf(
@@ -367,7 +367,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return slowly to full knee extension."
                 ),
                 listOf("Keep torso still against the back pad.", "Avoid using momentum."),
-                "machine", "beginner", null),
+                "machine", "beginner", null, videoFile = "seated_leg_curl", imageFile = "seated_leg_curl"),
             sub(subs, "hamstrings", "ex53", "Glute Ham Raise",
                 "Bodyweight or assisted raise emphasizing hamstrings and glutes.",
                 listOf(
@@ -377,7 +377,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Contract hamstrings and glutes to return to the top."
                 ),
                 listOf("Use assistance or partial range if needed.", "Maintain a neutral spine."),
-                "body weight / machine", "advanced", null),
+                "body weight / machine", "advanced", null, videoFile = "glute_ham_raise", imageFile = "glute_ham_raise"),
             sub(subs, "hamstrings", "ex54", "Nordic Curl",
                 "Partner or anchored hamstring curl from a tall-kneeling position.",
                 listOf(
@@ -387,7 +387,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Use hands to catch yourself and push lightly to return if needed."
                 ),
                 listOf("Focus on slow lowering at first.", "Do not drop suddenly; protect your knees."),
-                "body weight", "advanced", null),
+                "body weight", "advanced", null, videoFile = "nordic_curl", imageFile = "nordic_curl"),
 
             // =====================
             // LEGS — GLUTES
@@ -396,7 +396,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                 "Drive your hips up from a seated position, upper back on a bench.",
                 listOf("Sit on the floor with your back to the bench, bar on your hips.", "Press your upper back into the bench.", "Drive your hips up.", "Squeeze glutes at the top and lower."),
                 listOf("Tuck your chin slightly.", "Do not over-arch your lower back."),
-                "barbell", "beginner", null),
+                "barbell", "beginner", null, videoFile = "hip_thrust", imageFile = "hip_thrust"),
             sub(subs, "glutes", "ex55", "Glute Bridge",
                 "Floor bridge focusing on glutes with less load on the spine.",
                 listOf(
@@ -406,7 +406,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower hips back down with control."
                 ),
                 listOf("Do not over-arch lower back.", "Press through heels, not toes."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "glute_bridge", imageFile = "glute_bridge"),
             sub(subs, "glutes", "ex56", "Cable Kickback",
                 "Standing hip extension with cable to isolate the glutes.",
                 listOf(
@@ -416,7 +416,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Pause and squeeze glute at the end range, then return."
                 ),
                 listOf("Avoid swinging your torso.", "Use light to moderate weight for control."),
-                "cable", "beginner", null),
+                "cable", "beginner", null, videoFile = "cable_kickback", imageFile = "cable_kickback"),
             sub(subs, "glutes", "ex57", "Bulgarian Split Squat (Glutes)",
                 "Rear-foot-elevated split squat variation with more emphasis on glutes.",
                 listOf(
@@ -426,7 +426,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Drive through front heel to stand back up."
                 ),
                 listOf("Think about pushing the floor away with your front heel.", "Choose load that allows stable control."),
-                "body weight / dumbbell", "intermediate", null),
+                "body weight / dumbbell", "intermediate", null, videoFile = "bulgarian_split_squat_glutes", imageFile = "bulgarian_split_squat_glutes"),
             sub(subs, "glutes", "ex58", "Step-up (Glutes)",
                 "Step-up variation focusing on driving through the heel to target glutes.",
                 listOf(
@@ -436,7 +436,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower back down under control."
                 ),
                 listOf("Avoid pushing off with the trailing leg.", "Keep knee tracking over toes."),
-                "body weight / dumbbell", "intermediate", null),
+                "body weight / dumbbell", "intermediate", null, videoFile = "step_up_glutes", imageFile = "step_up_glutes"),
 
             // =====================
             // LEGS — CALVES
@@ -445,7 +445,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                 "Standing calf raise. Rise as high as you can on your toes.",
                 listOf("Stand on a platform with balls of feet on the edge.", "Lower your heels below the platform.", "Rise up on your toes as high as possible.", "Lower back down."),
                 listOf("Use full range at the bottom for a stretch.", "Pause at the top."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "standing_calf_raise", imageFile = "standing_calf_raise"),
             sub(subs, "calves", "ex59", "Seated Calf Raise",
                 "Seated calf raise focusing more on soleus muscle.",
                 listOf(
@@ -455,7 +455,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Raise heels as high as possible, then repeat."
                 ),
                 listOf("Do not bounce at the bottom.", "Control the top squeeze."),
-                "machine", "beginner", null),
+                "machine", "beginner", null, videoFile = "seated_calf_raise", imageFile = "seated_calf_raise"),
             sub(subs, "calves", "ex60", "Donkey Calf Raise",
                 "Hip‑hinged calf raise variation to increase calf stretch.",
                 listOf(
@@ -465,7 +465,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Raise heels as high as you can."
                 ),
                 listOf("Keep hips fixed; movement comes from ankles.", "Use bodyweight or added load as appropriate."),
-                "body weight / machine", "intermediate", null),
+                "body weight / machine", "intermediate", null, videoFile = "donkey_calf_raise", imageFile = "donkey_calf_raise"),
             sub(subs, "calves", "ex61", "Single-Leg Calf Raise",
                 "Unilateral standing calf raise to fix imbalances.",
                 listOf(
@@ -475,7 +475,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press up onto the ball of the foot and repeat."
                 ),
                 listOf("Perform the same reps on each leg.", "Focus on full range of motion."),
-                "body weight / dumbbell", "intermediate", null),
+                "body weight / dumbbell", "intermediate", null, videoFile = "single_leg_calf_raise", imageFile = "single_leg_calf_raise"),
             sub(subs, "lats", "ex11", "Pull-up",
                 "Hang from the bar and pull until your chin is over the bar.",
                 listOf("Grip the bar at shoulder width.", "Hang with arms fully extended.", "Pull yourself up, squeezing your shoulder blades.", "Lower yourself under control."),
@@ -490,7 +490,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                 "Lift the bar from the floor by extending your hips and knees.",
                 listOf("Stand in front of the bar, feet hip-width apart.", "Bend down and grip the bar just outside your legs.", "Keep your back straight.", "Stand up by extending legs and hips."),
                 listOf("Do not round your back.", "Keep the bar close to your legs."),
-                "barbell", "intermediate", null),
+                "barbell", "intermediate", null, videoFile = "deadlift", imageFile = "deadlift"),
             sub(subs, "upper_back", "ex14", "Barbell Row",
                 "Row the bar to your waist in a bent-over position. Drive elbows along your body.",
                 listOf("Bend forward holding the bar.", "Pull the bar to your waist.", "Squeeze shoulder blades at the top.", "Lower the bar."),
@@ -508,7 +508,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press the bar back up until elbows are extended."
                 ),
                 listOf("Keep shoulder blades retracted and feet planted.", "Do not bounce the bar off your chest."),
-                "barbell", "beginner", null),
+                "barbell", "beginner", null, videoFile = "bench_press", imageFile = "bench_press"),
             sub(subs, "mid_chest", "ex16", "Push-up",
                 "Bodyweight push-up emphasizing mid-chest on a flat body line.",
                 listOf(
@@ -518,7 +518,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Push back up to the starting position."
                 ),
                 listOf("Do not let hips sag.", "Brace your core and keep neck neutral."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "push_up", imageFile = "push_up"),
             // =====================
             // ABS — UPPER ABS
             // =====================
@@ -531,7 +531,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower back down without fully relaxing."
                 ),
                 listOf("Do not pull on your neck.", "Exhale as you crunch up."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "crunch", imageFile = "crunch"),
             sub(subs, "upper_abs", "ex78", "Cable Crunch",
                 "Kneeling cable crunch to load the upper abs with external resistance.",
                 listOf(
@@ -541,7 +541,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return slowly to the starting position."
                 ),
                 listOf("Move through the spine, not the hips.", "Do not pull with your arms."),
-                "cable", "intermediate", null),
+                "cable", "intermediate", null, videoFile = "cable_crunch", imageFile = "cable_crunch"),
             sub(subs, "upper_abs", "ex79", "Sit-up",
                 "Traditional sit-up moving through a larger range of motion for the upper abs.",
                 listOf(
@@ -551,7 +551,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower back down with control."
                 ),
                 listOf("Avoid jerking or pulling the neck.", "Control the descent as much as the ascent."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "sit_up", imageFile = "sit_up"),
             sub(subs, "upper_abs", "ex80", "Machine Crunch",
                 "Crunch performed on an ab machine with adjustable resistance.",
                 listOf(
@@ -561,7 +561,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return slowly to the start without letting the weight stack slam."
                 ),
                 listOf("Adjust the seat so pivot lines up with your core.", "Use moderate weight and full control."),
-                "machine", "beginner", null),
+                "machine", "beginner", null, videoFile = "machine_crunch", imageFile = "machine_crunch"),
 
             // =====================
             // ABS — LOWER ABS
@@ -575,7 +575,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower them toward the floor without letting your lower back arch excessively."
                 ),
                 listOf("Press your lower back gently into the floor.", "Use a comfortable range if hamstrings are tight."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "leg_raise", imageFile = "leg_raise"),
             sub(subs, "lower_abs", "ex82", "Hanging Knee Raise",
                 "Hanging knee raise targeting lower abs from a pull-up bar.",
                 listOf(
@@ -585,7 +585,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower legs back to the starting position with control."
                 ),
                 listOf("Avoid swinging; keep the movement strict.", "Use straps if grip is a limiting factor."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "hanging_knee_raise", imageFile = "hanging_knee_raise"),
             sub(subs, "lower_abs", "ex83", "Reverse Crunch",
                 "Reverse crunch focusing on curling the pelvis toward the ribcage.",
                 listOf(
@@ -595,7 +595,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower slowly back to the starting position."
                 ),
                 listOf("Do not swing your legs.", "Think about rolling the spine off the mat segment by segment."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "reverse_crunch", imageFile = "reverse_crunch"),
             sub(subs, "lower_abs", "ex84", "Flutter Kicks",
                 "Alternating leg kicks performed just above the floor to challenge lower abs.",
                 listOf(
@@ -605,7 +605,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Maintain a steady breathing pattern throughout."
                 ),
                 listOf("Keep lower back from arching excessively.", "Use shorter sets to maintain quality."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "flutter_kicks", imageFile = "flutter_kicks"),
 
             // =====================
             // ABS — OBLIQUES
@@ -619,7 +619,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Continue alternating sides for reps or time."
                 ),
                 listOf("Rotate through the torso, not just arms.", "Keep movements controlled, not jerky."),
-                "body weight / weight plate", "beginner", null),
+                "body weight / weight plate", "beginner", null, videoFile = "russian_twist", imageFile = "russian_twist"),
             sub(subs, "obliques", "ex86", "Side Plank",
                 "Static hold on one side to strengthen obliques and lateral core.",
                 listOf(
@@ -629,7 +629,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Repeat on the other side."
                 ),
                 listOf("Do not let hips sag.", "Keep neck in line with the spine."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "side_plank", imageFile = "side_plank"),
             sub(subs, "obliques", "ex87", "Bicycle Crunch",
                 "Alternating elbow-to-knee crunch targeting rectus abdominis and obliques.",
                 listOf(
@@ -639,7 +639,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Alternate sides in a pedaling motion."
                 ),
                 listOf("Keep lower back supported on the floor.", "Move in a controlled, not rushed, tempo."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "bicycle_crunch", imageFile = "bicycle_crunch"),
             sub(subs, "obliques", "ex88", "Woodchoppers",
                 "Diagonal cable or band chop engaging obliques and full core.",
                 listOf(
@@ -649,7 +649,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Control the return back to the start."
                 ),
                 listOf("Turn hips and shoulders together, not just arms.", "Keep core braced throughout."),
-                "cable / band", "intermediate", null),
+                "cable / band", "intermediate", null, videoFile = "woodchoppers", imageFile = "woodchoppers"),
 
             // =====================
             // ABS — CORE STABILITY
@@ -663,7 +663,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Stop when form begins to break."
                 ),
                 listOf("Do not let hips sag or pike up.", "Avoid holding your breath."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "plank", imageFile = "plank"),
             sub(subs, "core_stability", "ex89", "Dead Bug",
                 "Anti-extension core drill coordinating opposite arm and leg movement.",
                 listOf(
@@ -673,7 +673,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return to the start and alternate sides."
                 ),
                 listOf("Move slowly and with control.", "Only extend as far as you can while keeping back flat."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "dead_bug", imageFile = "dead_bug"),
             sub(subs, "core_stability", "ex90", "Bird Dog (Core)",
                 "Quadruped stability drill for core and hip control.",
                 listOf(
@@ -683,7 +683,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return to start and alternate sides."
                 ),
                 listOf("Do not let lower back sag or rotate.", "Move slowly; prioritize balance over range."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "bird_dog", imageFile = "bird_dog"),
             sub(subs, "core_stability", "ex91", "Pallof Press",
                 "Anti-rotation press using a cable or band to challenge core stability.",
                 listOf(
@@ -693,7 +693,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Hold briefly, resisting rotation, then return to your chest."
                 ),
                 listOf("Keep shoulders and hips squared forward.", "Use light resistance to maintain perfect control."),
-                "cable / band", "intermediate", null),
+                "cable / band", "intermediate", null, videoFile = "pallof_press", imageFile = "pallof_press"),
 
             // =====================
             // CARDIO — HIIT
@@ -708,7 +708,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Explosively jump up with arms overhead."
                 ),
                 listOf("Keep a steady but powerful rhythm.", "Land softly to protect your joints."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "burpees", imageFile = "burpees"),
             sub(subs, "hiit", "ex92", "Jump Squats",
                 "Squat with an explosive jump to spike heart rate.",
                 listOf(
@@ -718,7 +718,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Land softly and immediately go into the next rep."
                 ),
                 listOf("Absorb impact through hips and knees.", "Use smaller jumps if needed for control."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "jump_squats", imageFile = "jump_squats"),
             sub(subs, "hiit", "ex93", "Mountain Climbers",
                 "Fast alternating knee drives from a plank position.",
                 listOf(
@@ -728,7 +728,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Maintain a strong plank throughout."
                 ),
                 listOf("Do not let hips pike up.", "Keep shoulders stacked over wrists."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "mountain_climbers", imageFile = "mountain_climbers"),
             sub(subs, "hiit", "ex94", "High Knees",
                 "On-the-spot running bringing knees high to chest level.",
                 listOf(
@@ -738,7 +738,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Maintain quick, light foot contacts."
                 ),
                 listOf("Stay on the balls of your feet.", "Use a moderate volume if impact is high."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "high_knees", imageFile = "high_knees"),
             sub(subs, "hiit", "ex95", "Jump Lunges",
                 "Alternating lunge jumps for intense lower-body cardio.",
                 listOf(
@@ -748,7 +748,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Land in the opposite lunge and repeat."
                 ),
                 listOf("Keep torso upright and core tight.", "Use smaller jumps or step-back lunges if impact is too high."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "jump_lunges", imageFile = "jump_lunges"),
             sub(subs, "hiit", "ex96", "Box Jumps",
                 "Explosive jump onto a box or platform.",
                 listOf(
@@ -758,7 +758,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Step or lightly jump back down."
                 ),
                 listOf("Choose a box height you can land on safely.", "Focus on quality landings, not just height."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "box_jumps", imageFile = "box_jumps"),
             sub(subs, "hiit", "ex97", "Battle Ropes",
                 "Intervals with heavy ropes to combine strength and cardio.",
                 listOf(
@@ -768,7 +768,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Work in short, intense intervals."
                 ),
                 listOf("Keep core braced and chest up.", "Do not overextend your lower back."),
-                "battle ropes", "intermediate", null),
+                "battle ropes", "intermediate", null, videoFile = "battle_ropes", imageFile = "battle_ropes"),
             sub(subs, "hiit", "ex98", "Sprint Intervals",
                 "Short sprints alternated with rest or easy movement.",
                 listOf(
@@ -778,7 +778,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Repeat for several rounds."
                 ),
                 listOf("Use flat, safe surfaces.", "Start with moderate intensity if you are new to sprints."),
-                "body weight", "advanced", null),
+                "body weight", "advanced", null, videoFile = "sprint_intervals", imageFile = "sprint_intervals"),
 
             // =====================
             // CARDIO — STEADY STATE
@@ -792,7 +792,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Cool down with an easy walk and light stretching."
                 ),
                 listOf("Increase duration gradually over weeks.", "Avoid sudden spikes in pace."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "running", imageFile = "running"),
             sub(subs, "steady_state", "ex99", "Jogging",
                 "Easy, low-impact continuous jog for basic endurance.",
                 listOf(
@@ -802,7 +802,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Finish with a walk to bring heart rate down."
                 ),
                 listOf("Keep shoulders relaxed and arms swinging naturally.", "Use cushioned shoes and safe terrain."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "jogging", imageFile = "jogging"),
             sub(subs, "steady_state", "ex100", "Cycling",
                 "Steady cycling session outdoors or on a bike trainer.",
                 listOf(
@@ -812,7 +812,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Cool down at a lighter intensity."
                 ),
                 listOf("Keep cadence smooth (e.g., 80–90 RPM).", "Use appropriate resistance to avoid knee strain."),
-                "bike", "beginner", null),
+                "bike", "beginner", null, videoFile = "cycling", imageFile = "cycling"),
             sub(subs, "steady_state", "ex101", "Treadmill Walk",
                 "Incline or flat treadmill walking for low-impact cardio.",
                 listOf(
@@ -822,7 +822,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Gradually reduce speed and incline to cool down."
                 ),
                 listOf("Avoid holding onto the handrails excessively.", "Use shoes with good grip."),
-                "treadmill", "beginner", null),
+                "treadmill", "beginner", null, videoFile = "treadmill_walk", imageFile = "treadmill_walk"),
             sub(subs, "steady_state", "ex102", "Stair Climber",
                 "Continuous stepping on a stair climber machine.",
                 listOf(
@@ -832,7 +832,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Maintain consistent stepping rhythm."
                 ),
                 listOf("Do not lean heavily on the rails.", "Start with shorter sessions to build endurance."),
-                "machine", "beginner", null),
+                "machine", "beginner", null, videoFile = "stair_climber", imageFile = "stair_climber"),
             sub(subs, "steady_state", "ex103", "Rowing Machine",
                 "Full-body steady-state cardio on a rower.",
                 listOf(
@@ -842,7 +842,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Maintain a smooth, continuous stroke rate."
                 ),
                 listOf("Keep lower back neutral.", "Drive primarily with legs, not just arms."),
-                "rowing machine", "beginner", null),
+                "rowing machine", "beginner", null, videoFile = "rowing_machine", imageFile = "rowing_machine"),
 
             // =====================
             // CARDIO — FUNCTIONAL
@@ -856,7 +856,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Let kettlebell swing to about chest height and repeat."
                 ),
                 listOf("Do not squat the movement; hinge instead.", "Keep shoulders packed and back neutral."),
-                "kettlebell", "intermediate", null),
+                "kettlebell", "intermediate", null, videoFile = "kettlebell_swings", imageFile = "kettlebell_swings"),
             sub(subs, "functional_cardio", "ex105", "Medicine Ball Slams",
                 "Powerful overhead slam with a medicine ball for full-body conditioning.",
                 listOf(
@@ -866,7 +866,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Maintain a strong stance throughout."
                 ),
                 listOf("Use a non-bouncing ball if possible.", "Avoid flexing spine excessively when picking the ball up."),
-                "medicine ball", "beginner", null),
+                "medicine ball", "beginner", null, videoFile = "medicine_ball_slams", imageFile = "medicine_ball_slams"),
             sub(subs, "functional_cardio", "ex106", "Farmer’s Carry (Cardio)",
                 "Heavier, longer-distance farmer’s walks for conditioning.",
                 listOf(
@@ -876,7 +876,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Set weights down safely and rest."
                 ),
                 listOf("Keep chest up and core braced.", "Choose distances that challenge breathing but keep form solid."),
-                "dumbbell / farmer’s handles", "intermediate", null),
+                "dumbbell / farmer’s handles", "intermediate", null, videoFile = "farmers_carry_cardio", imageFile = "farmers_carry_cardio"),
             sub(subs, "functional_cardio", "ex107", "Sled Push",
                 "Pushing a loaded sled for functional strength and cardio.",
                 listOf(
@@ -886,7 +886,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Push for distance or time, then rest."
                 ),
                 listOf("Keep hips and shoulders aligned.", "Use appropriate load to maintain good mechanics."),
-                "sled", "intermediate", null),
+                "sled", "intermediate", null, videoFile = "sled_push", imageFile = "sled_push"),
             sub(subs, "functional_cardio", "ex108", "Agility Ladder",
                 "Footwork drills through a floor ladder to develop speed and coordination.",
                 listOf(
@@ -896,7 +896,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Maintain quick feet and light contacts."
                 ),
                 listOf("Start slow to learn patterns.", "Focus on quality before speed."),
-                "ladder", "beginner", null),
+                "ladder", "beginner", null, videoFile = "agility_ladder", imageFile = "agility_ladder"),
 
             // =====================
             // CARDIO — SPORTS
@@ -910,7 +910,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Repeat sequences for several rounds."
                 ),
                 listOf("Use proper basketball shoes.", "Scale intensity to your conditioning level."),
-                "basketball + court", "intermediate", null),
+                "basketball + court", "intermediate", null, videoFile = "basketball_drills", imageFile = "basketball_drills"),
             sub(subs, "sports", "ex110", "Soccer Drills",
                 "Interval-style soccer drills using sprints, ball control and agility.",
                 listOf(
@@ -920,7 +920,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Rest briefly between sets."
                 ),
                 listOf("Train on a safe surface.", "Warm up ankles and hips thoroughly."),
-                "soccer ball + field", "intermediate", null),
+                "soccer ball + field", "intermediate", null, videoFile = "soccer_drills", imageFile = "soccer_drills"),
             sub(subs, "sports", "ex111", "Boxing Rounds",
                 "Timed boxing rounds on a heavy bag or with shadowboxing.",
                 listOf(
@@ -930,7 +930,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Repeat for multiple rounds."
                 ),
                 listOf("Keep hands up and protect wrists with wraps/gloves.", "Control breathing, exhaling on punches."),
-                "boxing gloves + bag", "intermediate", null),
+                "boxing gloves + bag", "intermediate", null, videoFile = "boxing_rounds", imageFile = "boxing_rounds"),
             sub(subs, "sports", "ex112", "Jump Rope",
                 "Skipping rope at varied intensities for conditioning.",
                 listOf(
@@ -940,7 +940,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Adjust pace for intervals or steady work."
                 ),
                 listOf("Land softly on the balls of your feet.", "Use proper rope length for your height."),
-                "jump rope", "beginner", null),
+                "jump rope", "beginner", null, videoFile = "jump_rope", imageFile = "jump_rope"),
             sub(subs, "sports", "ex113", "Shadow Boxing",
                 "Free-form striking and movement without equipment to simulate fight rounds.",
                 listOf(
@@ -950,7 +950,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Work in timed rounds."
                 ),
                 listOf("Stay light on your feet.", "Maintain guard and technique even as you fatigue."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "shadow_boxing", imageFile = "shadow_boxing"),
             // =====================
             // CHEST — UPPER CHEST
             // =====================
@@ -963,7 +963,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press the bar up until elbows are extended."
                 ),
                 listOf("Avoid too steep of an incline to protect shoulders.", "Keep shoulder blades pulled back on the bench."),
-                "barbell", "intermediate", null),
+                "barbell", "intermediate", null, videoFile = "incline_bench_press", imageFile = "incline_bench_press"),
             sub(subs, "upper_chest", "ex36", "Incline Dumbbell Press",
                 "Incline dumbbell press for upper chest with greater range of motion.",
                 listOf(
@@ -973,7 +973,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press back up, bringing dumbbells together above chest."
                 ),
                 listOf("Keep wrists neutral.", "Do not let elbows drop too low behind the body."),
-                "dumbbell", "intermediate", null),
+                "dumbbell", "intermediate", null, videoFile = "incline_dumbbell_press", imageFile = "incline_dumbbell_press"),
             sub(subs, "upper_chest", "ex37", "Low-to-High Cable Fly",
                 "Cable fly from low pulleys upward to target upper chest fibers.",
                 listOf(
@@ -983,7 +983,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "With slight elbow bend, sweep arms up and together toward eye level."
                 ),
                 listOf("Keep movement controlled; do not swing.", "Squeeze chest at the top of each rep."),
-                "cable", "intermediate", null),
+                "cable", "intermediate", null, videoFile = "low_to_high_cable_fly", imageFile = "low_to_high_cable_fly"),
             sub(subs, "upper_chest", "ex38", "Decline Push-up",
                 "Feet-elevated push-up variation that shifts emphasis to upper chest and shoulders.",
                 listOf(
@@ -993,7 +993,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Push back up until arms are straight."
                 ),
                 listOf("Do not over-arch lower back.", "Choose height that allows solid form."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "decline_push_up", imageFile = "decline_push_up"),
 
             // =====================
             // CHEST — MID CHEST (дополнительные)
@@ -1007,7 +1007,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press dumbbells back up and slightly toward each other."
                 ),
                 listOf("Use full but comfortable range of motion.", "Avoid bouncing elbows off the bench."),
-                "dumbbell", "beginner", null),
+                "dumbbell", "beginner", null, videoFile = "dumbbell_bench_press", imageFile = "dumbbell_bench_press"),
             sub(subs, "mid_chest", "ex40", "Pec Deck Fly",
                 "Machine chest fly targeting mid-chest with fixed path.",
                 listOf(
@@ -1017,7 +1017,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Slowly return to starting position with stretch."
                 ),
                 listOf("Do not let weights slam down.", "Keep chest up and shoulders down."),
-                "machine", "beginner", null),
+                "machine", "beginner", null, videoFile = "pec_deck_fly", imageFile = "pec_deck_fly"),
             sub(subs, "mid_chest", "ex41", "Cable Crossover",
                 "Standing cable crossover at chest height for continuous tension on mid-chest.",
                 listOf(
@@ -1027,7 +1027,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return slowly until you feel a stretch in the chest."
                 ),
                 listOf("Cross hands slightly for extra squeeze if comfortable.", "Keep torso stable; do not rock."),
-                "cable", "intermediate", null),
+                "cable", "intermediate", null, videoFile = "cable_crossover", imageFile = "cable_crossover"),
 
             // =====================
             // CHEST — LOWER CHEST
@@ -1041,7 +1041,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press the bar back up to arms’ length."
                 ),
                 listOf("Keep hips secured and do not lift back off the bench.", "Control the bar path and avoid bouncing."),
-                "barbell", "intermediate", null),
+                "barbell", "intermediate", null, videoFile = "decline_bench_press", imageFile = "decline_bench_press"),
             sub(subs, "lower_chest", "ex43", "High-to-Low Cable Fly",
                 "Cable fly from high pulleys down to hips, targeting lower chest.",
                 listOf(
@@ -1051,7 +1051,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "With slight elbow bend, sweep arms down and together toward hips."
                 ),
                 listOf("Keep shoulders down and chest up.", "Use light to moderate weight for control."),
-                "cable", "intermediate", null),
+                "cable", "intermediate", null, videoFile = "high_to_low_cable_fly", imageFile = "high_to_low_cable_fly"),
             sub(subs, "lower_chest", "ex44", "Chest Dip",
                 "Bodyweight or assisted dip leaning forward to emphasize lower chest.",
                 listOf(
@@ -1061,7 +1061,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Press back up to the starting position."
                 ),
                 listOf("Do not drop too fast into the bottom.", "Use assistance if you cannot control full body weight."),
-                "body weight", "intermediate", null),
+                "body weight", "intermediate", null, videoFile = "chest_dip", imageFile = "chest_dip"),
 
             // =====================
             // BACK — LATS (ещё)
@@ -1199,7 +1199,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Raise until body forms a straight line."
                 ),
                 listOf("Avoid hyperextension.", "Move from hips, not the spine."),
-                "body weight", "beginner", null),
+                "body weight", "beginner", null, videoFile = "back_extension", imageFile = "back_extension"),
 
             sub(subs, "lower_back", "ex32", "Good Morning",
                 "Hip hinge movement strengthening lower back and hamstrings.",
@@ -1210,7 +1210,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return to standing by driving hips forward."
                 ),
                 listOf("Start light.", "Keep core tight and back neutral."),
-                "barbell", "intermediate", null),
+                "barbell", "intermediate", null, videoFile = "good_morning", imageFile = "good_morning"),
 
             sub(subs, "lower_back", "ex33", "Bird Dog",
                 "Core stability drill that supports lower back health.",
@@ -1221,7 +1221,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Return and switch sides."
                 ),
                 listOf("Keep hips level.", "Move slowly and controlled."),
-                "none", "beginner", null),
+                "none", "beginner", null, videoFile = "bird_dog", imageFile = "bird_dog"),
 
             sub(subs, "lower_back", "ex34", "Superman Hold",
                 "Bodyweight hold to engage lower back and glutes.",
@@ -1232,7 +1232,7 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                     "Lower and rest."
                 ),
                 listOf("Keep neck neutral.", "Avoid holding your breath."),
-                "none", "beginner", null),
+                "none", "beginner", null, videoFile = "superman_hold", imageFile = "superman_hold"),
         )
     }
 

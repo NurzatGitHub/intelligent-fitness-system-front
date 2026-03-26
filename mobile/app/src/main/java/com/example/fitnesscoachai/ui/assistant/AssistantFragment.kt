@@ -6,7 +6,6 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,7 +28,7 @@ class AssistantFragment : Fragment(R.layout.fragment_assistant) {
         val rv = view.findViewById<RecyclerView>(R.id.rvChat)
         val et = view.findViewById<EditText>(R.id.etMessage)
         val btn = view.findViewById<ImageButton>(R.id.btnSend)
-        val progress = view.findViewById<ProgressBar>(R.id.progressTyping)
+        val progress = view.findViewById<View>(R.id.progressTyping)
 
         adapter = ChatAdapter()
         rv.adapter = adapter
@@ -49,19 +48,20 @@ class AssistantFragment : Fragment(R.layout.fragment_assistant) {
         }
 
         fun sendNow() {
-            val text = et.text.toString()
+            val text = et.text.toString().trim()
+            if (text.isEmpty()) return
+
             et.setText("")
             val token = getAccessToken()
+
             if (token.isNullOrBlank()) {
-                // добавим сообщение в чат
-                // (быстро через current list)
                 val cur = vm.messages.value.orEmpty().toMutableList()
                 cur.add(ChatMessage("Нужно войти в аккаунт, чтобы использовать AI.", isUser = false))
-                // хак: напрямую не можем сетнуть в VM, поэтому проще:
-                // если хочешь чисто — добавь метод vm.addSystemMessage()
                 adapter.submitList(cur)
+                rv.scrollToPosition(cur.size - 1)
                 return
             }
+
             vm.sendUserMessage(text, token)
         }
 
@@ -71,7 +71,9 @@ class AssistantFragment : Fragment(R.layout.fragment_assistant) {
             if (actionId == EditorInfo.IME_ACTION_SEND) {
                 sendNow()
                 true
-            } else false
+            } else {
+                false
+            }
         }
     }
 }
