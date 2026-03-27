@@ -41,4 +41,3 @@ class ExerciseSelectAdapter(
         notifyDataSetChanged()
     }
 }
-

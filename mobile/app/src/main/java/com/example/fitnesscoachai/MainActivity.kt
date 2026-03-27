@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.example.fitnesscoachai.ui.auth.AuthActivity
-import com.example.fitnesscoachai.ui.exercise.ExerciseSelectFragment
+import com.example.fitnesscoachai.ui.exercise.ExerciseSelectActivity
 import com.example.fitnesscoachai.ui.home.HomeFragment
 import com.example.fitnesscoachai.ui.profile.ProfileFragment
 import com.example.fitnesscoachai.ui.assistant.AssistantFragment
@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         val isLoggedIn = getSharedPreferences("auth", MODE_PRIVATE)
             .getBoolean("isLoggedIn", false)
 
@@ -24,32 +24,20 @@ class MainActivity : AppCompatActivity() {
             finish()
             return
         }
-        
+
         setContentView(R.layout.activity_main)
 
-        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
-        val savedNavId = getSharedPreferences("app_settings", MODE_PRIVATE)
-            .getInt("selected_nav_id", R.id.nav_home)
-        when (savedNavId) {
-            R.id.nav_home -> openFragment(HomeFragment())
-            R.id.nav_camera -> openFragment(ExerciseSelectFragment())
-            R.id.nav_assistant -> openFragment(AssistantFragment())
-            R.id.nav_profile -> openFragment(ProfileFragment())
-            else -> openFragment(HomeFragment())
-        }
-        bottomNavigation.selectedItemId = savedNavId
+        openFragment(HomeFragment())
 
+        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
         bottomNavigation.setOnItemSelectedListener {
-            getSharedPreferences("app_settings", MODE_PRIVATE)
-                .edit()
-                .putInt("selected_nav_id", it.itemId)
-                .apply()
             when (it.itemId) {
                 R.id.nav_home -> openFragment(HomeFragment())
-                R.id.nav_camera -> openFragment(ExerciseSelectFragment())
+                R.id.nav_camera -> {
+                    startActivity(Intent(this, ExerciseSelectActivity::class.java))
+                }
                 R.id.nav_assistant -> openFragment(AssistantFragment())
                 R.id.nav_profile -> openFragment(ProfileFragment())
-                else -> { }
             }
             true
         }
