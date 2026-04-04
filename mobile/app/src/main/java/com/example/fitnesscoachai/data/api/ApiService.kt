@@ -27,6 +27,11 @@ interface ApiService {
     @POST("api/users/google/")
     suspend fun google(@Body request: GoogleLoginRequest): Response<AuthResponse>
 
+    @GET("api/users/me/")
+    suspend fun getMe(
+        @Header("Authorization") bearer: String
+    ): Response<User>
+
     @PATCH("api/users/me/")
     suspend fun updateMe(
         @Header("Authorization") bearer: String,

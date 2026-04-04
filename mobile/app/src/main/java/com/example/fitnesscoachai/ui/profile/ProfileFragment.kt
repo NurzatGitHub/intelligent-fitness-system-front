@@ -3,29 +3,37 @@ package com.example.fitnesscoachai.ui.profile
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.util.Log
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.fitnesscoachai.R
+import com.example.fitnesscoachai.data.api.RetrofitClient
+import com.example.fitnesscoachai.data.models.UpdateProfileRequest
+import com.example.fitnesscoachai.data.models.User
 import com.example.fitnesscoachai.ui.auth.AuthActivity
 import com.example.fitnesscoachai.ui.history.HistoryActivity
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-import java.util.Calendar
 
 class ProfileFragment : Fragment() {
 
@@ -34,7 +42,6 @@ class ProfileFragment : Fragment() {
     private val avatarPicker =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
             if (uri != null) {
-                // 1) Пытаемся персистить URI-доступ (может упасть на некоторых устройствах/SDK).
                 try {
                     requireContext().contentResolver.takePersistableUriPermission(
                         uri,
@@ -44,20 +51,17 @@ class ProfileFragment : Fragment() {
                     Log.w(tag, "Не удалось персистить Uri для аватара: $uri", e)
                 }
 
-                // 2) Сохраняем строку URI в SharedPreferences.
                 requireContext()
                     .getSharedPreferences("user_profile", AppCompatActivity.MODE_PRIVATE)
                     .edit()
                     .putString("avatar_uri", uri.toString())
                     .apply()
 
-                // 3) Всегда обновляем ImageView (чтобы пользователь видел результат сразу).
                 val ivAvatar = view?.findViewById<ImageView>(R.id.ivAvatar)
                 ivAvatar?.let {
                     it.setImageURI(uri)
                     it.background = null
                     it.clearColorFilter()
-                    // Отключаем tint из layout, иначе фото может выглядеть "погашенным".
                     it.imageTintList = null
                     it.invalidate()
                 }
@@ -75,14 +79,28 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        loadUserProfile(view)
+        setupActions(view)
+        setupSettings(view)
+
+        loadCachedProfile(view)
         loadQuickStats(view)
-        loadFitnessProfile(view)
         loadAchievements(view)
         loadTrainingInsights(view)
         loadRecentActivity(view)
-        setupSettings(view)
-        setupActions(view)
+
+        fetchProfileFromServer()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        view?.let {
+            loadCachedProfile(it)
+            loadQuickStats(it)
+            loadAchievements(it)
+            loadTrainingInsights(it)
+            loadRecentActivity(it)
+        }
+        fetchProfileFromServer()
     }
 
     private fun setupActions(view: View) {
@@ -95,58 +113,122 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    private fun loadUserProfile(view: View) {
+    private fun getAccessToken(): String? {
         val authPrefs = requireContext().getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
-        val userName = authPrefs.getString("user_name", "Azamat") ?: "Azamat"
+        return authPrefs.getString("access_token", null)
+    }
 
+    private fun fetchProfileFromServer() {
+        val token = getAccessToken() ?: return
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitClient.apiService.getMe("Bearer $token")
+                }
+
+                if (response.isSuccessful) {
+                    val user = response.body()
+                    if (user != null) {
+                        cacheUser(user)
+                        view?.let { updateProfileUI(it, user) }
+                    } else {
+                        Log.e(tag, "GET /me success but body is null")
+                    }
+                } else {
+                    Log.e(tag, "GET /me failed: ${response.code()} ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e(tag, "GET /me exception", e)
+            }
+        }
+    }
+
+    private fun cacheUser(user: User) {
+        val authPrefs = requireContext().getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
         val profilePrefs = requireContext().getSharedPreferences("user_profile", AppCompatActivity.MODE_PRIVATE)
-        val fitnessLevel = profilePrefs.getString("fitness_level", "Beginner") ?: "Beginner"
-        val trainingGoal = profilePrefs.getString("training_goal", null)
-        val avatarUri = profilePrefs.getString("avatar_uri", null)
+
+        authPrefs.edit()
+            .putString("user_name", user.username)
+            .putString("user_email", user.email)
+            .apply()
+
+        profilePrefs.edit()
+            .putInt("age", user.age ?: 25)
+            .putFloat("weight", user.weight ?: 75f)
+            .putFloat("height", user.height ?: 180f)
+            .putString("fitness_level", user.fitness_level)
+            .putString("training_goal", user.goal.ifBlank { "" })
+            .putString("injuries", user.limitations.ifBlank { "" })
+            .putString("training_frequency", user.frequency.ifBlank { "" })
+            .putString("workout_duration", user.workout_duration.ifBlank { "" })
+            .putString("workout_place", user.workout_place.ifBlank { "" })
+            .putString("endurance_level", user.endurance_level.ifBlank { "" })
+            .putString("gender", user.gender.ifBlank { "" })
+            .putString("profile_picture_url", user.profile_picture_url ?: "")
+            .apply()
+    }
+
+    private fun loadCachedProfile(view: View) {
+        val authPrefs = requireContext().getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
+        val profilePrefs = requireContext().getSharedPreferences("user_profile", AppCompatActivity.MODE_PRIVATE)
+
+        val cachedUser = User(
+            id = 0,
+            email = authPrefs.getString("user_email", "") ?: "",
+            username = authPrefs.getString("user_name", "Azamat") ?: "Azamat",
+            age = profilePrefs.getInt("age", 25),
+            weight = profilePrefs.getFloat("weight", 75f),
+            height = profilePrefs.getFloat("height", 180f),
+            fitness_level = profilePrefs.getString("fitness_level", "beginner") ?: "beginner",
+            goal = profilePrefs.getString("training_goal", "") ?: "",
+            limitations = profilePrefs.getString("injuries", "") ?: "",
+            frequency = profilePrefs.getString("training_frequency", "") ?: "",
+            workout_duration = profilePrefs.getString("workout_duration", "") ?: "",
+            workout_place = profilePrefs.getString("workout_place", "") ?: "",
+            endurance_level = profilePrefs.getString("endurance_level", "") ?: "",
+            gender = profilePrefs.getString("gender", "") ?: "",
+            profile_picture_url = profilePrefs.getString("profile_picture_url", "")?.ifBlank { null }
+        )
+
+        updateProfileUI(view, cachedUser)
+    }
+
+    private fun updateProfileUI(view: View, user: User) {
+        val settingsPrefs =
+            requireContext().getSharedPreferences("app_settings", AppCompatActivity.MODE_PRIVATE)
+        val units = settingsPrefs.getString("units", "kg / cm") ?: "kg / cm"
+
+        val userName = user.username.ifBlank { "User" }
+        val levelText = formatFitnessLevel(user.fitness_level)
+        val goalText = user.goal.ifBlank { "No goal set yet" }
+        val subtitle = if (levelText.isNotBlank()) "Fitness Level: $levelText" else "Fitness Profile"
 
         view.findViewById<TextView>(R.id.tvUserName).text = userName
-        view.findViewById<TextView>(R.id.tvUserSubtitle).text =
-            if (trainingGoal != null) "Training Goal: $trainingGoal" else "Fitness Level: $fitnessLevel"
+        view.findViewById<TextView>(R.id.tvUserSubtitle).text = subtitle
+        view.findViewById<TextView>(R.id.tvProfileGoal).text = "Goal: $goalText"
 
         val ivAvatar = view.findViewById<ImageView>(R.id.ivAvatar)
-        if (!avatarUri.isNullOrBlank()) {
-            ivAvatar.setImageURI(Uri.parse(avatarUri))
+        val localAvatarUri = requireContext()
+            .getSharedPreferences("user_profile", AppCompatActivity.MODE_PRIVATE)
+            .getString("avatar_uri", null)
+
+        if (!localAvatarUri.isNullOrBlank()) {
+            ivAvatar.setImageURI(Uri.parse(localAvatarUri))
             ivAvatar.background = null
             ivAvatar.clearColorFilter()
             ivAvatar.imageTintList = null
             ivAvatar.invalidate()
         }
-    }
 
-    private fun loadQuickStats(view: View) {
-        val workoutPrefs = requireContext().getSharedPreferences("workout_history", AppCompatActivity.MODE_PRIVATE)
-        val historyCount = workoutPrefs.getInt("history_count", 0)
+        view.findViewById<TextView>(R.id.tvAge).text =
+            (user.age ?: 25).toString()
 
-        view.findViewById<TextView>(R.id.tvTotalWorkouts).text = historyCount.toString()
+        view.findViewById<TextView>(R.id.tvGender).text =
+            user.gender.ifBlank { "Not specified" }
 
-        var totalReps = 0
-        for (i in 0 until historyCount) {
-            totalReps += workoutPrefs.getInt("reps_$i", 0)
-        }
-        view.findViewById<TextView>(R.id.tvTotalReps).text = totalReps.toString()
-
-        val avgScore = if (historyCount > 0) 78 else 0
-        view.findViewById<TextView>(R.id.tvAvgFormScore).text = "$avgScore%"
-    }
-
-    private fun loadFitnessProfile(view: View) {
-        val prefs = requireContext().getSharedPreferences("user_profile", AppCompatActivity.MODE_PRIVATE)
-        val settingsPrefs =
-            requireContext().getSharedPreferences("app_settings", AppCompatActivity.MODE_PRIVATE)
-        val units = settingsPrefs.getString("units", "kg / cm") ?: "kg / cm"
-
-        val age = prefs.getInt("age", 25)
-        val gender = prefs.getString("gender", "Male") ?: "Male"
-        val weightKg = prefs.getFloat("weight", 75f)
-        val heightCm = prefs.getFloat("height", 180f)
-
-        view.findViewById<TextView>(R.id.tvAge).text = age.toString()
-        view.findViewById<TextView>(R.id.tvGender).text = gender
+        val weightKg = user.weight ?: 75f
+        val heightCm = user.height ?: 180f
 
         if (units == "lb / ft") {
             val weightLb = weightKg * 2.20462f
@@ -162,11 +244,45 @@ class ProfileFragment : Fragment() {
         }
 
         view.findViewById<TextView>(R.id.tvTrainingFrequency).text =
-            prefs.getString("training_frequency", "3-4 times per week") ?: "3-4 times per week"
+            user.frequency.ifBlank { "Not specified" }
+
         view.findViewById<TextView>(R.id.tvWorkoutDuration).text =
-            prefs.getString("workout_duration", "30-60 min") ?: "30-60 min"
+            user.workout_duration.ifBlank { "Not specified" }
+
         view.findViewById<TextView>(R.id.tvLimitations).text =
-            prefs.getString("injuries", "No Limitations") ?: "No Limitations"
+            user.limitations.ifBlank { "No Limitations" }
+    }
+
+    private fun formatFitnessLevel(level: String?): String {
+        return when (level?.lowercase(Locale.getDefault())) {
+            "beginner" -> "Beginner"
+            "intermediate" -> "Intermediate"
+            "advanced" -> "Advanced"
+            else -> level?.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+            } ?: ""
+        }
+    }
+
+    private fun loadQuickStats(view: View) {
+        val workoutPrefs = requireContext().getSharedPreferences("workout_history", AppCompatActivity.MODE_PRIVATE)
+        val historyCount = workoutPrefs.getInt("history_count", 0)
+
+        view.findViewById<TextView>(R.id.tvTotalWorkouts).text = historyCount.toString()
+        view.findViewById<TextView>(R.id.tvStatWorkoutsValue).text = historyCount.toString()
+
+        var totalReps = 0
+        for (i in 0 until historyCount) {
+            totalReps += workoutPrefs.getInt("reps_$i", 0)
+        }
+        view.findViewById<TextView>(R.id.tvTotalReps).text = totalReps.toString()
+
+        val avgScore = if (historyCount > 0) 78 else 0
+        view.findViewById<TextView>(R.id.tvAvgFormScore).text = "$avgScore%"
+        view.findViewById<TextView>(R.id.tvStatFormValue).text = "$avgScore%"
+
+        val streak = calculateStreak(workoutPrefs, historyCount)
+        view.findViewById<TextView>(R.id.tvStatStreakValue).text = streak.toString()
     }
 
     private fun loadAchievements(view: View) {
@@ -250,7 +366,7 @@ class ProfileFragment : Fragment() {
         }
 
         view.findViewById<TextView>(R.id.tvBestExercise).text =
-            exerciseCounts.maxByOrNull { it.value }?.key ?: "Squat"
+            exerciseCounts.maxByOrNull { it.value }?.key ?: "No data yet"
 
         view.findViewById<TextView>(R.id.tvAIAccuracy).text = "92%"
     }
@@ -377,8 +493,8 @@ class ProfileFragment : Fragment() {
             .setSingleChoiceItems(items, checked) { dialog, which ->
                 prefs.edit().putString("units", items[which]).apply()
                 view?.findViewById<TextView>(R.id.tvUnits)?.text = items[which]
-                view?.let {
-                    loadFitnessProfile(it)
+                view?.let { currentView ->
+                    loadCachedProfile(currentView)
                 }
                 dialog.dismiss()
             }
@@ -386,15 +502,20 @@ class ProfileFragment : Fragment() {
     }
 
     private fun showEditProfileDialog() {
+        val authPrefs = requireContext().getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
         val prefs = requireContext().getSharedPreferences("user_profile", AppCompatActivity.MODE_PRIVATE)
         val settingsPrefs = requireContext().getSharedPreferences("app_settings", AppCompatActivity.MODE_PRIVATE)
+
         val units = settingsPrefs.getString("units", "kg / cm") ?: "kg / cm"
         val isImperial = units == "lb / ft"
         val ctx = requireContext()
+
         val fieldParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply { topMargin = 16 }
+        ).apply {
+            topMargin = 16
+        }
 
         val weightKg = prefs.getFloat("weight", 75f)
         val heightCm = prefs.getFloat("height", 180f)
@@ -409,13 +530,10 @@ class ProfileFragment : Fragment() {
             layoutParams = fieldParams
             isErrorEnabled = true
             addView(TextInputEditText(ctx).apply {
-                setText(
-                    ctx.getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
-                        .getString("user_name", "Azamat") ?: "Azamat"
-                )
+                setText(authPrefs.getString("user_name", "Azamat") ?: "Azamat")
             })
         }
-        val etName = tilName.getEditText()!!
+        val etName = tilName.editText!!
 
         val tilAge = TextInputLayout(ctx).apply {
             hint = "Age"
@@ -426,7 +544,7 @@ class ProfileFragment : Fragment() {
                 setText(prefs.getInt("age", 25).toString())
             })
         }
-        val etAge = tilAge.getEditText()!!
+        val etAge = tilAge.editText!!
 
         val tilWeight = TextInputLayout(ctx).apply {
             hint = "Weight"
@@ -434,14 +552,15 @@ class ProfileFragment : Fragment() {
             layoutParams = fieldParams
             isErrorEnabled = true
             addView(TextInputEditText(ctx).apply {
-                inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+                inputType = android.text.InputType.TYPE_CLASS_NUMBER or
+                        android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
                 setText(
                     if (isImperial) (weightKg * 2.20462f).toString()
                     else weightKg.toString()
                 )
             })
         }
-        val etWeight = tilWeight.getEditText()!!
+        val etWeight = tilWeight.editText!!
 
         val tilHeight = TextInputLayout(ctx).apply {
             hint = "Height"
@@ -449,14 +568,15 @@ class ProfileFragment : Fragment() {
             layoutParams = fieldParams
             isErrorEnabled = true
             addView(TextInputEditText(ctx).apply {
-                inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+                inputType = android.text.InputType.TYPE_CLASS_NUMBER or
+                        android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
                 setText(
                     if (isImperial) (heightCm / 2.54f).toString()
                     else heightCm.toInt().toString()
                 )
             })
         }
-        val etHeight = tilHeight.getEditText()!!
+        val etHeight = tilHeight.editText!!
 
         container.addView(tilName)
         container.addView(tilAge)
@@ -467,78 +587,148 @@ class ProfileFragment : Fragment() {
             .setTitle("Edit Personal Data")
             .setView(container)
             .setNegativeButton("Cancel", null)
-            .setPositiveButton("Save") { dialogInterface, _ ->
-                tilName.error = null
-                tilAge.error = null
-                tilWeight.error = null
-                tilHeight.error = null
+            .setPositiveButton("Save", null)
+            .create()
+            .also { dialog ->
+                dialog.setOnShowListener {
+                    dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                        tilName.error = null
+                        tilAge.error = null
+                        tilWeight.error = null
+                        tilHeight.error = null
 
-                val name = etName.text.toString().trim()
-                val ageStr = etAge.text.toString().trim()
-                val weightStr = etWeight.text.toString().trim()
-                val heightStr = etHeight.text.toString().trim()
+                        val name = etName.text?.toString()?.trim().orEmpty()
+                        val ageStr = etAge.text?.toString()?.trim().orEmpty()
+                        val weightStr = etWeight.text?.toString()?.trim().orEmpty()
+                        val heightStr = etHeight.text?.toString()?.trim().orEmpty()
 
-                var hasError = false
-                if (name.isBlank()) {
-                    tilName.error = "Enter your name"
-                    hasError = true
-                }
-                val age = ageStr.toIntOrNull()
-                if (age == null || age !in 10..120) {
-                    tilAge.error = "Age must be between 10 and 120"
-                    hasError = true
-                }
-                val weightVal: Float
-                val heightVal: Float
-                if (isImperial) {
-                    val weightLb = weightStr.toFloatOrNull()
-                    if (weightLb == null || weightLb !in 44f..660f) {
-                        tilWeight.error = "Weight must be between 44 and 660 lb"
-                        hasError = true
+                        var hasError = false
+
+                        if (name.isBlank()) {
+                            tilName.error = "Enter your name"
+                            hasError = true
+                        }
+
+                        val age = ageStr.toIntOrNull()
+                        if (age == null || age !in 10..120) {
+                            tilAge.error = "Age must be between 10 and 120"
+                            hasError = true
+                        }
+
+                        val weightVal: Float
+                        val heightVal: Float
+
+                        if (isImperial) {
+                            val weightLb = weightStr.toFloatOrNull()
+                            if (weightLb == null || weightLb !in 44f..660f) {
+                                tilWeight.error = "Weight must be between 44 and 660 lb"
+                                hasError = true
+                            }
+
+                            val heightIn = heightStr.toFloatOrNull()
+                            if (heightIn == null || heightIn !in 39f..98f) {
+                                tilHeight.error = "Height must be between 39 and 98 in"
+                                hasError = true
+                            }
+
+                            weightVal = (weightLb ?: 165f) / 2.20462f
+                            heightVal = (heightIn ?: 70f) * 2.54f
+                        } else {
+                            val weight = weightStr.toFloatOrNull()
+                            if (weight == null || weight !in 20f..300f) {
+                                tilWeight.error = "Weight must be between 20 and 300 kg"
+                                hasError = true
+                            }
+
+                            val height = heightStr.toFloatOrNull()
+                            if (height == null || height !in 100f..250f) {
+                                tilHeight.error = "Height must be between 100 and 250 cm"
+                                hasError = true
+                            }
+
+                            weightVal = weight ?: 75f
+                            heightVal = height ?: 180f
+                        }
+
+                        if (hasError) return@setOnClickListener
+
+                        updateProfileOnServer(
+                            dialog = dialog,
+                            username = name,
+                            age = age ?: 25,
+                            weight = weightVal,
+                            height = heightVal
+                        )
                     }
-                    val heightIn = heightStr.toFloatOrNull()
-                    if (heightIn == null || heightIn !in 39f..98f) {
-                        tilHeight.error = "Height must be between 39 and 98 in"
-                        hasError = true
-                    }
-                    weightVal = (weightLb ?: 165f) / 2.20462f
-                    heightVal = (heightIn ?: 70f) * 2.54f
-                } else {
-                    val weight = weightStr.toFloatOrNull()
-                    if (weight == null || weight !in 20f..300f) {
-                        tilWeight.error = "Weight must be between 20 and 300 kg"
-                        hasError = true
-                    }
-                    val height = heightStr.toFloatOrNull()
-                    if (height == null || height !in 100f..250f) {
-                        tilHeight.error = "Height must be between 100 and 250 cm"
-                        hasError = true
-                    }
-                    weightVal = weight ?: 75f
-                    heightVal = height ?: 180f
                 }
-                if (hasError) return@setPositiveButton
-
-                val ageVal = age ?: 25
-
-                ctx.getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
-                    .edit()
-                    .putString("user_name", name.ifBlank { "Azamat" })
-                    .apply()
-
-                prefs.edit()
-                    .putInt("age", ageVal)
-                    .putFloat("weight", weightVal)
-                    .putFloat("height", heightVal)
-                    .apply()
-
-                view?.let {
-                    loadUserProfile(it)
-                    loadFitnessProfile(it)
-                }
-                (dialogInterface as? android.app.AlertDialog)?.dismiss()
+                dialog.show()
             }
-            .show()
+    }
+
+    private fun updateProfileOnServer(
+        dialog: androidx.appcompat.app.AlertDialog,
+        username: String,
+        age: Int,
+        weight: Float,
+        height: Float
+    ) {
+        val token = getAccessToken()
+        if (token.isNullOrBlank()) {
+            Toast.makeText(requireContext(), "Authorization token not found", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val prefs = requireContext().getSharedPreferences("user_profile", AppCompatActivity.MODE_PRIVATE)
+
+        val request = UpdateProfileRequest(
+            username = username,
+            age = age,
+            weight = weight,
+            height = height,
+            fitness_level = prefs.getString("fitness_level", null),
+            goal = prefs.getString("training_goal", null),
+            limitations = prefs.getString("injuries", null),
+            frequency = prefs.getString("training_frequency", null),
+            workout_duration = prefs.getString("workout_duration", null),
+            workout_place = prefs.getString("workout_place", null),
+            endurance_level = prefs.getString("endurance_level", null),
+            gender = prefs.getString("gender", null)
+        )
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitClient.apiService.updateMe("Bearer $token", request)
+                }
+
+                if (response.isSuccessful) {
+                    val updatedUser = response.body()
+                    if (updatedUser != null) {
+                        cacheUser(updatedUser)
+                        view?.let { updateProfileUI(it, updatedUser) }
+                        Toast.makeText(requireContext(), "Profile updated", Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
+                    } else {
+                        Toast.makeText(requireContext(), "Empty server response", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e(tag, "PATCH /me failed: ${response.code()} $errorBody")
+                    Toast.makeText(
+                        requireContext(),
+                        "Update failed: ${response.code()}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } catch (e: Exception) {
+                Log.e(tag, "PATCH /me exception", e)
+                Toast.makeText(
+                    requireContext(),
+                    "Network error while updating profile",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     private fun createPrimaryListText(text: String): TextView {

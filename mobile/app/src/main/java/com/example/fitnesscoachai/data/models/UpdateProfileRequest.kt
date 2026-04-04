@@ -1,6 +1,7 @@
 package com.example.fitnesscoachai.data.models
 
 data class UpdateProfileRequest(
+    val username: String? = null,
     val age: Int? = null,
     val height: Float? = null,
     val weight: Float? = null,

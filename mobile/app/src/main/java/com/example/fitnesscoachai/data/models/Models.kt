@@ -15,6 +15,7 @@ data class User(
     val workout_place: String = "",
     val endurance_level: String = "",
     val gender: String = "",
+    val profile_picture_url: String? = null,
 )
 
 data class LoginRequest(
