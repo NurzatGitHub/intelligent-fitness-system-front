@@ -3,6 +3,10 @@ package com.example.fitnesscoachai.data.api
 import com.example.fitnesscoachai.data.models.AuthResponse
 import com.example.fitnesscoachai.data.models.ChatRequest
 import com.example.fitnesscoachai.data.models.ChatResponse
+import com.example.fitnesscoachai.data.models.ExerciseCategoryResponse
+import com.example.fitnesscoachai.data.models.ExerciseDetailResponse
+import com.example.fitnesscoachai.data.models.ExerciseListItemResponse
+import com.example.fitnesscoachai.data.models.ExerciseSubcategoryResponse
 import com.example.fitnesscoachai.data.models.GoogleLoginRequest
 import com.example.fitnesscoachai.data.models.LoginRequest
 import com.example.fitnesscoachai.data.models.RegisterRequest
@@ -15,6 +19,8 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -48,4 +54,29 @@ interface ApiService {
     suspend fun getWeeklyPlan(
         @Header("Authorization") bearer: String
     ): Response<WeeklyPlanResponse>
+
+    @GET("api/exercises/categories/")
+    suspend fun getExerciseCategories(
+        @Header("Authorization") bearer: String
+    ): Response<List<ExerciseCategoryResponse>>
+
+    @GET("api/exercises/subcategories/")
+    suspend fun getExerciseSubcategories(
+        @Header("Authorization") bearer: String,
+        @Query("category") categorySlug: String
+    ): Response<List<ExerciseSubcategoryResponse>>
+
+    @GET("api/exercises/")
+    suspend fun getExercises(
+        @Header("Authorization") bearer: String,
+        @Query("category") categorySlug: String? = null,
+        @Query("subcategory") subcategorySlug: String? = null,
+        @Query("search") search: String? = null
+    ): Response<List<ExerciseListItemResponse>>
+
+    @GET("api/exercises/{slug}/")
+    suspend fun getExerciseDetail(
+        @Header("Authorization") bearer: String,
+        @Path("slug") slug: String
+    ): Response<ExerciseDetailResponse>
 }

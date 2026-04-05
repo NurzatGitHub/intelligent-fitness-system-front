@@ -4,19 +4,21 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.example.fitnesscoachai.R
-import com.example.fitnesscoachai.data.repo.ExerciseRepositoryLocal
+import com.example.fitnesscoachai.data.api.RetrofitClient
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
+
 class ExerciseInstructionActivity : AppCompatActivity() {
 
     private var player: ExoPlayer? = null
@@ -31,63 +33,102 @@ class ExerciseInstructionActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener { finish() }
 
-        val exerciseId = intent.getStringExtra(EXTRA_EXERCISE_ID)
-        if (exerciseId == null) {
+        val exerciseSlug = intent.getStringExtra(EXTRA_EXERCISE_SLUG)
+        if (exerciseSlug.isNullOrBlank()) {
             finish()
             return
         }
 
-        val repo = ExerciseRepositoryLocal()
+        playerView = findViewById(R.id.playerView)
+        loadExerciseDetail(exerciseSlug)
+    }
+
+    private fun getBearerToken(): String? {
+        val prefs = getSharedPreferences("auth", Context.MODE_PRIVATE)
+        val token = prefs.getString("access_token", null)
+        return if (token.isNullOrBlank()) null else "Bearer $token"
+    }
+
+    private fun loadExerciseDetail(slug: String) {
+        val token = getBearerToken()
+        if (token == null) {
+            Toast.makeText(this, "Please log in first", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+
         val stepsContainer = findViewById<LinearLayout>(R.id.stepsContainer)
         val tipsContainer = findViewById<LinearLayout>(R.id.tipsContainer)
         val videoContainer = findViewById<View>(R.id.videoContainer)
-        playerView = findViewById(R.id.playerView)
 
         lifecycleScope.launch {
-            val exercise = repo.getExerciseById(exerciseId)
-            if (exercise == null) {
-                finish()
-                return@launch
-            }
-            supportActionBar?.title = exercise.titleEn
+            try {
+                val response = RetrofitClient.apiService.getExerciseDetail(
+                    bearer = token,
+                    slug = slug
+                )
 
-            if (!exercise.videoPath.isNullOrBlank()) {
-                val cached = cacheVideoIfNeeded(exercise.videoPath!!)
-                if (cached != null && cached.exists()) {
-                    videoContainer.visibility = View.VISIBLE
-                    initializePlayer(cached)
+                if (!response.isSuccessful || response.body() == null) {
+                    Toast.makeText(
+                        this@ExerciseInstructionActivity,
+                        "Failed to load exercise",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    finish()
+                    return@launch
+                }
+
+                val exercise = response.body()!!
+
+                supportActionBar?.title = exercise.name
+                findViewById<TextView>(R.id.tvExerciseName).text = exercise.name
+                findViewById<TextView>(R.id.tvExerciseMeta).text = buildString {
+                    if (exercise.equipment.isNotBlank()) {
+                        append(exercise.equipment.replaceFirstChar { it.uppercase() })
+                    }
+                    if (exercise.difficulty.isNotBlank()) {
+                        if (isNotEmpty()) append(" · ")
+                        append(exercise.difficulty.replaceFirstChar { it.uppercase() })
+                    }
+                    if (isEmpty()) append("-")
+                }
+                findViewById<TextView>(R.id.tvDescription).text = exercise.description
+
+                val videoAssetName = exercise.asset_video_name.trim()
+                if (videoAssetName.isNotEmpty()) {
+                    val cached = cacheVideoIfNeeded("videos/${videoAssetName}.mp4")
+                    if (cached != null && cached.exists()) {
+                        videoContainer.visibility = View.VISIBLE
+                        initializePlayer(cached)
+                    } else {
+                        videoContainer.visibility = View.GONE
+                    }
                 } else {
                     videoContainer.visibility = View.GONE
                 }
-            } else {
-                videoContainer.visibility = View.GONE
-            }
 
-            findViewById<TextView>(R.id.tvExerciseName).text = exercise.titleEn
-            findViewById<TextView>(R.id.tvExerciseMeta).text = buildString {
-                exercise.equipment?.let { append(it.replaceFirstChar { c -> c.uppercase() }) }
-                exercise.difficulty?.let {
-                    if (isNotEmpty()) append(" · ")
-                    append(it)
+                stepsContainer.removeAllViews()
+                exercise.steps.forEachIndexed { index, step ->
+                    val view = LayoutInflater.from(this@ExerciseInstructionActivity)
+                        .inflate(R.layout.item_step, stepsContainer, false)
+                    (view as TextView).text = "${index + 1}. $step"
+                    stepsContainer.addView(view)
                 }
-                if (isEmpty()) append("-")
-            }
-            findViewById<TextView>(R.id.tvDescription).text = exercise.description
 
-            stepsContainer.removeAllViews()
-            exercise.steps.forEachIndexed { index, step ->
-                val view = LayoutInflater.from(this@ExerciseInstructionActivity)
-                    .inflate(R.layout.item_step, stepsContainer, false)
-                (view as TextView).text = "${index + 1}. $step"
-                stepsContainer.addView(view)
-            }
-
-            tipsContainer.removeAllViews()
-            exercise.tips.forEach { tip ->
-                val view = LayoutInflater.from(this@ExerciseInstructionActivity)
-                    .inflate(R.layout.item_step, tipsContainer, false)
-                (view as TextView).text = "• $tip"
-                tipsContainer.addView(view)
+                tipsContainer.removeAllViews()
+                exercise.tips_list.forEach { tip ->
+                    val view = LayoutInflater.from(this@ExerciseInstructionActivity)
+                        .inflate(R.layout.item_step, tipsContainer, false)
+                    (view as TextView).text = "• $tip"
+                    tipsContainer.addView(view)
+                }
+            } catch (e: Exception) {
+                Toast.makeText(
+                    this@ExerciseInstructionActivity,
+                    "Network error",
+                    Toast.LENGTH_SHORT
+                ).show()
+                finish()
             }
         }
     }
@@ -96,7 +137,6 @@ class ExerciseInstructionActivity : AppCompatActivity() {
         return try {
             val fileName = assetPath.substringAfterLast('/')
             val outFile = File(cacheDir, fileName)
-            // Всегда перезаписываем из assets, чтобы при замене файла показывалась новая версия
             assets.open(assetPath).use { input ->
                 outFile.outputStream().use { output ->
                     input.copyTo(output)
@@ -139,11 +179,11 @@ class ExerciseInstructionActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val EXTRA_EXERCISE_ID = "extra_exercise_id"
+        const val EXTRA_EXERCISE_SLUG = "extra_exercise_slug"
 
-        fun newIntent(context: Context, exerciseId: String): Intent {
+        fun newIntent(context: Context, exerciseSlug: String): Intent {
             return Intent(context, ExerciseInstructionActivity::class.java).apply {
-                putExtra(EXTRA_EXERCISE_ID, exerciseId)
+                putExtra(EXTRA_EXERCISE_SLUG, exerciseSlug)
             }
         }
     }

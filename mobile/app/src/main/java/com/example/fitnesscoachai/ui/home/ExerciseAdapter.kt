@@ -1,24 +1,22 @@
 package com.example.fitnesscoachai.ui.home
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnesscoachai.R
-import com.example.fitnesscoachai.domain.model.Exercise
-import com.example.fitnesscoachai.domain.model.ExerciseMedia
+import com.example.fitnesscoachai.data.models.ExerciseListItemResponse
 
 class ExerciseAdapter(
-    private var exercises: List<Exercise>,
-    private val onExerciseClick: (Exercise) -> Unit = {}
+    private var exercises: List<ExerciseListItemResponse>,
+    private val onExerciseClick: (ExerciseListItemResponse) -> Unit = {}
 ) : RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder>() {
 
-    class ExerciseViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val tvExerciseName: TextView = view.findViewById(R.id.tvExerciseName)
-        val tvExerciseTarget: TextView = view.findViewById(R.id.tvExerciseTarget)
-        val ivExerciseGif: ImageView = view.findViewById(R.id.ivExerciseGif)
+    class ExerciseViewHolder(parent: android.view.View) : RecyclerView.ViewHolder(parent) {
+        val tvExerciseName: TextView = parent.findViewById(R.id.tvExerciseName)
+        val tvExerciseTarget: TextView = parent.findViewById(R.id.tvExerciseTarget)
+        val ivExerciseGif: ImageView = parent.findViewById(R.id.ivExerciseGif)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExerciseViewHolder {
@@ -29,30 +27,37 @@ class ExerciseAdapter(
 
     override fun onBindViewHolder(holder: ExerciseViewHolder, position: Int) {
         val exercise = exercises[position]
-        holder.tvExerciseName.text = exercise.titleEn.replaceFirstChar { it.uppercase() }
+
+        holder.tvExerciseName.text = exercise.name
         holder.tvExerciseTarget.text = buildString {
-            append(exercise.sub.titleEn)
-            exercise.equipment?.let { append(" | ").append(it) }
-        }
-        when (val m = exercise.media) {
-            is ExerciseMedia.LocalAsset -> {
-                if (m.path.startsWith("drawable/")) {
-                    val name = m.path.removePrefix("drawable/")
-                    val resId = holder.itemView.context.resources.getIdentifier(name, "drawable", holder.itemView.context.packageName)
-                    if (resId != 0) holder.ivExerciseGif.setImageResource(resId)
-                    else holder.ivExerciseGif.setImageDrawable(null)
-                } else {
-                    holder.ivExerciseGif.setImageDrawable(null)
-                }
+            append(exercise.subcategory_name ?: exercise.category_name)
+            if (exercise.equipment.isNotBlank()) {
+                append(" | ").append(exercise.equipment)
             }
-            else -> holder.ivExerciseGif.setImageDrawable(null)
         }
+
+        val imageName = exercise.asset_image_name.trim()
+        if (imageName.isNotEmpty()) {
+            val resId = holder.itemView.context.resources.getIdentifier(
+                imageName,
+                "drawable",
+                holder.itemView.context.packageName
+            )
+            if (resId != 0) {
+                holder.ivExerciseGif.setImageResource(resId)
+            } else {
+                holder.ivExerciseGif.setImageDrawable(null)
+            }
+        } else {
+            holder.ivExerciseGif.setImageDrawable(null)
+        }
+
         holder.itemView.setOnClickListener { onExerciseClick(exercise) }
     }
 
-    override fun getItemCount() = exercises.size
+    override fun getItemCount(): Int = exercises.size
 
-    fun updateData(newExercises: List<Exercise>) {
+    fun updateData(newExercises: List<ExerciseListItemResponse>) {
         exercises = newExercises
         notifyDataSetChanged()
     }
