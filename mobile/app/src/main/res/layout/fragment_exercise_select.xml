@@ -22,6 +22,8 @@
         android:layout_marginBottom="16dp"
         android:background="@android:drawable/edit_text"
         android:hint="Search exercise"
+        android:textColor="@android:color/black"
+        android:textColorHint="#FF616161"
         android:inputType="text"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
