@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.example.fitnesscoachai.ui.auth.AuthActivity
-import com.example.fitnesscoachai.ui.exercise.ExerciseSelectActivity
+import com.example.fitnesscoachai.ui.exercise.ExerciseSelectFragment
 import com.example.fitnesscoachai.ui.home.HomeFragment
 import com.example.fitnesscoachai.ui.profile.ProfileFragment
 import com.example.fitnesscoachai.ui.assistant.AssistantFragment
@@ -27,15 +27,17 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        openFragment(HomeFragment())
-
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
+
+        if (savedInstanceState == null) {
+            openFragment(HomeFragment())
+            bottomNavigation.selectedItemId = R.id.nav_home
+        }
+
         bottomNavigation.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.nav_home -> openFragment(HomeFragment())
-                R.id.nav_camera -> {
-                    startActivity(Intent(this, ExerciseSelectActivity::class.java))
-                }
+                R.id.nav_camera -> openFragment(ExerciseSelectFragment())
                 R.id.nav_assistant -> openFragment(AssistantFragment())
                 R.id.nav_profile -> openFragment(ProfileFragment())
             }
