@@ -55,6 +55,11 @@ interface ApiService {
         @Header("Authorization") bearer: String
     ): Response<WeeklyPlanResponse>
 
+    @POST("api/assistant/weekly-plan/regenerate/")
+    suspend fun regenerateWeeklyPlan(
+        @Header("Authorization") bearer: String
+    ): Response<WeeklyPlanResponse>
+
     @GET("api/exercises/categories/")
     suspend fun getExerciseCategories(
         @Header("Authorization") bearer: String

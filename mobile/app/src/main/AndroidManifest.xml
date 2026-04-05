@@ -101,6 +101,9 @@
         <activity
             android:name=".ui.history.HistoryActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.home.WeeklyPlanDayActivity"
+            android:exported="false" />
 
     </application>
 

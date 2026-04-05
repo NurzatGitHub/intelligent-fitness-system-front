@@ -68,9 +68,9 @@
             android:layout_marginBottom="24dp"
             app:cardCornerRadius="24dp"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="?attr/colorPrimaryContainer"
+            app:cardBackgroundColor="@color/weekly_plan_card_bg"
             app:strokeWidth="1dp"
-            app:strokeColor="?attr/colorOutline">
+            app:strokeColor="@color/weekly_plan_card_stroke">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -85,7 +85,7 @@
                     android:text="AI Weekly Plan"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="?attr/colorOnPrimaryContainer" />
+                    android:textColor="@color/weekly_plan_card_text_primary" />
 
                 <TextView
                     android:id="@+id/tvAiPlanSummary"
@@ -94,7 +94,7 @@
                     android:layout_marginTop="6dp"
                     android:text="Generating your personalized weekly plan..."
                     android:textSize="14sp"
-                    android:textColor="?attr/colorOnPrimaryContainer"
+                    android:textColor="@color/weekly_plan_card_text_secondary"
                     android:alpha="0.85" />
 
                 <HorizontalScrollView
@@ -399,7 +399,7 @@
                     android:text="Today"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:textColor="?attr/colorOnPrimaryContainer" />
+                    android:textColor="@color/weekly_plan_card_text_primary"/>
 
                 <TextView
                     android:id="@+id/tvTodayMeta"
@@ -408,7 +408,7 @@
                     android:layout_marginTop="6dp"
                     android:text="Your today plan will appear here"
                     android:textSize="14sp"
-                    android:textColor="?attr/colorOnPrimaryContainer"
+                    android:textColor="@color/weekly_plan_card_text_secondary"
                     android:alpha="0.9" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

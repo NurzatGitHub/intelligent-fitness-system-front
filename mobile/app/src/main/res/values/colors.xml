@@ -2,6 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
     <!-- Цвета карточек категорий (группы мышц) -->
     <color name="category_back">#4A90A4</color>
     <color name="category_cardio">#E74C3C</color>
@@ -28,4 +29,10 @@
     <color name="profile_accent_soft">#664E3BB8</color>
     <color name="profile_badge_border">#66FFFFFF</color>
     <color name="profile_on_accent">#0B0715</color>
+
+    <!-- Weekly plan card -->
+    <color name="weekly_plan_card_bg">#1C1C22</color>
+    <color name="weekly_plan_card_stroke">#3A3A44</color>
+    <color name="weekly_plan_card_text_primary">#FFFFFFFF</color>
+    <color name="weekly_plan_card_text_secondary">#D0D0DA</color>
 </resources>
