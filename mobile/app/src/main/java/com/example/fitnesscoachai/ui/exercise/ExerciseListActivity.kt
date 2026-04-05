@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.fitnesscoachai.R
 import com.example.fitnesscoachai.data.api.RetrofitClient
 import com.example.fitnesscoachai.data.models.ExerciseSubcategoryResponse
+import com.example.fitnesscoachai.data.repo.ExerciseMemoryCache
 import com.example.fitnesscoachai.domain.model.MainCategory
 import com.example.fitnesscoachai.ui.home.ExerciseAdapter
 import com.example.fitnesscoachai.ui.home.MainCategoryDisplay
@@ -71,6 +72,12 @@ class ExerciseListActivity : AppCompatActivity() {
         val pbLoading = findViewById<ProgressBar>(R.id.pbLoading)
         val tvEmpty = findViewById<TextView>(R.id.tvEmpty)
 
+        val cached = ExerciseMemoryCache.getSubcategories(main.id)
+        if (!cached.isNullOrEmpty()) {
+            setupChips(chipGroup, main, cached, pbLoading, tvEmpty, token)
+            return
+        }
+
         pbLoading.visibility = View.VISIBLE
         tvEmpty.visibility = View.GONE
 
@@ -85,6 +92,8 @@ class ExerciseListActivity : AppCompatActivity() {
 
                 if (response.isSuccessful && response.body() != null) {
                     val subcategories = response.body().orEmpty()
+                    ExerciseMemoryCache.putSubcategories(main.id, subcategories)
+
                     if (subcategories.isEmpty()) {
                         tvEmpty.visibility = View.VISIBLE
                         tvEmpty.text = "No subcategories found"
@@ -121,10 +130,7 @@ class ExerciseListActivity : AppCompatActivity() {
                 intArrayOf(android.R.attr.state_checked),
                 intArrayOf()
             ),
-            intArrayOf(
-                selectedColor,
-                unselectedColor
-            )
+            intArrayOf(selectedColor, unselectedColor)
         )
 
         val textStates = ColorStateList(
@@ -132,10 +138,7 @@ class ExerciseListActivity : AppCompatActivity() {
                 intArrayOf(android.R.attr.state_checked),
                 intArrayOf()
             ),
-            intArrayOf(
-                textSelected,
-                textUnselected
-            )
+            intArrayOf(textSelected, textUnselected)
         )
 
         chipGroup.setOnCheckedStateChangeListener(null)
@@ -195,6 +198,14 @@ class ExerciseListActivity : AppCompatActivity() {
         tvEmpty: TextView,
         token: String
     ) {
+        val cached = ExerciseMemoryCache.getExercises(categorySlug, subcategorySlug)
+        if (!cached.isNullOrEmpty()) {
+            exerciseAdapter.updateData(cached)
+            pbLoading.visibility = View.GONE
+            tvEmpty.visibility = if (cached.isEmpty()) View.VISIBLE else View.GONE
+            return
+        }
+
         pbLoading.visibility = View.VISIBLE
         tvEmpty.visibility = View.GONE
 
@@ -210,6 +221,7 @@ class ExerciseListActivity : AppCompatActivity() {
 
                 if (response.isSuccessful && response.body() != null) {
                     val exercises = response.body().orEmpty()
+                    ExerciseMemoryCache.putExercises(categorySlug, subcategorySlug, exercises)
                     exerciseAdapter.updateData(exercises)
                     tvEmpty.visibility = if (exercises.isEmpty()) View.VISIBLE else View.GONE
                 } else {

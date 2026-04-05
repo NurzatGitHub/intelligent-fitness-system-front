@@ -31,7 +31,6 @@ class ExerciseSelectActivity : AppCompatActivity() {
         val adapter = ExerciseSelectAdapter(emptyList()) { exercise ->
             routeToWorkout(exercise)
         }
-
         rv.adapter = adapter
         rv.layoutManager = LinearLayoutManager(this)
 
@@ -68,10 +67,16 @@ class ExerciseSelectActivity : AppCompatActivity() {
         val intent = when (exercise.id) {
             "ex16" -> Intent(this, PushupActivity::class.java)
             "ex6" -> Intent(this, SquatActivity::class.java)
-            else -> ExerciseInstructionActivity.newIntent(
-                this,
-                exercise.titleEn.lowercase().replace(" ", "-")
-            )
+            else -> {
+                val slug = exercise.titleEn
+                    .lowercase()
+                    .replace("(", "")
+                    .replace(")", "")
+                    .replace("’", "")
+                    .replace("'", "")
+                    .replace(" ", "-")
+                ExerciseInstructionActivity.newIntent(this, slug)
+            }
         }
         intent.putExtra("exercise_name", exercise.titleEn)
         startActivity(intent)
