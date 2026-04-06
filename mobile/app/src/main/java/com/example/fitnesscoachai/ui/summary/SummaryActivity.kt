@@ -5,10 +5,15 @@ import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.fitnesscoachai.MainActivity
 import com.example.fitnesscoachai.R
+import com.example.fitnesscoachai.data.api.RetrofitClient
+import com.example.fitnesscoachai.data.models.WorkoutExerciseRequest
+import com.example.fitnesscoachai.data.models.WorkoutSessionRequest
 import com.example.fitnesscoachai.ui.history.HistoryActivity
 import com.google.android.material.button.MaterialButton
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 class SummaryActivity : AppCompatActivity() {
@@ -22,11 +27,15 @@ class SummaryActivity : AppCompatActivity() {
     private lateinit var btnGoToHistory: MaterialButton
     private lateinit var btnBackToHome: MaterialButton
 
+    private var isSaving = false
+    private var exerciseSlug: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_summary)
 
         val exerciseName = intent.getStringExtra("exercise_name") ?: "Exercise"
+        exerciseSlug = intent.getStringExtra("exercise_slug")
         val duration = intent.getIntExtra("duration", 0)
         val reps = intent.getIntExtra("reps", 0)
 
@@ -50,15 +59,12 @@ class SummaryActivity : AppCompatActivity() {
         tvExerciseName.text = exerciseName
         tvTotalReps.text = reps.toString()
 
-        // Format duration
         val minutes = TimeUnit.SECONDS.toMinutes(duration.toLong())
         val seconds = duration % 60
         tvDuration.text = String.format("%02d:%02d", minutes, seconds)
 
-        // Common mistakes (placeholder - would come from workout data)
         tvCommonMistakes.text = "Keep your back straight\nMaintain proper form"
 
-        // Overall performance (placeholder logic)
         val performance = when {
             reps > 20 -> "Excellent"
             reps > 10 -> "Good"
@@ -70,19 +76,8 @@ class SummaryActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         btnSave.setOnClickListener {
-            // TODO: Save workout to database
-            Toast.makeText(this, "Workout saved", Toast.LENGTH_SHORT).show()
-            
-            // Save to SharedPreferences for history (temporary)
-            val prefs = getSharedPreferences("workout_history", MODE_PRIVATE)
-            val historyCount = prefs.getInt("history_count", 0)
-            prefs.edit()
-                .putString("exercise_$historyCount", tvExerciseName.text.toString())
-                .putInt("duration_$historyCount", getDurationInSeconds())
-                .putInt("reps_$historyCount", tvTotalReps.text.toString().toIntOrNull() ?: 0)
-                .putLong("date_$historyCount", System.currentTimeMillis())
-                .putInt("history_count", historyCount + 1)
-                .apply()
+            if (isSaving) return@setOnClickListener
+            saveWorkout()
         }
 
         btnGoToHistory.setOnClickListener {
@@ -94,6 +89,93 @@ class SummaryActivity : AppCompatActivity() {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
+    }
+
+    private fun saveWorkout() {
+        isSaving = true
+        btnSave.isEnabled = false
+
+        val exerciseName = tvExerciseName.text.toString()
+        val durationSec = getDurationInSeconds()
+        val reps = tvTotalReps.text.toString().toIntOrNull() ?: 0
+
+        saveWorkoutLocally(exerciseName, durationSec, reps)
+        sendWorkoutToBackend(exerciseName, durationSec, reps)
+    }
+
+    private fun saveWorkoutLocally(exerciseName: String, durationSec: Int, reps: Int) {
+        val prefs = getSharedPreferences("workout_history", MODE_PRIVATE)
+        val historyCount = prefs.getInt("history_count", 0)
+
+        prefs.edit()
+            .putString("exercise_$historyCount", exerciseName)
+            .putInt("duration_$historyCount", durationSec)
+            .putInt("reps_$historyCount", reps)
+            .putLong("date_$historyCount", System.currentTimeMillis())
+            .putInt("history_count", historyCount + 1)
+            .apply()
+    }
+
+    private fun sendWorkoutToBackend(exerciseName: String, durationSec: Int, reps: Int) {
+        val token = getSharedPreferences("auth", MODE_PRIVATE)
+            .getString("access_token", null)
+
+        if (token.isNullOrBlank()) {
+            Toast.makeText(this, "Workout saved locally", Toast.LENGTH_SHORT).show()
+            finishSaving()
+            return
+        }
+
+        val request = WorkoutSessionRequest(
+            title = exerciseName,
+            total_duration_sec = durationSec,
+            total_reps = reps,
+            exercises = listOf(
+                WorkoutExerciseRequest(
+                    exercise_slug = exerciseSlug,
+                    exercise_name = exerciseName,
+                    completed_reps = reps,
+                    duration_sec = durationSec
+                )
+            )
+        )
+
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitClient.apiService.createWorkoutSession(
+                    "Bearer $token",
+                    request
+                )
+
+                if (response.isSuccessful) {
+                    Toast.makeText(
+                        this@SummaryActivity,
+                        "Workout saved",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    Toast.makeText(
+                        this@SummaryActivity,
+                        "Saved locally, backend sync failed: ${response.code()}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(
+                    this@SummaryActivity,
+                    "Saved locally, backend sync error",
+                    Toast.LENGTH_LONG
+                ).show()
+            } finally {
+                finishSaving()
+            }
+        }
+    }
+
+    private fun finishSaving() {
+        isSaving = false
+        btnSave.isEnabled = true
     }
 
     private fun getDurationInSeconds(): Int {

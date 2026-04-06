@@ -162,6 +162,7 @@ class SquatActivity : AppCompatActivity() {
         timer?.cancel()
 
         val intent = Intent(this, SummaryActivity::class.java).apply {
+            putExtra("exercise_name", tvExerciseName.text.toString())
             putExtra("duration", elapsedSeconds.toInt())
             putExtra("reps", repCount)
         }

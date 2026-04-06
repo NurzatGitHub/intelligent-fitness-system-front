@@ -15,6 +15,8 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.example.fitnesscoachai.R
 import com.example.fitnesscoachai.data.api.RetrofitClient
+import com.example.fitnesscoachai.ui.summary.SummaryActivity
+import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
@@ -24,11 +26,17 @@ class ExerciseInstructionActivity : AppCompatActivity() {
     private var player: ExoPlayer? = null
     private var playerView: PlayerView? = null
 
+    private var loadedExerciseName: String = ""
+    private var loadedExerciseSlug: String = ""
+    private var loadedDefaultReps: Int = 0
+    private var loadedDefaultDurationSec: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_exercise_instruction)
 
-        val toolbar = findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.toolbar)
+        val toolbar =
+            findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener { finish() }
@@ -39,7 +47,25 @@ class ExerciseInstructionActivity : AppCompatActivity() {
             return
         }
 
+        loadedExerciseSlug = exerciseSlug
+
         playerView = findViewById(R.id.playerView)
+
+        findViewById<MaterialButton>(R.id.btnCompleteExercise).setOnClickListener {
+            if (loadedExerciseName.isBlank()) {
+                Toast.makeText(this, "Exercise is still loading", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val summaryIntent = Intent(this, SummaryActivity::class.java).apply {
+                putExtra("exercise_name", loadedExerciseName)
+                putExtra("exercise_slug", loadedExerciseSlug)
+                putExtra("duration", loadedDefaultDurationSec)
+                putExtra("reps", loadedDefaultReps)
+            }
+            startActivity(summaryIntent)
+        }
+
         loadExerciseDetail(exerciseSlug)
     }
 
@@ -60,6 +86,7 @@ class ExerciseInstructionActivity : AppCompatActivity() {
         val stepsContainer = findViewById<LinearLayout>(R.id.stepsContainer)
         val tipsContainer = findViewById<LinearLayout>(R.id.tipsContainer)
         val videoContainer = findViewById<View>(R.id.videoContainer)
+        val tvQuickCompleteHint = findViewById<TextView>(R.id.tvQuickCompleteHint)
 
         lifecycleScope.launch {
             try {
@@ -80,6 +107,11 @@ class ExerciseInstructionActivity : AppCompatActivity() {
 
                 val exercise = response.body()!!
 
+                loadedExerciseName = exercise.name
+                loadedExerciseSlug = exercise.slug
+                loadedDefaultReps = exercise.default_reps ?: 0
+                loadedDefaultDurationSec = (exercise.default_duration_min ?: 0) * 60
+
                 supportActionBar?.title = exercise.name
                 findViewById<TextView>(R.id.tvExerciseName).text = exercise.name
                 findViewById<TextView>(R.id.tvExerciseMeta).text = buildString {
@@ -93,6 +125,22 @@ class ExerciseInstructionActivity : AppCompatActivity() {
                     if (isEmpty()) append("-")
                 }
                 findViewById<TextView>(R.id.tvDescription).text = exercise.description
+
+                val quickMeta = buildList {
+                    if ((exercise.default_reps ?: 0) > 0) {
+                        add("${exercise.default_reps} reps")
+                    }
+                    if ((exercise.default_duration_min ?: 0) > 0) {
+                        add("${exercise.default_duration_min} min")
+                    }
+                }.joinToString(" • ")
+
+                tvQuickCompleteHint.text =
+                    if (quickMeta.isBlank()) {
+                        "Save this exercise to progress."
+                    } else {
+                        "Save this exercise to progress using: $quickMeta"
+                    }
 
                 val videoAssetName = exercise.asset_video_name.trim()
                 if (videoAssetName.isNotEmpty()) {

@@ -13,6 +13,7 @@ import com.example.fitnesscoachai.data.models.RegisterRequest
 import com.example.fitnesscoachai.data.models.UpdateProfileRequest
 import com.example.fitnesscoachai.data.models.User
 import com.example.fitnesscoachai.data.models.WeeklyPlanResponse
+import com.example.fitnesscoachai.data.models.WorkoutSessionRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -84,4 +85,10 @@ interface ApiService {
         @Header("Authorization") bearer: String,
         @Path("slug") slug: String
     ): Response<ExerciseDetailResponse>
+
+    @POST("api/workouts/sessions/")
+    suspend fun createWorkoutSession(
+        @Header("Authorization") bearer: String,
+        @Body body: WorkoutSessionRequest
+    ): Response<Unit>
 }
