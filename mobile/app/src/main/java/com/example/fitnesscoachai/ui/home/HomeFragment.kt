@@ -21,6 +21,7 @@ import com.example.fitnesscoachai.data.models.WeeklyPlanDay
 import com.example.fitnesscoachai.data.models.WeeklyPlanResponse
 import com.example.fitnesscoachai.domain.model.MainCategory
 import com.example.fitnesscoachai.ui.exercise.ExerciseListActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.card.MaterialCardView
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
@@ -55,6 +56,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         bindUserHeader(view)
+        setupProfileHeaderNavigation(view)
 
         setupCategoryRecyclerView(view)
         categoryAdapter.setCategories(MainCategory.entries)
@@ -99,6 +101,14 @@ class HomeFragment : Fragment() {
                 avatar.imageTintList = null
                 avatar.invalidate()
             }
+        }
+    }
+
+    private fun setupProfileHeaderNavigation(view: View) {
+        view.findViewById<View>(R.id.homeProfileHeader)?.setOnClickListener {
+            requireActivity()
+                .findViewById<BottomNavigationView>(R.id.bottomNavigation)
+                ?.selectedItemId = R.id.nav_profile
         }
     }
 
