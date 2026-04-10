@@ -13,6 +13,7 @@ import com.example.fitnesscoachai.R
 import com.example.fitnesscoachai.data.repo.ExerciseRepositoryLocal
 import com.example.fitnesscoachai.domain.model.Exercise
 import com.example.fitnesscoachai.domain.model.MainCategory
+import com.example.fitnesscoachai.ui.workout.plank.PlankActivity
 import com.example.fitnesscoachai.ui.workout.pushup.PushupActivity
 import com.example.fitnesscoachai.ui.workout.squat.SquatActivity
 import kotlinx.coroutines.launch
@@ -31,10 +32,12 @@ class ExerciseSelectActivity : AppCompatActivity() {
         val adapter = ExerciseSelectAdapter(emptyList()) { exercise ->
             routeToWorkout(exercise)
         }
-        rv.adapter = adapter
+
         rv.layoutManager = LinearLayoutManager(this)
+        rv.adapter = adapter
 
         val repo = ExerciseRepositoryLocal()
+
         lifecycleScope.launch {
             val all = repo.getExercisesByMainCategory(MainCategory.BACK) +
                     repo.getExercisesByMainCategory(MainCategory.CHEST) +
@@ -48,16 +51,31 @@ class ExerciseSelectActivity : AppCompatActivity() {
         }
 
         etSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) = Unit
+
+            override fun onTextChanged(
+                s: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int
+            ) = Unit
 
             override fun afterTextChanged(s: Editable?) {
                 val query = s?.toString().orEmpty().trim()
+
                 val filtered = if (query.isEmpty()) {
                     allExercises
                 } else {
-                    allExercises.filter { it.titleEn.contains(query, ignoreCase = true) }
+                    allExercises.filter { exercise ->
+                        exercise.titleEn.contains(query, ignoreCase = true)
+                    }
                 }
+
                 adapter.submitList(filtered)
             }
         })
@@ -67,18 +85,21 @@ class ExerciseSelectActivity : AppCompatActivity() {
         val intent = when (exercise.id) {
             "ex16" -> Intent(this, PushupActivity::class.java)
             "ex6" -> Intent(this, SquatActivity::class.java)
-            else -> {
-                val slug = exercise.titleEn
-                    .lowercase()
-                    .replace("(", "")
-                    .replace(")", "")
-                    .replace("’", "")
-                    .replace("'", "")
-                    .replace(" ", "-")
-                ExerciseInstructionActivity.newIntent(this, slug)
-            }
+            "ex18" -> Intent(this, PlankActivity::class.java)
+            else -> ExerciseInstructionActivity.newIntent(this, buildExerciseSlug(exercise.titleEn))
         }
+
         intent.putExtra("exercise_name", exercise.titleEn)
         startActivity(intent)
+    }
+
+    private fun buildExerciseSlug(title: String): String {
+        return title
+            .lowercase()
+            .replace("(", "")
+            .replace(")", "")
+            .replace("’", "")
+            .replace("'", "")
+            .replace(" ", "-")
     }
 }
