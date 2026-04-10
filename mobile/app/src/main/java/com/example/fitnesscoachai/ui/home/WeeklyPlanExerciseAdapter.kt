@@ -17,6 +17,7 @@ class WeeklyPlanExerciseAdapter(
 
     inner class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ivImage: ImageView = itemView.findViewById(R.id.ivExerciseImage)
+        val ivCompleted: ImageView = itemView.findViewById(R.id.ivCompleted)
         val tvName: TextView = itemView.findViewById(R.id.tvExerciseName)
         val tvMeta: TextView = itemView.findViewById(R.id.tvExerciseMeta)
         val tvNotes: TextView = itemView.findViewById(R.id.tvExerciseNotes)
@@ -49,7 +50,8 @@ class WeeklyPlanExerciseAdapter(
         }
 
         holder.tvMeta.text = metaParts.joinToString(" • ").ifBlank { "Tap to open instructions" }
-        holder.tvNotes.text = item.plan_notes?.takeIf { it.isNotBlank() } ?: "Open exercise details"
+        holder.tvNotes.text = if (item.is_completed) "Completed" else (item.plan_notes?.takeIf { it.isNotBlank() } ?: "Open exercise details")
+        holder.ivCompleted.visibility = if (item.is_completed) View.VISIBLE else View.GONE
 
         bindExerciseImage(holder.ivImage, item.asset_image_name)
 

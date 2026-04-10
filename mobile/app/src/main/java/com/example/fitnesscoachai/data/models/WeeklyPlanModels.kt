@@ -18,7 +18,8 @@ data class WeeklyPlanExerciseItem(
     val plan_reps: Int? = null,
     val plan_duration_min: Int? = null,
     val plan_notes: String? = null,
-    val sort_order: Int? = null
+    val sort_order: Int? = null,
+    val is_completed: Boolean = false
 )
 
 data class WeeklyPlanDay(
@@ -31,6 +32,9 @@ data class WeeklyPlanDay(
     val duration_min: Int,
     val note: String,
     val sort_order: Int? = null,
+    val is_completed: Boolean = false,
+    val completed_exercise_count: Int = 0,
+    val total_exercise_count: Int = 0,
     val exercises: List<WeeklyPlanExerciseItem> = emptyList()
 )
 

@@ -2,6 +2,7 @@ package com.example.fitnesscoachai.ui.home
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
@@ -35,6 +36,10 @@ class HomeFragment : Fragment() {
 
     companion object {
         private var weeklyPlanCache: WeeklyPlanResponse? = null
+
+        fun clearCache() {
+            weeklyPlanCache = null
+        }
     }
 
     data class DayCardBinding(
@@ -74,13 +79,35 @@ class HomeFragment : Fragment() {
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
-            view?.let { bindUserHeader(it) }
+            view?.let {
+                bindUserHeader(it)
+
+                val cached = weeklyPlanCache
+                if (cached != null) {
+                    bindWeeklyPlan(it, cached)
+                } else {
+                    loadWeeklyPlan(it)
+                }
+
+                loadOverallStatus(it)
+            }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        view?.let { bindUserHeader(it) }
+        view?.let {
+            bindUserHeader(it)
+
+            val cached = weeklyPlanCache
+            if (cached != null) {
+                bindWeeklyPlan(it, cached)
+            } else {
+                loadWeeklyPlan(it)
+            }
+
+            loadOverallStatus(it)
+        }
     }
 
     private fun bindUserHeader(view: View) {
@@ -223,6 +250,7 @@ class HomeFragment : Fragment() {
                 add(today.type.replaceFirstChar { it.uppercase() })
                 add("${today.duration_min} min")
                 if (today.note.isNotBlank()) add(today.note)
+                if (today.is_completed) add("Completed")
             }
             view.findViewById<TextView>(R.id.tvTodayMeta)?.text = metaParts.joinToString(" • ")
         } else {
@@ -233,18 +261,43 @@ class HomeFragment : Fragment() {
     }
 
     private fun bindDay(binding: DayCardBinding, day: WeeklyPlanDay, isToday: Boolean) {
-        binding.label.text = if (isToday) "${day.label} • Today" else day.label
-        binding.type.text = day.type.replaceFirstChar { it.uppercase() }
-        binding.title.text = day.title
+        val surfaceColor = Color.parseColor("#1C1C22")
+        val outlineColor = Color.parseColor("#3A3A44")
+        val primaryColor = Color.parseColor("#C8B6FF")
 
-        binding.card.strokeWidth = if (isToday) dp(3) else dp(1)
-        binding.card.alpha = if (isToday) 1f else 0.88f
-        binding.card.scaleX = if (isToday) 1.06f else 1f
-        binding.card.scaleY = if (isToday) 1.06f else 1f
-        binding.card.cardElevation = if (isToday) dp(6).toFloat() else 0f
+        if (day.is_completed) {
+            binding.card.setCardBackgroundColor(Color.parseColor("#163322"))
+            binding.card.strokeColor = Color.parseColor("#59C36A")
+            binding.card.strokeWidth = dp(2)
+            binding.card.alpha = 1f
+            binding.card.scaleX = 1f
+            binding.card.scaleY = 1f
+            binding.card.cardElevation = dp(4).toFloat()
 
-        binding.label.setTypeface(null, if (isToday) Typeface.BOLD else Typeface.NORMAL)
-        binding.title.setTypeface(null, if (isToday) Typeface.BOLD else Typeface.NORMAL)
+            binding.label.text = if (isToday) "✓ ${day.label} • Today" else "✓ ${day.label}"
+            binding.type.text = "Completed"
+            binding.title.text = day.title
+            binding.type.setTextColor(Color.parseColor("#7DFF93"))
+
+            binding.label.setTypeface(null, Typeface.BOLD)
+            binding.title.setTypeface(null, Typeface.BOLD)
+        } else {
+            binding.card.setCardBackgroundColor(surfaceColor)
+            binding.card.strokeColor = if (isToday) primaryColor else outlineColor
+            binding.card.strokeWidth = if (isToday) dp(3) else dp(1)
+            binding.card.alpha = if (isToday) 1f else 0.88f
+            binding.card.scaleX = if (isToday) 1.06f else 1f
+            binding.card.scaleY = if (isToday) 1.06f else 1f
+            binding.card.cardElevation = if (isToday) dp(6).toFloat() else 0f
+
+            binding.label.text = if (isToday) "${day.label} • Today" else day.label
+            binding.type.text = day.type.replaceFirstChar { it.uppercase() }
+            binding.title.text = day.title
+            binding.type.setTextColor(primaryColor)
+
+            binding.label.setTypeface(null, if (isToday) Typeface.BOLD else Typeface.NORMAL)
+            binding.title.setTypeface(null, if (isToday) Typeface.BOLD else Typeface.NORMAL)
+        }
 
         binding.card.setOnClickListener {
             openPlanDay(day)

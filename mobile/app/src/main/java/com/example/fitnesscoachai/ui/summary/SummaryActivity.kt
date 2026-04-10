@@ -15,6 +15,7 @@ import com.example.fitnesscoachai.ui.history.HistoryActivity
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
+import com.example.fitnesscoachai.ui.home.HomeFragment
 
 class SummaryActivity : AppCompatActivity() {
 
@@ -154,6 +155,7 @@ class SummaryActivity : AppCompatActivity() {
                 )
 
                 if (response.isSuccessful) {
+                    HomeFragment.clearCache()
                     Toast.makeText(
                         this@SummaryActivity,
                         "Workout saved",
