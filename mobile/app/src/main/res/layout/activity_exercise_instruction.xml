@@ -81,7 +81,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Quick save"
+                    android:text="Workout"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -90,7 +90,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="Save this exercise to progress using its default reps and duration."
+                    android:text="Start workout and enter your real results."
                     android:textColor="?attr/colorOnSurfaceVariant"
                     android:textSize="14sp" />
 
@@ -99,7 +99,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
-                    android:text="Complete exercise" />
+                    android:text="Start workout" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

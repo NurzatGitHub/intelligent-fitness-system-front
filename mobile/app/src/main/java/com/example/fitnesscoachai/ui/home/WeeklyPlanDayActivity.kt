@@ -51,7 +51,10 @@ class WeeklyPlanDayActivity : AppCompatActivity() {
         val recycler = findViewById<RecyclerView>(R.id.rvPlanExercises)
 
         recycler.layoutManager = LinearLayoutManager(this)
-        recycler.adapter = WeeklyPlanExerciseAdapter(day.exercises)
+        recycler.adapter = WeeklyPlanExerciseAdapter(
+            items = day.exercises,
+            weeklyPlanDayId = day.id
+        )
 
         emptyView.visibility = if (day.exercises.isEmpty()) TextView.VISIBLE else TextView.GONE
         recycler.visibility = if (day.exercises.isEmpty()) RecyclerView.GONE else RecyclerView.VISIBLE

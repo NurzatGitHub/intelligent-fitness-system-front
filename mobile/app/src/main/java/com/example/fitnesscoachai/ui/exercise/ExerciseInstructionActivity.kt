@@ -1,7 +1,6 @@
 package com.example.fitnesscoachai.ui.exercise
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +14,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.example.fitnesscoachai.R
 import com.example.fitnesscoachai.data.api.RetrofitClient
-import com.example.fitnesscoachai.ui.summary.SummaryActivity
+import com.example.fitnesscoachai.ui.workout.generic.GenericWorkoutActivity
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
 import java.io.File
@@ -30,6 +29,7 @@ class ExerciseInstructionActivity : AppCompatActivity() {
     private var loadedExerciseSlug: String = ""
     private var loadedDefaultReps: Int = 0
     private var loadedDefaultDurationSec: Int = 0
+    private var loadedWeeklyPlanDayId: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +49,9 @@ class ExerciseInstructionActivity : AppCompatActivity() {
 
         loadedExerciseSlug = exerciseSlug
 
+        val rawPlanDayId = intent.getIntExtra(EXTRA_WEEKLY_PLAN_DAY_ID, -1)
+        loadedWeeklyPlanDayId = if (rawPlanDayId > 0) rawPlanDayId else null
+
         playerView = findViewById(R.id.playerView)
 
         findViewById<MaterialButton>(R.id.btnCompleteExercise).setOnClickListener {
@@ -57,13 +60,16 @@ class ExerciseInstructionActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val summaryIntent = Intent(this, SummaryActivity::class.java).apply {
-                putExtra("exercise_name", loadedExerciseName)
-                putExtra("exercise_slug", loadedExerciseSlug)
-                putExtra("duration", loadedDefaultDurationSec)
-                putExtra("reps", loadedDefaultReps)
-            }
-            startActivity(summaryIntent)
+            startActivity(
+                GenericWorkoutActivity.newIntent(
+                    context = this,
+                    exerciseName = loadedExerciseName,
+                    exerciseSlug = loadedExerciseSlug,
+                    defaultReps = loadedDefaultReps,
+                    defaultDurationSec = loadedDefaultDurationSec,
+                    weeklyPlanDayId = loadedWeeklyPlanDayId
+                )
+            )
         }
 
         loadExerciseDetail(exerciseSlug)
@@ -87,6 +93,7 @@ class ExerciseInstructionActivity : AppCompatActivity() {
         val tipsContainer = findViewById<LinearLayout>(R.id.tipsContainer)
         val videoContainer = findViewById<View>(R.id.videoContainer)
         val tvQuickCompleteHint = findViewById<TextView>(R.id.tvQuickCompleteHint)
+        val btnCompleteExercise = findViewById<MaterialButton>(R.id.btnCompleteExercise)
 
         lifecycleScope.launch {
             try {
@@ -127,20 +134,18 @@ class ExerciseInstructionActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.tvDescription).text = exercise.description
 
                 val quickMeta = buildList {
-                    if ((exercise.default_reps ?: 0) > 0) {
-                        add("${exercise.default_reps} reps")
-                    }
-                    if ((exercise.default_duration_min ?: 0) > 0) {
-                        add("${exercise.default_duration_min} min")
-                    }
+                    if ((exercise.default_reps ?: 0) > 0) add("${exercise.default_reps} reps")
+                    if ((exercise.default_duration_min ?: 0) > 0) add("${exercise.default_duration_min} min")
                 }.joinToString(" • ")
 
                 tvQuickCompleteHint.text =
                     if (quickMeta.isBlank()) {
-                        "Save this exercise to progress."
+                        "Start a workout and enter your real results."
                     } else {
-                        "Save this exercise to progress using: $quickMeta"
+                        "Recommended: $quickMeta"
                     }
+
+                btnCompleteExercise.text = "Start workout"
 
                 val videoAssetName = exercise.asset_video_name.trim()
                 if (videoAssetName.isNotEmpty()) {
@@ -228,11 +233,15 @@ class ExerciseInstructionActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_EXERCISE_SLUG = "extra_exercise_slug"
+        const val EXTRA_WEEKLY_PLAN_DAY_ID = "extra_weekly_plan_day_id"
 
-        fun newIntent(context: Context, exerciseSlug: String): Intent {
-            return Intent(context, ExerciseInstructionActivity::class.java).apply {
-                putExtra(EXTRA_EXERCISE_SLUG, exerciseSlug)
-            }
+        fun newIntent(
+            context: Context,
+            exerciseSlug: String,
+            weeklyPlanDayId: Int? = null
+        ) = android.content.Intent(context, ExerciseInstructionActivity::class.java).apply {
+            putExtra(EXTRA_EXERCISE_SLUG, exerciseSlug)
+            weeklyPlanDayId?.let { putExtra(EXTRA_WEEKLY_PLAN_DAY_ID, it) }
         }
     }
 }

@@ -29,6 +29,7 @@ class SummaryActivity : AppCompatActivity() {
 
     private var isSaving = false
     private var exerciseSlug: String? = null
+    private var weeklyPlanDayId: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +37,10 @@ class SummaryActivity : AppCompatActivity() {
 
         val exerciseName = intent.getStringExtra("exercise_name") ?: "Exercise"
         exerciseSlug = intent.getStringExtra("exercise_slug")
+
+        val rawPlanDayId = intent.getIntExtra("weekly_plan_day_id", -1)
+        weeklyPlanDayId = if (rawPlanDayId > 0) rawPlanDayId else null
+
         val duration = intent.getIntExtra("duration", 0)
         val reps = intent.getIntExtra("reps", 0)
 
@@ -128,6 +133,7 @@ class SummaryActivity : AppCompatActivity() {
 
         val request = WorkoutSessionRequest(
             title = exerciseName,
+            weekly_plan_day_id = weeklyPlanDayId,
             total_duration_sec = durationSec,
             total_reps = reps,
             exercises = listOf(

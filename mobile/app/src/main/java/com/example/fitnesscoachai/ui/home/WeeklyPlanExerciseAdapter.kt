@@ -11,7 +11,8 @@ import com.example.fitnesscoachai.data.models.WeeklyPlanExerciseItem
 import com.example.fitnesscoachai.ui.exercise.ExerciseInstructionActivity
 
 class WeeklyPlanExerciseAdapter(
-    private val items: List<WeeklyPlanExerciseItem>
+    private val items: List<WeeklyPlanExerciseItem>,
+    private val weeklyPlanDayId: Int? = null
 ) : RecyclerView.Adapter<WeeklyPlanExerciseAdapter.VH>() {
 
     inner class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -53,7 +54,13 @@ class WeeklyPlanExerciseAdapter(
         bindExerciseImage(holder.ivImage, item.asset_image_name)
 
         holder.itemView.setOnClickListener {
-            ctx.startActivity(ExerciseInstructionActivity.newIntent(ctx, item.slug))
+            ctx.startActivity(
+                ExerciseInstructionActivity.newIntent(
+                    context = ctx,
+                    exerciseSlug = item.slug,
+                    weeklyPlanDayId = weeklyPlanDayId
+                )
+            )
         }
     }
 

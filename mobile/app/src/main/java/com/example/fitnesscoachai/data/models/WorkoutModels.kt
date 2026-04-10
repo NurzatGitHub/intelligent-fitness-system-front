@@ -9,6 +9,7 @@ data class WorkoutExerciseRequest(
 
 data class WorkoutSessionRequest(
     val title: String,
+    val weekly_plan_day_id: Int? = null,
     val total_duration_sec: Int,
     val total_reps: Int,
     val exercises: List<WorkoutExerciseRequest>
