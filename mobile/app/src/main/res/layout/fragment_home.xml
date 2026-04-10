@@ -53,12 +53,6 @@
                     android:layout_height="wrap_content"/>
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/ivNotifications"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:src="@android:drawable/ic_popup_reminder"
-                app:tint="?attr/colorOnSurface" />
         </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView

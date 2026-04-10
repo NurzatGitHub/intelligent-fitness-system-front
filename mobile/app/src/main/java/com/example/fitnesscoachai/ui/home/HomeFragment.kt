@@ -3,11 +3,13 @@ package com.example.fitnesscoachai.ui.home
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.HorizontalScrollView
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -52,9 +54,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val prefs = requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
-        val userName = prefs.getString("user_name", "beginner") ?: "beginner"
-        view.findViewById<TextView>(R.id.tvUserName)?.text = "$userName 👋"
+        bindUserHeader(view)
 
         setupCategoryRecyclerView(view)
         categoryAdapter.setCategories(MainCategory.entries)
@@ -67,6 +67,39 @@ class HomeFragment : Fragment() {
         }
 
         loadOverallStatus(view)
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            view?.let { bindUserHeader(it) }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        view?.let { bindUserHeader(it) }
+    }
+
+    private fun bindUserHeader(view: View) {
+        val authPrefs = requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
+        val userName = authPrefs.getString("user_name", "beginner") ?: "beginner"
+        view.findViewById<TextView>(R.id.tvUserName)?.text = "$userName 👋"
+
+        val avatarUri = requireContext()
+            .getSharedPreferences("user_profile", Context.MODE_PRIVATE)
+            .getString("avatar_uri", null)
+
+        if (!avatarUri.isNullOrBlank()) {
+            view.findViewById<ImageView>(R.id.ivAvatar)?.let { avatar ->
+                avatar.setImageURI(Uri.parse(avatarUri))
+                avatar.background = null
+                avatar.setPadding(0, 0, 0, 0)
+                avatar.clearColorFilter()
+                avatar.imageTintList = null
+                avatar.invalidate()
+            }
+        }
     }
 
     private fun setupCategoryRecyclerView(view: View) {
