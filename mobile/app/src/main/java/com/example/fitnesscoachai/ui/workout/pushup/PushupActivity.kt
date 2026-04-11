@@ -145,10 +145,22 @@ class PushupActivity : AppCompatActivity() {
 
     private fun finishWorkout() {
         timer?.cancel()
-        val intent = Intent(this, SummaryActivity::class.java)
-        intent.putExtra("duration", elapsedSeconds.toInt())
-        intent.putExtra("reps", repCount)
-        startActivity(intent)
+
+        val exerciseName = intent.getStringExtra("exercise_name") ?: "Push-up"
+        val exerciseSlug = intent.getStringExtra("exercise_slug") ?: "push-up"
+        val weeklyPlanDayId = intent.getIntExtra("weekly_plan_day_id", -1)
+
+        val summaryIntent = Intent(this, SummaryActivity::class.java).apply {
+            putExtra("exercise_name", exerciseName)
+            putExtra("exercise_slug", exerciseSlug)
+            if (weeklyPlanDayId > 0) {
+                putExtra("weekly_plan_day_id", weeklyPlanDayId)
+            }
+            putExtra("duration", elapsedSeconds.toInt())
+            putExtra("reps", repCount)
+        }
+
+        startActivity(summaryIntent)
         finish()
     }
 

@@ -9,11 +9,17 @@ class PlankModel(context: Context) {
     private val env: OrtEnvironment = OrtEnvironment.getEnvironment()
     private val session: OrtSession
 
+    // Имя входа определяется автоматически из модели
+    private val inputName: String
+
     init {
         val modelBytes = context.assets
             .open("plank_model.onnx")
             .readBytes()
-        session = env.createSession(modelBytes, OrtSession.SessionOptions())
+        session   = env.createSession(modelBytes, OrtSession.SessionOptions())
+        inputName = session.inputNames.iterator().next()   // "input" в новой модели
+        Log.d("PlankModel", "Loaded. inputName=$inputName  " +
+                "outputs=${session.outputNames.toList()}")
     }
 
     data class PredictResult(
@@ -24,7 +30,7 @@ class PlankModel(context: Context) {
     fun predict(features: FloatArray): PredictResult {
         return try {
             OnnxTensor.createTensor(env, arrayOf(features)).use { tensor ->
-                val results = session.run(mapOf("float_input" to tensor))
+                val results = session.run(mapOf(inputName to tensor))
 
                 val rawLabel = (results[0].value as Array<*>)[0].toString()
 
@@ -40,7 +46,7 @@ class PlankModel(context: Context) {
 
                 val normalizedLabel = when (rawLabel.lowercase().trim()) {
                     "correct", "1" -> "correct"
-                    else -> "incorrect"
+                    else           -> "incorrect"
                 }
 
                 PredictResult(normalizedLabel, confidence)

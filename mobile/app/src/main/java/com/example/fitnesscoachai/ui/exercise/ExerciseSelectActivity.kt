@@ -16,6 +16,7 @@ import com.example.fitnesscoachai.domain.model.MainCategory
 import com.example.fitnesscoachai.ui.workout.plank.PlankActivity
 import com.example.fitnesscoachai.ui.workout.pushup.PushupActivity
 import com.example.fitnesscoachai.ui.workout.squat.SquatActivity
+import com.example.fitnesscoachai.ui.exercise.ExerciseRouter
 import kotlinx.coroutines.launch
 
 class ExerciseSelectActivity : AppCompatActivity() {
@@ -82,14 +83,17 @@ class ExerciseSelectActivity : AppCompatActivity() {
     }
 
     private fun routeToWorkout(exercise: Exercise) {
-        val intent = when (exercise.id) {
-            "ex16" -> Intent(this, PushupActivity::class.java)
-            "ex6" -> Intent(this, SquatActivity::class.java)
-            "ex18" -> Intent(this, PlankActivity::class.java)
-            else -> ExerciseInstructionActivity.newIntent(this, buildExerciseSlug(exercise.titleEn))
-        }
+        android.util.Log.d(
+            "ExerciseSelect",
+            "clicked id=${exercise.id}, title=${exercise.titleEn}, slug=${buildExerciseSlug(exercise.titleEn)}"
+        )
 
-        intent.putExtra("exercise_name", exercise.titleEn)
+        val intent = ExerciseRouter.createIntent(
+            context = this,
+            exerciseId = exercise.id,
+            exerciseSlug = buildExerciseSlug(exercise.titleEn),
+            exerciseName = exercise.titleEn
+        )
         startActivity(intent)
     }
 

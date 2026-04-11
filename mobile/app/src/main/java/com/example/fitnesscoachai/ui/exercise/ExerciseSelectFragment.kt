@@ -1,6 +1,5 @@
 package com.example.fitnesscoachai.ui.exercise
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,8 +15,6 @@ import com.example.fitnesscoachai.R
 import com.example.fitnesscoachai.data.repo.ExerciseRepositoryLocal
 import com.example.fitnesscoachai.domain.model.Exercise
 import com.example.fitnesscoachai.domain.model.MainCategory
-import com.example.fitnesscoachai.ui.workout.pushup.PushupActivity
-import com.example.fitnesscoachai.ui.workout.squat.SquatActivity
 import kotlinx.coroutines.launch
 
 class ExerciseSelectFragment : Fragment() {
@@ -64,16 +61,31 @@ class ExerciseSelectFragment : Fragment() {
         }
 
         etSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) = Unit
+
+            override fun onTextChanged(
+                s: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int
+            ) = Unit
 
             override fun afterTextChanged(s: Editable?) {
                 val query = s?.toString().orEmpty().trim()
+
                 val filtered = if (query.isEmpty()) {
                     allExercises
                 } else {
-                    allExercises.filter { it.titleEn.contains(query, ignoreCase = true) }
+                    allExercises.filter {
+                        it.titleEn.contains(query, ignoreCase = true)
+                    }
                 }
+
                 adapter?.submitList(filtered)
             }
         })
@@ -85,24 +97,23 @@ class ExerciseSelectFragment : Fragment() {
     }
 
     private fun routeToWorkout(exercise: Exercise) {
-        val ctx = requireContext()
-
-        val intent = when (exercise.id) {
-            "ex16" -> Intent(ctx, PushupActivity::class.java)
-            "ex6" -> Intent(ctx, SquatActivity::class.java)
-            else -> {
-                val slug = exercise.titleEn
-                    .lowercase()
-                    .replace("(", "")
-                    .replace(")", "")
-                    .replace("’", "")
-                    .replace("'", "")
-                    .replace(" ", "-")
-                ExerciseInstructionActivity.newIntent(ctx, slug)
-            }
-        }
-
-        intent.putExtra("exercise_name", exercise.titleEn)
+        val intent = ExerciseRouter.createIntent(
+            context = requireContext(),
+            exerciseId = exercise.id,
+            exerciseSlug = buildExerciseSlug(exercise.titleEn),
+            exerciseName = exercise.titleEn
+        )
         startActivity(intent)
+    }
+
+    private fun buildExerciseSlug(title: String): String {
+        return title
+            .trim()
+            .lowercase()
+            .replace("(", "")
+            .replace(")", "")
+            .replace("’", "")
+            .replace("'", "")
+            .replace(" ", "-")
     }
 }
