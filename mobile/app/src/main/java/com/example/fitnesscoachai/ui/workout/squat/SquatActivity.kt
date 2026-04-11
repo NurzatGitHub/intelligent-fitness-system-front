@@ -326,10 +326,8 @@ class SquatActivity : AppCompatActivity() {
         val stanceRatio = kneeWidth / (hipWidth + 1e-6f)
         val stanceOk = hipWidth > 0.01f && stanceRatio in minKneeWidthRatio..maxKneeWidthRatio
 
-        // мягкая двухопорная проверка
         val twoLegSupportOk = listOf(ankleLevelOk, kneeLevelOk, stanceOk).count { it } >= 2
 
-        // низ: достаточно, чтобы ОБЕ ноги реально согнулись, но не требуем идеала
         val bottomReached =
             leftKnee < downThreshold &&
                     rightKnee < downThreshold &&
@@ -337,7 +335,6 @@ class SquatActivity : AppCompatActivity() {
                     kneeDiff < kneeDiffThreshold &&
                     twoLegSupportOk
 
-        // верх: полное выпрямление
         val standingReached =
             leftKnee > upThreshold &&
                     rightKnee > upThreshold
@@ -383,26 +380,28 @@ class SquatActivity : AppCompatActivity() {
             bottomHoldStreak = 0
         }
 
+        // Geometry flags — used for both feedback text and segment coloring
+        val kneeGood = kneeCaveRatio < kneeCaveThreshold
+        val depthGood = depthRatio < depthThreshold
+        val trunkGood = trunkAngle < trunkLeanThreshold
+
         val feedback = when {
             !stanceOk -> "Stand evenly"
             !twoLegSupportOk -> "Keep both feet grounded"
-            depthRatio >= depthThreshold -> "Go lower"
-            trunkAngle > trunkLeanThreshold -> "Keep your chest up"
-            kneeCaveRatio >= kneeCaveThreshold -> "Keep your knees out"
+            !depthGood -> "Go lower"
+            !trunkGood -> "Keep your chest up"
+            !kneeGood -> "Keep your knees out"
             else -> "Good squat"
         }
 
-        val prediction = squatModel.predict(features)
+        // Segment colors are driven purely by geometry — model is used for logging/future use only
+        squatModel.predict(features)
 
-        var segments = buildSquatSegments(
-            kneeGood = kneeCaveRatio < kneeCaveThreshold,
-            depthGood = depthRatio < depthThreshold,
-            trunkGood = trunkAngle < trunkLeanThreshold
+        val segments = buildSquatSegments(
+            kneeGood = kneeGood,
+            depthGood = depthGood,
+            trunkGood = trunkGood
         )
-
-        if (prediction.label.lowercase() == "incorrect") {
-            segments = segments.map { it.copy(color = "#FF0000") }
-        }
 
         return UiState(
             feedback = feedback,
