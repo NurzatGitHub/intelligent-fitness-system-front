@@ -7,6 +7,7 @@ import com.example.fitnesscoachai.ui.workout.plank.PlankActivity
 import com.example.fitnesscoachai.ui.workout.pushup.PushupActivity
 import com.example.fitnesscoachai.ui.workout.shoulderpress.ShoulderPressActivity
 import com.example.fitnesscoachai.ui.workout.squat.SquatActivity
+import com.example.fitnesscoachai.ui.workout.crunch.CrunchActivity
 import java.util.Locale
 
 object ExerciseRouter {
@@ -63,6 +64,12 @@ object ExerciseRouter {
                     slug.contains("shoulderpress") ||
                     name == "shoulder press" ||
                     name.contains("shoulder press")
+        val isCrunch =
+            id == "ex125" ||
+                    slug == "crunch" ||
+                    slug.contains("crunch") ||
+                    name == "crunch" ||
+                    name.contains("crunch")
 
         val intent = when {
             isPushup -> {
@@ -83,6 +90,11 @@ object ExerciseRouter {
             isShoulderPress -> {
                 Log.d("ExerciseRouter", "Opening ShoulderPressActivity")
                 Intent(context, ShoulderPressActivity::class.java)
+            }
+
+            isCrunch -> {
+                Log.d("ExerciseRouter", "Opening CrunchActivity")
+                Intent(context, CrunchActivity::class.java)
             }
 
             else -> {

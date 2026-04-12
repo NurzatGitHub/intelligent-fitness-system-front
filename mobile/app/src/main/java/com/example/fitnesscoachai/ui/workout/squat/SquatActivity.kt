@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
@@ -42,6 +43,7 @@ class SquatActivity : AppCompatActivity() {
     private lateinit var tvReps: TextView
     private lateinit var tvFeedback: TextView
 
+    private lateinit var btnSwitchCamera: ImageButton
     private lateinit var btnStartPause: MaterialButton
     private lateinit var btnFinish: MaterialButton
 
@@ -86,7 +88,7 @@ class SquatActivity : AppCompatActivity() {
     private val readyStreakNeed = 3
     private var isReady = false
 
-    private val lensFacing = CameraSelector.LENS_FACING_FRONT
+    private var lensFacing = CameraSelector.LENS_FACING_FRONT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,8 +120,9 @@ class SquatActivity : AppCompatActivity() {
 
         btnStartPause = findViewById(R.id.btnStartPause)
         btnFinish = findViewById(R.id.btnFinish)
+        btnSwitchCamera = findViewById(R.id.btnSwitchCamera)
 
-        overlayView.mirrorX = true
+        overlayView.mirrorX = (lensFacing == CameraSelector.LENS_FACING_FRONT)
         tvTimer.text = "00:00"
         tvReps.text = "0"
         tvFeedback.text = "Tap Start"
@@ -139,6 +142,17 @@ class SquatActivity : AppCompatActivity() {
 
         btnFinish.setOnClickListener {
             finishWorkout()
+        }
+
+        btnSwitchCamera.setOnClickListener {
+            lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK) {
+                CameraSelector.LENS_FACING_FRONT
+            } else {
+                CameraSelector.LENS_FACING_BACK
+            }
+
+            overlayView.mirrorX = (lensFacing == CameraSelector.LENS_FACING_FRONT)
+            bindCameraUseCases()
         }
     }
 
@@ -311,7 +325,6 @@ class SquatActivity : AppCompatActivity() {
                 segments = PoseSkeleton.segments
             )
 
-        val minKnee = features[0]
         val leftKnee = features[1]
         val rightKnee = features[2]
         val kneeDiff = features[3]
@@ -388,7 +401,6 @@ class SquatActivity : AppCompatActivity() {
             bottomHoldStreak = 0
         }
 
-        // Geometry flags — used for both feedback text and segment coloring
         val kneeGood = kneeCaveRatio < kneeCaveThreshold
         val depthGood = depthRatio < depthThreshold
         val trunkGood = trunkAngle < trunkLeanThreshold
@@ -402,7 +414,6 @@ class SquatActivity : AppCompatActivity() {
             else -> "Good squat"
         }
 
-        // Segment colors are driven purely by geometry — model is used for logging/future use only
         squatModel.predict(features)
 
         val segments = buildSquatSegments(

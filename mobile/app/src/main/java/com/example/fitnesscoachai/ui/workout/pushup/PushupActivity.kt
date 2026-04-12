@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
@@ -31,6 +32,7 @@ class PushupActivity : AppCompatActivity() {
     private lateinit var tvReps: TextView
     private lateinit var tvFeedback: TextView
 
+    private lateinit var btnSwitchCamera: ImageButton
     private lateinit var btnStartPause: MaterialButton
     private lateinit var btnFinish: MaterialButton
 
@@ -92,9 +94,10 @@ class PushupActivity : AppCompatActivity() {
 
         btnStartPause = findViewById(R.id.btnStartPause)
         btnFinish = findViewById(R.id.btnFinish)
+        btnSwitchCamera = findViewById(R.id.btnSwitchCamera)
 
         tvExerciseName = findViewById(R.id.tvExerciseName)
-        overlayView.mirrorX = true
+        overlayView.mirrorX = (lensFacing == CameraSelector.LENS_FACING_FRONT)
         tvReps.text = "0"
         tvFeedback.text = "Tap Start"
         tvExerciseName.text = intent.getStringExtra("exercise_name") ?: "Push-up"
@@ -104,7 +107,19 @@ class PushupActivity : AppCompatActivity() {
         btnStartPause.setOnClickListener {
             if (!isWorkoutActive) startWorkout() else pauseWorkout()
         }
+
         btnFinish.setOnClickListener { finishWorkout() }
+
+        btnSwitchCamera.setOnClickListener {
+            lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK) {
+                CameraSelector.LENS_FACING_FRONT
+            } else {
+                CameraSelector.LENS_FACING_BACK
+            }
+
+            overlayView.mirrorX = (lensFacing == CameraSelector.LENS_FACING_FRONT)
+            bindCameraUseCases()
+        }
     }
 
     private fun startWorkout() {
@@ -133,7 +148,7 @@ class PushupActivity : AppCompatActivity() {
                 tvTimer.text = String.format("%02d:%02d", minutes, seconds)
             }
 
-            override fun onFinish() {}
+            override fun onFinish() = Unit
         }.start()
     }
 

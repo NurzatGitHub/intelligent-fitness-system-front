@@ -1,4 +1,4 @@
-package com.example.fitnesscoachai.ui.workout.shoulderpress
+package com.example.fitnesscoachai.ui.workout.crunch
 
 import com.example.fitnesscoachai.ui.workout.shared.*
 
@@ -22,7 +22,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-class ShoulderPressActivity : AppCompatActivity() {
+class CrunchActivity : AppCompatActivity() {
 
     private lateinit var previewView: PreviewView
     private lateinit var overlayView: OverlayView
@@ -39,11 +39,11 @@ class ShoulderPressActivity : AppCompatActivity() {
     private lateinit var cameraExecutor: ExecutorService
     private var cameraProvider: ProcessCameraProvider? = null
 
-    private lateinit var shoulderPressModel: ShoulderPressModel
+    private lateinit var crunchModel: CrunchModel
     private var poseHelper: PoseLandmarkerHelper? = null
 
     private val stabilizer = PoseStabilizer()
-    private val readyCheck = ShoulderPressReadyCheck()
+    private val readyCheck = CrunchReadyCheck()
 
     private var isWorkoutActive = false
     private var elapsedSeconds: Long = 0
@@ -51,57 +51,68 @@ class ShoulderPressActivity : AppCompatActivity() {
 
     private var repCount = 0
 
-    // DOWN = веса у плеч (старт), UP = руки вытянуты вверх
-    private enum class ShoulderPressPhase { DOWN, UP }
+    private enum class CrunchPhase { UP, DOWN }
 
-    private var phase = ShoulderPressPhase.DOWN
+    private var phase = CrunchPhase.UP
     private var downStreak = 0
     private var upStreak = 0
 
-    // Пороги минимального угла локтей
-    private val DOWN_T = 105f   // локти согнуты — DOWN позиция
-    private val UP_T   = 155f   // руки вытянуты — UP позиция
+    // Пороги из анализа датасета
+    private val DOWN_T = 98.5f
+    private val UP_T = 140.0f
+    private val FLAT_T = 155.0f
+    private val NECK_DOWN_T = 148f
+
+    private var reachedDepthInCurrentRep = false
+    private var downHoldStreak = 0
+    private val DOWN_HOLD_NEED = 1
 
     private var readyStreak = 0
     private val READY_STREAK_NEED = 3
     private var isReady = false
 
-    private var lensFacing = CameraSelector.LENS_FACING_FRONT
+    // Делаем var, чтобы можно было переключать
+    private var lensFacing = CameraSelector.LENS_FACING_BACK
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_workout)
 
-        initializeViews()
+        initViews()
 
-        shoulderPressModel = ShoulderPressModel(this)
+        crunchModel = CrunchModel(this)
         poseHelper = PoseLandmarkerHelper(this)
-
         cameraExecutor = Executors.newSingleThreadExecutor()
 
-        if (allPermissionsGranted()) startCamera()
-        else ActivityCompat.requestPermissions(
-            this, arrayOf(Manifest.permission.CAMERA), 10
-        )
+        if (allPermissionsGranted()) {
+            startCamera()
+        } else {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.CAMERA),
+                10
+            )
+        }
 
         setupListeners()
     }
 
-    private fun initializeViews() {
-        previewView     = findViewById(R.id.previewView)
-        overlayView     = findViewById(R.id.overlayView)
-        tvTimer         = findViewById(R.id.tvTimer)
-        tvReps          = findViewById(R.id.tvReps)
-        tvFeedback      = findViewById(R.id.tvFeedback)
-        btnStartPause   = findViewById(R.id.btnStartPause)
-        btnFinish       = findViewById(R.id.btnFinish)
+    private fun initViews() {
+        previewView = findViewById(R.id.previewView)
+        overlayView = findViewById(R.id.overlayView)
+        tvTimer = findViewById(R.id.tvTimer)
+        tvReps = findViewById(R.id.tvReps)
+        tvFeedback = findViewById(R.id.tvFeedback)
+        btnStartPause = findViewById(R.id.btnStartPause)
+        btnFinish = findViewById(R.id.btnFinish)
         btnSwitchCamera = findViewById(R.id.btnSwitchCamera)
-        tvExerciseName  = findViewById(R.id.tvExerciseName)
+        tvExerciseName = findViewById(R.id.tvExerciseName)
 
         overlayView.mirrorX = (lensFacing == CameraSelector.LENS_FACING_FRONT)
-        tvReps.text         = "0"
-        tvFeedback.text     = "Tap Start"
-        tvExerciseName.text = intent.getStringExtra("exercise_name") ?: "Shoulder Press"
+        tvTimer.text = "00:00"
+        tvReps.text = "0"
+        tvFeedback.text = "Tap Start"
+        tvExerciseName.text = intent.getStringExtra("exercise_name") ?: "Crunch"
     }
 
     private fun setupListeners() {
@@ -112,10 +123,11 @@ class ShoulderPressActivity : AppCompatActivity() {
         btnFinish.setOnClickListener { finishWorkout() }
 
         btnSwitchCamera.setOnClickListener {
-            lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK)
+            lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK) {
                 CameraSelector.LENS_FACING_FRONT
-            else
+            } else {
                 CameraSelector.LENS_FACING_BACK
+            }
 
             overlayView.mirrorX = (lensFacing == CameraSelector.LENS_FACING_FRONT)
             bindCameraUseCases()
@@ -124,28 +136,31 @@ class ShoulderPressActivity : AppCompatActivity() {
 
     private fun startWorkout() {
         isWorkoutActive = true
-        elapsedSeconds  = 0
-        tvTimer.text    = "00:00"
+        elapsedSeconds = 0
+        tvTimer.text = "00:00"
 
         stabilizer.reset()
         readyCheck.reset()
 
-        repCount    = 0
-        downStreak  = 0
-        upStreak    = 0
+        repCount = 0
+        phase = CrunchPhase.UP
+        downStreak = 0
+        upStreak = 0
+        reachedDepthInCurrentRep = false
+        downHoldStreak = 0
         readyStreak = 0
-        isReady     = false
-        phase       = ShoulderPressPhase.DOWN
+        isReady = false
 
         btnStartPause.text = "Pause"
 
-        timer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
+        timer = object : CountDownTimer(Long.MAX_VALUE, 1000L) {
             override fun onTick(millisUntilFinished: Long) {
                 elapsedSeconds++
                 val minutes = TimeUnit.SECONDS.toMinutes(elapsedSeconds)
                 val seconds = elapsedSeconds % 60
                 tvTimer.text = String.format("%02d:%02d", minutes, seconds)
             }
+
             override fun onFinish() = Unit
         }.start()
     }
@@ -159,8 +174,8 @@ class ShoulderPressActivity : AppCompatActivity() {
     private fun finishWorkout() {
         timer?.cancel()
 
-        val exerciseName    = intent.getStringExtra("exercise_name")   ?: "Shoulder Press"
-        val exerciseSlug    = intent.getStringExtra("exercise_slug")    ?: "shoulder-press"
+        val exerciseName = intent.getStringExtra("exercise_name") ?: "Crunch"
+        val exerciseSlug = intent.getStringExtra("exercise_slug") ?: "crunch"
         val weeklyPlanDayId = intent.getIntExtra("weekly_plan_day_id", -1)
 
         val summaryIntent = Intent(this, SummaryActivity::class.java).apply {
@@ -170,7 +185,6 @@ class ShoulderPressActivity : AppCompatActivity() {
             putExtra("duration", elapsedSeconds.toInt())
             putExtra("reps", repCount)
         }
-
         startActivity(summaryIntent)
         finish()
     }
@@ -200,102 +214,127 @@ class ShoulderPressActivity : AppCompatActivity() {
                 if (!isWorkoutActive) return@setAnalyzer
 
                 val rotation = imageProxy.imageInfo.rotationDegrees
-
-                val (dispW, dispH) = if (rotation == 90 || rotation == 270)
+                val (dispW, dispH) = if (rotation == 90 || rotation == 270) {
                     imageProxy.height to imageProxy.width
-                else
+                } else {
                     imageProxy.width to imageProxy.height
+                }
+
                 overlayView.setImageSize(dispW, dispH)
 
-                val bitmap  = RgbaToBitmap.toBitmap(imageProxy)
+                val bitmap = RgbaToBitmap.toBitmap(imageProxy)
                 val mpImage = com.google.mediapipe.framework.image.BitmapImageBuilder(bitmap).build()
-                val result  = poseHelper?.detectVideo(mpImage, System.currentTimeMillis())
-                val pose    = result?.landmarks()?.firstOrNull() ?: return@setAnalyzer
+                val result = poseHelper?.detectVideo(mpImage, System.currentTimeMillis())
+                val pose = result?.landmarks()?.firstOrNull() ?: return@setAnalyzer
 
                 val mapped = PoseMapper.mapTo18(pose)
                 val stable = stabilizer.apply(mapped) ?: mapped
-                val fixed  = PoseRotation.rotate(stable, rotation)
+                val fixed = PoseRotation.rotate(stable, rotation)
 
-                var segments     = emptyList<Segment>()
+                var segments = emptyList<Segment>()
                 var feedbackText = ""
 
                 if (!isReady) {
-                    // ── Ожидание стартовой позиции ────────────────────────────
                     val readyResult = readyCheck.check(fixed)
 
-                    feedbackText = readyResult.hint.ifEmpty {
-                        "Hold weights at shoulders to start"
-                    }
+                    feedbackText = readyResult.hint.ifEmpty { "Lie on your back, knees bent" }
 
                     if (readyResult.isReady) {
                         readyStreak++
-                        segments = PoseSkeleton.segments
+                        segments = PoseSkeleton.segments.map { it.copy(color = "#AAAAAA") }
                     } else {
                         readyStreak = 0
-                        segments    = emptyList()
+                        segments = emptyList()
                     }
 
                     if (readyStreak >= READY_STREAK_NEED) {
-                        isReady    = true
-                        phase      = ShoulderPressPhase.DOWN
+                        isReady = true
+                        phase = CrunchPhase.UP
                         downStreak = 0
-                        upStreak   = 0
+                        upStreak = 0
+                        feedbackText = "Start crunching"
                     }
 
                 } else {
-                    // ── Активная тренировка ───────────────────────────────────
-                    val features = ShoulderPressFeatureExtractor.extract(fixed)
+                    val features = CrunchFeatureExtractor.extract(fixed)
 
                     if (features != null) {
-                        val minElbow   = ShoulderPressFeatureExtractor.minElbow(features)
-                        val prediction = shoulderPressModel.predict(features)
-                        feedbackText   = prediction.label
+                        val trunkAngle = features[0]
+                        val neckAngle = features[1]
 
-                        segments = if (prediction.label == "incorrect") {
-                            PoseSkeleton.segments.map { it.copy(color = "#FF0000") }
-                        } else {
-                            PoseSkeleton.segments.map { it.copy(color = "#00C853") }
+                        val isFlat = trunkAngle >= FLAT_T
+                        val isCrunching = trunkAngle < DOWN_T
+                        val isRising = trunkAngle in DOWN_T..UP_T
+
+                        val trunkGood = isFlat || isCrunching || isRising
+                        val neckGood = neckAngle <= NECK_DOWN_T || neckAngle >= 175f
+                        val depthGood = isCrunching
+
+                        segments = buildCrunchSegments(
+                            trunkGood = trunkGood,
+                            neckGood = neckGood,
+                            depthGood = depthGood
+                        )
+
+                        feedbackText = when {
+                            isFlat -> "Lift your upper body"
+                            isCrunching -> "Good crunch"
+                            isRising && !depthGood -> "Go deeper"
+                            neckAngle > NECK_DOWN_T && neckAngle < 175f -> "Lift your head"
+                            else -> "Keep going"
                         }
 
-                        // Считаем репы только при правильной форме
-                        if (prediction.label == "correct") {
-                            when {
-                                minElbow < DOWN_T -> {
-                                    downStreak++
-                                    upStreak = 0
-                                }
-                                minElbow > UP_T -> {
-                                    upStreak++
-                                    downStreak = 0
-                                }
-                                else -> {
-                                    downStreak = 0
-                                    upStreak   = 0
-                                }
-                            }
+                        crunchModel.predict(features)
 
-                            // Зафиксировали DOWN (веса у плеч)
-                            if (phase == ShoulderPressPhase.UP && downStreak >= 3) {
-                                phase      = ShoulderPressPhase.DOWN
-                                downStreak = 0
-                            }
+                        val mouthVisible = fixed[2].v >= 0.15f
+                        val crunchDown = trunkAngle <= DOWN_T &&
+                                (!mouthVisible || neckAngle <= NECK_DOWN_T)
+                        val crunchUp = trunkAngle >= UP_T
 
-                            // После DOWN дошли до UP — реп засчитан
-                            if (phase == ShoulderPressPhase.DOWN && upStreak >= 3) {
-                                phase    = ShoulderPressPhase.UP
-                                upStreak = 0
-                                repCount++
+                        if (crunchDown) {
+                            downHoldStreak++
+                            if (downHoldStreak >= DOWN_HOLD_NEED) {
+                                reachedDepthInCurrentRep = true
                             }
                         } else {
+                            downHoldStreak = 0
+                        }
+
+                        when {
+                            crunchDown -> {
+                                downStreak++
+                                upStreak = 0
+                            }
+                            crunchUp -> {
+                                upStreak++
+                                downStreak = 0
+                            }
+                            else -> {
+                                downStreak = 0
+                                upStreak = 0
+                            }
+                        }
+
+                        if (phase == CrunchPhase.UP && downStreak >= 1) {
+                            phase = CrunchPhase.DOWN
                             downStreak = 0
-                            upStreak   = 0
+                        }
+
+                        if (phase == CrunchPhase.DOWN && upStreak >= 1) {
+                            phase = CrunchPhase.UP
+                            upStreak = 0
+
+                            if (reachedDepthInCurrentRep) repCount++
+
+                            reachedDepthInCurrentRep = false
+                            downHoldStreak = 0
                         }
 
                     } else {
-                        feedbackText = "Show upper body"
-                        segments     = emptyList()
-                        downStreak   = 0
-                        upStreak     = 0
+                        feedbackText = "Show hips and knees"
+                        segments = emptyList()
+                        downStreak = 0
+                        upStreak = 0
                     }
                 }
 
@@ -303,7 +342,7 @@ class ShoulderPressActivity : AppCompatActivity() {
                 val finalFeedback = feedbackText
 
                 runOnUiThread {
-                    tvReps.text     = repCount.toString()
+                    tvReps.text = repCount.toString()
                     tvFeedback.text = finalFeedback
                     overlayView.updatePose(fixed, finalSegments)
                 }
@@ -321,6 +360,30 @@ class ShoulderPressActivity : AppCompatActivity() {
         provider.bindToLifecycle(this, selector, preview, analysis)
     }
 
+    private fun buildCrunchSegments(
+        trunkGood: Boolean,
+        neckGood: Boolean,
+        depthGood: Boolean
+    ): List<Segment> {
+        val green = "#00FF00"
+        val red = "#FF0000"
+
+        val neckColor = if (neckGood) green else red
+        val trunkColor = if (trunkGood) green else red
+
+        return listOf(
+            Segment(2, 3, neckColor),
+            Segment(4, 5, trunkColor),
+            Segment(3, 4, trunkColor),
+            Segment(3, 5, trunkColor),
+            Segment(4, 10, trunkColor),
+            Segment(5, 11, trunkColor),
+            Segment(10, 11, trunkColor),
+            Segment(10, 12, trunkColor),
+            Segment(11, 13, trunkColor),
+        )
+    }
+
     private fun allPermissionsGranted() =
         ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) ==
                 PackageManager.PERMISSION_GRANTED
@@ -330,6 +393,6 @@ class ShoulderPressActivity : AppCompatActivity() {
         timer?.cancel()
         cameraExecutor.shutdown()
         poseHelper?.close()
-        shoulderPressModel.close()
+        crunchModel.close()
     }
 }

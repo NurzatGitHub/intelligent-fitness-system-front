@@ -81,9 +81,6 @@
             android:name=".ui.exercise.ExerciseListActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.exercise.ExerciseDetailActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.exercise.ExerciseInstructionActivity"
             android:exported="false" />
         <activity
@@ -94,6 +91,12 @@
             android:exported="false" />
         <activity
             android:name=".ui.workout.plank.PlankActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.workout.shoulderpress.ShoulderPressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.workout.crunch.CrunchActivity"
             android:exported="false" />
         <activity
             android:name=".ui.summary.SummaryActivity"
@@ -107,10 +110,6 @@
         <activity
             android:name=".ui.workout.generic.GenericWorkoutActivity"
             android:exported="false" />
-        <activity
-            android:name=".ui.workout.shoulderpress.ShoulderPressActivity"
-            android:exported="false" />
-
     </application>
 
 </manifest>
