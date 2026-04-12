@@ -198,6 +198,23 @@ class ExerciseRepositoryLocal : ExerciseRepository {
                 listOf("Keep upper arm fixed in place.", "Use light weight to avoid swinging."),
                 "dumbbell", "beginner", null, videoFile = "tricep_kickback", imageFile = "tricep_kickback"),
 
+            sub(subs, "triceps", "ex114", "Shoulder Press",
+                "Overhead pressing movement that builds shoulder and upper-body strength.",
+                listOf(
+                    "Stand or sit tall with weights at shoulder height.",
+                    "Brace your core and keep wrists stacked over elbows.",
+                    "Press the weights overhead until arms are extended.",
+                    "Lower the weights back to shoulder height with control."
+                ),
+                listOf(
+                    "Do not over-arch your lower back.",
+                    "Keep elbows slightly in front of the body.",
+                    "Control both the press and the lowering phase."
+                ),
+                "dumbbell / barbell", "intermediate", null,
+                videoFile = "shoulder_press",
+                imageFile = "shoulder_press"
+            ),
             // =====================
             // ARMS — FOREARMS
             // =====================

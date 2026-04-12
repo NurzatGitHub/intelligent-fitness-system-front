@@ -5,6 +5,7 @@ import android.content.Intent
 import android.util.Log
 import com.example.fitnesscoachai.ui.workout.plank.PlankActivity
 import com.example.fitnesscoachai.ui.workout.pushup.PushupActivity
+import com.example.fitnesscoachai.ui.workout.shoulderpress.ShoulderPressActivity
 import com.example.fitnesscoachai.ui.workout.squat.SquatActivity
 import java.util.Locale
 
@@ -55,6 +56,14 @@ object ExerciseRouter {
                     name == "plank" ||
                     name.contains("plank")
 
+        val isShoulderPress =
+            id == "ex114" ||
+                    slug == "shoulder-press" ||
+                    slug.contains("shoulder-press") ||
+                    slug.contains("shoulderpress") ||
+                    name == "shoulder press" ||
+                    name.contains("shoulder press")
+
         val intent = when {
             isPushup -> {
                 Log.d("ExerciseRouter", "Opening PushupActivity")
@@ -71,6 +80,11 @@ object ExerciseRouter {
                 Intent(context, PlankActivity::class.java)
             }
 
+            isShoulderPress -> {
+                Log.d("ExerciseRouter", "Opening ShoulderPressActivity")
+                Intent(context, ShoulderPressActivity::class.java)
+            }
+
             else -> {
                 Log.d("ExerciseRouter", "Opening ExerciseInstructionActivity")
                 ExerciseInstructionActivity.newIntent(
@@ -80,7 +94,7 @@ object ExerciseRouter {
             }
         }
 
-        intent.putExtra("exercise_name", resolvedName)
+        intent.putExtra("exercise_name", resolvedName.ifBlank { "Exercise" })
         intent.putExtra("exercise_slug", resolvedSlug)
 
         if (weeklyPlanDayId != null && weeklyPlanDayId > 0) {

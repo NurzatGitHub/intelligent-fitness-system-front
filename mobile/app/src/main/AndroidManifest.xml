@@ -107,6 +107,9 @@
         <activity
             android:name=".ui.workout.generic.GenericWorkoutActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.workout.shoulderpress.ShoulderPressActivity"
+            android:exported="false" />
 
     </application>
 
