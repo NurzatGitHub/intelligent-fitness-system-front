@@ -3,10 +3,6 @@ package com.example.fitnesscoachai
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import com.example.fitnesscoachai.ui.assistant.AssistantFragment
 import com.example.fitnesscoachai.ui.auth.AuthActivity
@@ -38,15 +34,6 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.mainRoot)) { v, windowInsets ->
-            val bars = windowInsets.getInsets(
-                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
-            )
-            v.updatePadding(bars.left, bars.top, bars.right, bars.bottom)
-            WindowInsetsCompat.CONSUMED
-        }
-
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
 
         if (savedInstanceState == null) {
@@ -63,8 +50,12 @@ class MainActivity : AppCompatActivity() {
             activeFragment = homeFragment
             bottomNavigation.selectedItemId = R.id.nav_home
         } else {
-            activeFragment = supportFragmentManager.findFragmentByTag("home")
-                ?: homeFragment
+            activeFragment =
+                supportFragmentManager.findFragmentByTag("home")
+                    ?: supportFragmentManager.findFragmentByTag("assistant")
+                            ?: supportFragmentManager.findFragmentByTag("exercise")
+                            ?: supportFragmentManager.findFragmentByTag("profile")
+                            ?: homeFragment
         }
 
         bottomNavigation.setOnItemSelectedListener {
