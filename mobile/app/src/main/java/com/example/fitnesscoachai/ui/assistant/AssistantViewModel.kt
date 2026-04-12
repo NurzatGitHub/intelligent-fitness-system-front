@@ -16,7 +16,7 @@ class AssistantViewModel : ViewModel() {
     private val _messages = MutableLiveData<List<ChatMessage>>(
         listOf(
             ChatMessage(
-                text = "Привет! Я AI-ассистент. Чем помочь по тренировкам?",
+                text = "Hi! I'm your AI assistant. How can I help with your training?",
                 isUser = false
             )
         )
@@ -46,7 +46,7 @@ class AssistantViewModel : ViewModel() {
                     val reply = resp.body()?.reply?.trim()
                     updated.add(
                         ChatMessage(
-                            text = reply ?: "Пустой ответ от сервера.",
+                            text = reply ?: "Empty response from server.",
                             isUser = false
                         )
                     )
@@ -64,13 +64,13 @@ class AssistantViewModel : ViewModel() {
                                     if (isNotEmpty()) append("\n")
                                     append(error)
                                 }
-                                if (isBlank()) append("Ошибка сервера: ${resp.code()}")
+                                if (isBlank()) append("Server error: ${resp.code()}")
                             }
                         } else {
-                            "Ошибка сервера: ${resp.code()}"
+                            "Server error: ${resp.code()}"
                         }
                     } catch (e: Exception) {
-                        "Ошибка сервера: ${resp.code()}"
+                        "Server error: ${resp.code()}"
                     }
 
                     updated.add(
@@ -87,7 +87,7 @@ class AssistantViewModel : ViewModel() {
                 val updated = _messages.value.orEmpty().toMutableList()
                 updated.add(
                     ChatMessage(
-                        text = "Не удалось подключиться к серверу. Проверь IP, backend и интернет.",
+                        text = "Could not connect to the server. Check IP, backend, and internet connection.",
                         isUser = false
                     )
                 )

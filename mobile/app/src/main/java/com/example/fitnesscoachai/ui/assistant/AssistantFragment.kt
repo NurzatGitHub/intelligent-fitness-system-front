@@ -99,7 +99,7 @@ class AssistantFragment : Fragment(R.layout.fragment_assistant) {
 
             if (token.isNullOrBlank()) {
                 val cur = vm.messages.value.orEmpty().toMutableList()
-                cur.add(ChatMessage("Нужно войти в аккаунт, чтобы использовать AI.", isUser = false))
+                cur.add(ChatMessage("You need to sign in to use AI.", isUser = false))
                 adapter.submitList(cur)
                 rv.post { rv.scrollToPosition(cur.size - 1) }
                 return

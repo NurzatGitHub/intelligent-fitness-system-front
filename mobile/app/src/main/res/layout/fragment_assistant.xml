@@ -5,9 +5,19 @@
     android:id="@+id/assistantRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0F1014"
     android:clipChildren="false"
     android:clipToPadding="false">
+
+    <ImageView
+        android:id="@+id/bgImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/assistant_chat_bg"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvChat"
@@ -56,6 +66,9 @@
         android:id="@+id/inputContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="6dp"
         android:background="@drawable/bg_chat_input_container"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -82,7 +95,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:textColor="#F3F4F6"
-            android:textColorHint="#8F90A0"
+            android:textColorHint="#B8BBC7"
             android:textSize="15sp" />
 
         <ImageButton
