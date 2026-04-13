@@ -70,20 +70,6 @@ class SquatActivity : AppCompatActivity() {
     private var reachedDepthInCurrentRep = false
     private var bottomHoldStreak = 0
 
-    private val downThreshold = 145f
-    private val upThreshold = 154f
-    private val depthThreshold = 0.92f
-    private val kneeDiffThreshold = 40f
-    private val bottomHoldNeed = 1
-
-    private val ankleLevelTolerance = 0.18f
-    private val kneeLevelTolerance = 0.20f
-    private val minKneeWidthRatio = 0.22f
-    private val maxKneeWidthRatio = 2.50f
-
-    private val trunkLeanThreshold = 42f
-    private val kneeCaveThreshold = 3.1f
-
     private var readyStreak = 0
     private val readyStreakNeed = 3
     private var isReady = false
@@ -308,21 +294,21 @@ class SquatActivity : AppCompatActivity() {
             isReady = true
             return UiState(
                 feedback = "Start squatting",
-                segments = PoseSkeleton.segments
+                segments = buildReadySegments()
             )
         }
 
         return UiState(
             feedback = if (readyResult.isReady) "Ready" else readyResult.hint.ifBlank { "Stand upright" },
-            segments = if (readyResult.isReady) PoseSkeleton.segments else emptyList()
+            segments = if (readyResult.isReady) buildReadySegments() else emptyList()
         )
     }
 
     private fun handleActiveState(fixed: List<PosePoint>): UiState {
         val features = SquatFeatureExtractor.extract(fixed)
             ?: return UiState(
-                feedback = "Show shoulders, hips, knees and ankles clearly",
-                segments = PoseSkeleton.segments
+                feedback = "Return to squat position",
+                segments = buildInvalidSegments()
             )
 
         val leftKnee = features[1]
@@ -332,6 +318,8 @@ class SquatActivity : AppCompatActivity() {
         val depthRatio = features[6]
         val trunkAngle = features[7]
 
+        val lSh = fixed[4]
+        val rSh = fixed[5]
         val lHip = fixed[10]
         val rHip = fixed[11]
         val lKneeP = fixed[12]
@@ -339,57 +327,92 @@ class SquatActivity : AppCompatActivity() {
         val lAnk = fixed[14]
         val rAnk = fixed[15]
 
-        val ankleLevelOk = abs(lAnk.y - rAnk.y) < ankleLevelTolerance
-        val kneeLevelOk = abs(lKneeP.y - rKneeP.y) < kneeLevelTolerance
+        val shoulderLevelOk = abs(lSh.y - rSh.y) < 0.12f
+        val hipLevelOk = abs(lHip.y - rHip.y) < 0.12f
+        val kneeLevelOk = abs(lKneeP.y - rKneeP.y) < 0.14f
+        val ankleLevelOk = abs(lAnk.y - rAnk.y) < 0.12f
 
         val hipWidth = abs(lHip.x - rHip.x)
         val kneeWidth = abs(lKneeP.x - rKneeP.x)
+        val ankleWidth = abs(lAnk.x - rAnk.x)
+
         val stanceRatio = kneeWidth / (hipWidth + 1e-6f)
-        val stanceOk = hipWidth > 0.01f && stanceRatio in minKneeWidthRatio..maxKneeWidthRatio
+        val ankleRatio = ankleWidth / (hipWidth + 1e-6f)
 
-        val twoLegSupportOk = listOf(ankleLevelOk, kneeLevelOk, stanceOk).count { it } >= 2
+        val stanceOk = hipWidth > 0.01f &&
+                stanceRatio in 0.45f..1.80f &&
+                ankleRatio in 0.55f..2.20f
 
-        val bottomReached =
-            leftKnee < downThreshold &&
-                    rightKnee < downThreshold &&
-                    depthRatio < depthThreshold &&
-                    kneeDiff < kneeDiffThreshold &&
-                    twoLegSupportOk
+        val supportOk = ankleLevelOk && kneeLevelOk && stanceOk
+        val symmetryOk = shoulderLevelOk && hipLevelOk && kneeDiff < 25f
 
-        val standingReached =
-            leftKnee > upThreshold &&
-                    rightKnee > upThreshold
+        val standingReady =
+            leftKnee > 158f &&
+                    rightKnee > 158f &&
+                    trunkAngle < 28f &&
+                    supportOk &&
+                    symmetryOk
 
-        if (bottomReached) {
+        val squatBottomValid =
+            leftKnee in 65f..135f &&
+                    rightKnee in 65f..135f &&
+                    depthRatio < 0.88f &&
+                    trunkAngle < 36f &&
+                    supportOk &&
+                    symmetryOk &&
+                    kneeCaveRatio < 2.4f
+
+        val obviouslyInvalid =
+            !supportOk ||
+                    !symmetryOk ||
+                    trunkAngle > 45f ||
+                    kneeCaveRatio >= 2.8f ||
+                    leftKnee < 45f ||
+                    rightKnee < 45f
+
+        if (obviouslyInvalid) {
+            downStreak = 0
+            upStreak = 0
+            bottomHoldStreak = 0
+
+            return UiState(
+                feedback = "Return to squat position",
+                segments = buildInvalidSegments()
+            )
+        }
+
+        if (squatBottomValid) {
             bottomHoldStreak++
-            if (bottomHoldStreak >= bottomHoldNeed) {
+            if (bottomHoldStreak >= 2) {
                 reachedDepthInCurrentRep = true
             }
-        } else {
+            downStreak++
+            upStreak = 0
+        } else if (standingReady) {
+            upStreak++
+            downStreak = 0
             bottomHoldStreak = 0
+        } else {
+            downStreak = 0
+            upStreak = 0
+            bottomHoldStreak = 0
+
+            return UiState(
+                feedback = "Return to squat position",
+                segments = buildPartialWarningSegments(
+                    trunkGood = trunkAngle < 36f,
+                    kneesGood = kneeCaveRatio < 2.4f && kneeDiff < 25f,
+                    legsGood = supportOk
+                )
+            )
         }
 
-        when {
-            bottomReached -> {
-                downStreak++
-                upStreak = 0
-            }
-            standingReached -> {
-                upStreak++
-                downStreak = 0
-            }
-            else -> {
-                downStreak = 0
-                upStreak = 0
-            }
-        }
-
-        if (phase == SquatPhase.UP && downStreak >= 1) {
+        if (phase == SquatPhase.UP && downStreak >= 2) {
             phase = SquatPhase.DOWN
             downStreak = 0
         }
 
-        if (phase == SquatPhase.DOWN && upStreak >= 1) {
+        if (phase == SquatPhase.DOWN && upStreak >= 2) {
             phase = SquatPhase.UP
             upStreak = 0
 
@@ -401,26 +424,24 @@ class SquatActivity : AppCompatActivity() {
             bottomHoldStreak = 0
         }
 
-        val kneeGood = kneeCaveRatio < kneeCaveThreshold
-        val depthGood = depthRatio < depthThreshold
-        val trunkGood = trunkAngle < trunkLeanThreshold
-
         val feedback = when {
-            !stanceOk -> "Stand evenly"
-            !twoLegSupportOk -> "Keep both feet grounded"
-            !depthGood -> "Go lower"
-            !trunkGood -> "Keep your chest up"
-            !kneeGood -> "Keep your knees out"
-            else -> "Good squat"
+            !supportOk -> "Keep both feet grounded"
+            kneeCaveRatio >= 2.4f -> "Keep your knees out"
+            trunkAngle >= 36f -> "Keep your chest up"
+            squatBottomValid -> "Good squat"
+            standingReady -> "Ready"
+            else -> "Return to squat position"
         }
 
-        squatModel.predict(features)
-
-        val segments = buildSquatSegments(
-            kneeGood = kneeGood,
-            depthGood = depthGood,
-            trunkGood = trunkGood
-        )
+        val segments = when {
+            squatBottomValid -> buildGoodSquatSegments()
+            standingReady -> buildReadySegments()
+            else -> buildPartialWarningSegments(
+                trunkGood = trunkAngle < 36f,
+                kneesGood = kneeCaveRatio < 2.4f && kneeDiff < 25f,
+                legsGood = supportOk
+            )
+        }
 
         return UiState(
             feedback = feedback,
@@ -428,26 +449,69 @@ class SquatActivity : AppCompatActivity() {
         )
     }
 
-    private fun buildSquatSegments(
-        kneeGood: Boolean,
-        depthGood: Boolean,
-        trunkGood: Boolean
+    private fun buildInvalidSegments(): List<Segment> {
+        val red = "#FF0000"
+        return listOf(
+            Segment(4, 5, red),
+            Segment(10, 11, red),
+            Segment(4, 10, red),
+            Segment(5, 11, red),
+            Segment(10, 12, red),
+            Segment(12, 14, red),
+            Segment(11, 13, red),
+            Segment(13, 15, red),
+        )
+    }
+
+    private fun buildReadySegments(): List<Segment> {
+        val green = "#00FF00"
+        return listOf(
+            Segment(4, 5, green),
+            Segment(10, 11, green),
+            Segment(4, 10, green),
+            Segment(5, 11, green),
+            Segment(10, 12, green),
+            Segment(12, 14, green),
+            Segment(11, 13, green),
+            Segment(13, 15, green),
+        )
+    }
+
+    private fun buildGoodSquatSegments(): List<Segment> {
+        val green = "#00FF00"
+        return listOf(
+            Segment(4, 5, green),
+            Segment(10, 11, green),
+            Segment(4, 10, green),
+            Segment(5, 11, green),
+            Segment(10, 12, green),
+            Segment(12, 14, green),
+            Segment(11, 13, green),
+            Segment(13, 15, green),
+        )
+    }
+
+    private fun buildPartialWarningSegments(
+        trunkGood: Boolean,
+        kneesGood: Boolean,
+        legsGood: Boolean
     ): List<Segment> {
         val green = "#00FF00"
         val red = "#FF0000"
 
-        val kneeColor = if (kneeGood) green else red
-        val bodyColor = if (depthGood && trunkGood) green else red
+        val trunkColor = if (trunkGood) green else red
+        val kneeColor = if (kneesGood) green else red
+        val legColor = if (legsGood) green else red
 
         return listOf(
-            Segment(4, 5, bodyColor),
-            Segment(10, 11, bodyColor),
-            Segment(4, 10, bodyColor),
-            Segment(5, 11, bodyColor),
+            Segment(4, 5, trunkColor),
+            Segment(10, 11, trunkColor),
+            Segment(4, 10, trunkColor),
+            Segment(5, 11, trunkColor),
             Segment(10, 12, kneeColor),
-            Segment(12, 14, kneeColor),
             Segment(11, 13, kneeColor),
-            Segment(13, 15, kneeColor),
+            Segment(12, 14, legColor),
+            Segment(13, 15, legColor),
         )
     }
 

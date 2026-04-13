@@ -6,7 +6,7 @@ import kotlin.math.*
 object SquatFeatureExtractor {
 
     private const val EPS = 1e-6f
-    private const val MIN_VIS = 0.20f
+    private const val MIN_VIS = 0.35f
 
     private const val VALID_KNEE_MIN = 20f
     private const val VALID_KNEE_MAX = 180f

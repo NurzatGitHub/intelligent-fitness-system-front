@@ -36,7 +36,7 @@ class PlankActivity : AppCompatActivity() {
 
     private lateinit var cameraExecutor: ExecutorService
     private var cameraProvider: ProcessCameraProvider? = null
-    private var lensFacing = CameraSelector.LENS_FACING_BACK
+    private var lensFacing = CameraSelector.LENS_FACING_FRONT
 
     private lateinit var plankModel: PlankModel
     private var poseHelper: PoseLandmarkerHelper? = null
