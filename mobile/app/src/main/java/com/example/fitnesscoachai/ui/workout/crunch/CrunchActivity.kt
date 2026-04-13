@@ -72,7 +72,7 @@ class CrunchActivity : AppCompatActivity() {
     private var isReady = false
 
     // Делаем var, чтобы можно было переключать
-    private var lensFacing = CameraSelector.LENS_FACING_BACK
+    private var lensFacing = CameraSelector.LENS_FACING_FRONT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
