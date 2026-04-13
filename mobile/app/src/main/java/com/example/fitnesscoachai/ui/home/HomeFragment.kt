@@ -36,9 +36,11 @@ class HomeFragment : Fragment() {
 
     companion object {
         private var weeklyPlanCache: WeeklyPlanResponse? = null
+        private var cachedUserId: Int? = null
 
         fun clearCache() {
             weeklyPlanCache = null
+            cachedUserId = null
         }
     }
 
@@ -66,13 +68,7 @@ class HomeFragment : Fragment() {
         setupCategoryRecyclerView(view)
         categoryAdapter.setCategories(MainCategory.entries)
 
-        val cached = weeklyPlanCache
-        if (cached != null) {
-            bindWeeklyPlan(view, cached)
-        } else {
-            loadWeeklyPlan(view)
-        }
-
+        bindFromCacheOrLoad(view)
         loadOverallStatus(view)
     }
 
@@ -81,14 +77,7 @@ class HomeFragment : Fragment() {
         if (!hidden) {
             view?.let {
                 bindUserHeader(it)
-
-                val cached = weeklyPlanCache
-                if (cached != null) {
-                    bindWeeklyPlan(it, cached)
-                } else {
-                    loadWeeklyPlan(it)
-                }
-
+                bindFromCacheOrLoad(it)
                 loadOverallStatus(it)
             }
         }
@@ -98,16 +87,25 @@ class HomeFragment : Fragment() {
         super.onResume()
         view?.let {
             bindUserHeader(it)
-
-            val cached = weeklyPlanCache
-            if (cached != null) {
-                bindWeeklyPlan(it, cached)
-            } else {
-                loadWeeklyPlan(it)
-            }
-
+            bindFromCacheOrLoad(it)
             loadOverallStatus(it)
         }
+    }
+
+    private fun bindFromCacheOrLoad(view: View) {
+        val currentUserId = getCurrentUserId()
+        val cached = weeklyPlanCache
+
+        if (cached != null && cachedUserId != null && cachedUserId == currentUserId) {
+            bindWeeklyPlan(view, cached)
+        } else {
+            loadWeeklyPlan(view)
+        }
+    }
+
+    private fun getCurrentUserId(): Int {
+        val prefs = requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
+        return prefs.getInt("user_id", -1)
     }
 
     private fun bindUserHeader(view: View) {
@@ -152,8 +150,10 @@ class HomeFragment : Fragment() {
         val prefs = requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
         val isGuest = prefs.getBoolean("isGuest", false)
         val token = prefs.getString("access_token", null)
+        val currentUserId = prefs.getInt("user_id", -1)
 
         if (isGuest || token.isNullOrBlank()) {
+            clearCache()
             showGuestPlan(view)
             return
         }
@@ -166,6 +166,7 @@ class HomeFragment : Fragment() {
                 if (response.isSuccessful && response.body() != null) {
                     val plan = response.body()!!
                     weeklyPlanCache = plan
+                    cachedUserId = currentUserId
                     bindWeeklyPlan(view, plan)
                 } else {
                     showPlanError(view)

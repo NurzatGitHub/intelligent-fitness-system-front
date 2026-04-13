@@ -14,6 +14,7 @@ import com.example.fitnesscoachai.MainActivity
 import com.example.fitnesscoachai.R
 import com.example.fitnesscoachai.data.models.AuthResponse
 import com.example.fitnesscoachai.ui.auth.onboarding.SignUpAgeActivity
+import com.example.fitnesscoachai.ui.home.HomeFragment
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -37,7 +38,6 @@ class AuthActivity : AppCompatActivity() {
 
     private val viewModel: AuthViewModel by viewModels()
 
-    // Google Sign-In launcher
     private val googleLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -86,10 +86,17 @@ class AuthActivity : AppCompatActivity() {
         btnGoogle.setOnClickListener { startGoogleSignIn() }
 
         btnContinueAsGuest.setOnClickListener {
+            HomeFragment.clearCache()
             getSharedPreferences("auth", MODE_PRIVATE).edit()
                 .putBoolean("isLoggedIn", true)
                 .putBoolean("isGuest", true)
+                .remove("user_id")
+                .remove("user_name")
+                .remove("user_email")
+                .remove("access_token")
+                .remove("refresh_token")
                 .apply()
+
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
@@ -111,7 +118,6 @@ class AuthActivity : AppCompatActivity() {
 
         val client = GoogleSignIn.getClient(this, gso)
 
-        // signOut асинхронный — лучше запускать intent после завершения
         client.signOut().addOnCompleteListener {
             googleLauncher.launch(client.signInIntent)
         }
@@ -181,8 +187,8 @@ class AuthActivity : AppCompatActivity() {
 
                             val auth = state.authResponse
                             saveAuthData(auth)
+                            HomeFragment.clearCache()
 
-                            // ✅ Главное изменение: onboarding если новый ИЛИ профиль пустой
                             if (needsOnboarding(auth)) {
                                 startActivity(
                                     Intent(this@AuthActivity, SignUpAgeActivity::class.java).apply {
@@ -230,6 +236,7 @@ class AuthActivity : AppCompatActivity() {
             .putString("refresh_token", authResponse.refresh)
             .putBoolean("isLoggedIn", true)
             .putBoolean("isGuest", false)
+            .putInt("user_id", authResponse.user.id)
             .putString("user_name", authResponse.user.username)
             .putString("user_email", authResponse.user.email)
             .apply()
