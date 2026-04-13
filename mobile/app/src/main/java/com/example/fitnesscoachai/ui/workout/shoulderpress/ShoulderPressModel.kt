@@ -1,6 +1,8 @@
 package com.example.fitnesscoachai.ui.workout.shoulderpress
 
-import ai.onnxruntime.*
+import ai.onnxruntime.OnnxTensor
+import ai.onnxruntime.OrtEnvironment
+import ai.onnxruntime.OrtSession
 import android.content.Context
 import android.util.Log
 
@@ -10,9 +12,7 @@ class ShoulderPressModel(context: Context) {
     private val session: OrtSession
 
     init {
-        val modelBytes = context.assets
-            .open("shoulderpress_model.onnx")
-            .readBytes()
+        val modelBytes = context.assets.open("shoulderpress_model.onnx").readBytes()
         session = env.createSession(modelBytes, OrtSession.SessionOptions())
     }
 
@@ -28,12 +28,11 @@ class ShoulderPressModel(context: Context) {
 
                 val rawLabel = (results[0].value as Array<*>)[0].toString()
 
-                val confidence: Float? = try {
+                val confidence = try {
                     @Suppress("UNCHECKED_CAST")
                     val probMaps = results[1].value as Array<Map<String, Float>>
-                    val probMap = probMaps[0]
-                    probMap[rawLabel]
-                } catch (e: Exception) {
+                    probMaps[0][rawLabel]
+                } catch (_: Exception) {
                     null
                 }
 
@@ -53,7 +52,14 @@ class ShoulderPressModel(context: Context) {
     }
 
     fun close() {
-        session.close()
-        env.close()
+        try {
+            session.close()
+        } catch (_: Exception) {
+        }
+
+        try {
+            env.close()
+        } catch (_: Exception) {
+        }
     }
 }
