@@ -344,25 +344,25 @@ class SquatActivity : AppCompatActivity() {
         val symmetryOk = shoulderLevelOk && hipLevelOk && kneeDiff < 22f
 
         val fullStandingReturn =
-            leftKnee > 166f &&
-                    rightKnee > 166f &&
-                    trunkAngle < 18f &&
-                    depthRatio < 0.78f &&
+            leftKnee > 163f &&
+                    rightKnee > 163f &&
+                    trunkAngle < 23f &&
+                    depthRatio < 0.82f &&
                     supportOk &&
                     symmetryOk
 
         val almostStanding =
-            leftKnee > 156f &&
-                    rightKnee > 156f &&
-                    trunkAngle < 24f &&
+            leftKnee > 152f &&
+                    rightKnee > 152f &&
+                    trunkAngle < 28f &&
                     supportOk &&
                     symmetryOk
 
         val squatBottomValid =
-            leftKnee in 70f..135f &&
-                    rightKnee in 70f..135f &&
-                    depthRatio < 0.90f &&
-                    trunkAngle < 32f &&
+            leftKnee in 70f..138f &&
+                    rightKnee in 70f..138f &&
+                    depthRatio < 0.92f &&
+                    trunkAngle < 34f &&
                     supportOk &&
                     symmetryOk &&
                     kneeCaveRatio < 2.35f
@@ -370,7 +370,7 @@ class SquatActivity : AppCompatActivity() {
         val obviouslyInvalid =
             !supportOk ||
                     !symmetryOk ||
-                    trunkAngle > 38f ||
+                    trunkAngle > 40f ||
                     kneeCaveRatio >= 2.75f ||
                     leftKnee < 50f ||
                     rightKnee < 50f
@@ -393,10 +393,12 @@ class SquatActivity : AppCompatActivity() {
             }
             downStreak++
             upStreak = 0
+
         } else if (fullStandingReturn) {
             upStreak++
             downStreak = 0
             bottomHoldStreak = 0
+
         } else if (almostStanding) {
             downStreak = 0
             upStreak = 0
@@ -405,11 +407,12 @@ class SquatActivity : AppCompatActivity() {
             return UiState(
                 feedback = "Stand fully upright",
                 segments = buildPartialWarningSegments(
-                    trunkGood = trunkAngle < 24f,
+                    trunkGood = trunkAngle < 28f,
                     kneesGood = kneeCaveRatio < 2.35f && kneeDiff < 22f,
                     legsGood = supportOk
                 )
             )
+
         } else {
             downStreak = 0
             upStreak = 0
@@ -418,19 +421,19 @@ class SquatActivity : AppCompatActivity() {
             return UiState(
                 feedback = "Return to squat position",
                 segments = buildPartialWarningSegments(
-                    trunkGood = trunkAngle < 32f,
+                    trunkGood = trunkAngle < 35f,
                     kneesGood = kneeCaveRatio < 2.35f && kneeDiff < 22f,
                     legsGood = supportOk
                 )
             )
         }
 
-        if (phase == SquatPhase.UP && downStreak >= 2) {
+        if (phase == SquatPhase.UP && downStreak >= 3) {
             phase = SquatPhase.DOWN
             downStreak = 0
         }
 
-        if (phase == SquatPhase.DOWN && upStreak >= 2) {
+        if (phase == SquatPhase.DOWN && upStreak >= 3) {
             phase = SquatPhase.UP
             upStreak = 0
 
@@ -445,7 +448,7 @@ class SquatActivity : AppCompatActivity() {
         val feedback = when {
             !supportOk -> "Keep both feet grounded"
             kneeCaveRatio >= 2.35f -> "Keep your knees out"
-            trunkAngle >= 32f -> "Keep your chest up"
+            trunkAngle >= 34f -> "Keep your chest up"
             squatBottomValid -> "Good squat"
             fullStandingReturn -> "Ready"
             almostStanding -> "Stand fully upright"
@@ -456,7 +459,7 @@ class SquatActivity : AppCompatActivity() {
             squatBottomValid -> buildGoodSquatSegments()
             fullStandingReturn -> buildReadySegments()
             else -> buildPartialWarningSegments(
-                trunkGood = trunkAngle < 32f,
+                trunkGood = trunkAngle < 35f,
                 kneesGood = kneeCaveRatio < 2.35f && kneeDiff < 22f,
                 legsGood = supportOk
             )
