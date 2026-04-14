@@ -330,11 +330,45 @@ class PlankActivity : AppCompatActivity() {
             return emptyList<Segment>() to "Show full body"
         }
 
-        val prediction = plankModel.predict(features)
-        var segments = PoseSkeleton.segments
-        var feedbackText = prediction.label
+        val bodyLineAngle = features[0]
+        val hipOffset = features[1]
+        val shHipKnee = features[2]
+        val hipKneeAnkle = features[3]
+        val trunkAngle = features[4]
+        val elShHip = features[5]
+        val headOffset = features[6]
 
-        if (prediction.label == "correct") {
+        val prediction = plankModel.predict(features)
+
+        // Смягчённые пороги = золотая середина
+        val bodyLineGood = bodyLineAngle >= 148f
+        val hipsGood = hipOffset in -0.14f..0.14f
+        val trunkGood = trunkAngle <= 24f
+        val legsGood = hipKneeAnkle >= 138f
+
+        // Почти хорошо — не красим сразу всё в красный
+        val almostGood =
+            bodyLineAngle >= 142f &&
+                    hipOffset in -0.18f..0.18f &&
+                    trunkAngle <= 28f &&
+                    hipKneeAnkle >= 130f
+
+        val geometryCorrect = bodyLineGood && hipsGood && trunkGood && legsGood
+        val finalCorrect = prediction.label == "correct" && geometryCorrect
+
+        var segments = PoseSkeleton.segments
+        var feedbackText = when {
+            hipOffset > 0.14f -> "Drop your hips"
+            hipOffset < -0.14f -> "Raise your hips"
+            !bodyLineGood && !almostGood -> "Keep your body straight"
+            !trunkGood && !almostGood -> "Keep your torso level"
+            !legsGood && !almostGood -> "Straighten your legs"
+            finalCorrect -> "Hold!"
+            almostGood -> "Almost there"
+            else -> "Keep going"
+        }
+
+        if (finalCorrect) {
             correctStreak++
             incorrectStreak = 0
 
@@ -347,18 +381,45 @@ class PlankActivity : AppCompatActivity() {
             if (isHolding) {
                 segments = segments.map { it.copy(color = "#00C853") }
                 feedbackText = "Hold!"
+            } else {
+                segments = segments.map { it.copy(color = "#00C853") }
             }
 
         } else {
             incorrectStreak++
             correctStreak = 0
-            segments = segments.map { it.copy(color = "#FF0000") }
+
+            segments = if (almostGood) {
+                // не рубим всё красным, если поза почти норм
+                PoseSkeleton.segments.map { it.copy(color = "#00C853") }
+            } else {
+                PoseSkeleton.segments.map { it.copy(color = "#FF0000") }
+            }
 
             if (isHolding && incorrectStreak >= INCORRECT_STREAK_BREAK) {
                 isHolding = false
                 Log.d(TAG, "Hold BROKEN")
             }
         }
+
+        Log.d(
+            TAG,
+            "bodyLine=%.1f hipOffset=%.3f shHipKnee=%.1f hipKneeAnkle=%.1f trunk=%.1f elShHip=%.1f head=%.3f geom=%s almost=%s model=%s conf=%s hold=%s"
+                .format(
+                    bodyLineAngle,
+                    hipOffset,
+                    shHipKnee,
+                    hipKneeAnkle,
+                    trunkAngle,
+                    elShHip,
+                    headOffset,
+                    geometryCorrect,
+                    almostGood,
+                    prediction.label,
+                    prediction.confidence?.toString() ?: "null",
+                    isHolding
+                )
+        )
 
         return segments to feedbackText
     }
