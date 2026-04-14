@@ -5,8 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.widget.ImageButton
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -22,7 +20,6 @@ import com.example.fitnesscoachai.ui.workout.shared.PoseLandmarkerHelper
 import com.example.fitnesscoachai.ui.workout.shared.PoseMapper
 import com.example.fitnesscoachai.ui.workout.shared.PosePoint
 import com.example.fitnesscoachai.ui.workout.shared.PoseRotation
-import com.example.fitnesscoachai.ui.workout.shared.PoseSkeleton
 import com.example.fitnesscoachai.ui.workout.shared.PoseStabilizer
 import com.example.fitnesscoachai.ui.workout.shared.RgbaToBitmap
 import com.example.fitnesscoachai.ui.workout.shared.Segment
@@ -38,12 +35,12 @@ class SquatActivity : AppCompatActivity() {
     private lateinit var previewView: PreviewView
     private lateinit var overlayView: OverlayView
 
-    private lateinit var tvTimer: TextView
-    private lateinit var tvExerciseName: TextView
-    private lateinit var tvReps: TextView
-    private lateinit var tvFeedback: TextView
+    private lateinit var tvTimer: android.widget.TextView
+    private lateinit var tvExerciseName: android.widget.TextView
+    private lateinit var tvReps: android.widget.TextView
+    private lateinit var tvFeedback: android.widget.TextView
 
-    private lateinit var btnSwitchCamera: ImageButton
+    private lateinit var btnSwitchCamera: android.widget.ImageButton
     private lateinit var btnStartPause: MaterialButton
     private lateinit var btnFinish: MaterialButton
 
@@ -344,31 +341,39 @@ class SquatActivity : AppCompatActivity() {
                 ankleRatio in 0.55f..2.20f
 
         val supportOk = ankleLevelOk && kneeLevelOk && stanceOk
-        val symmetryOk = shoulderLevelOk && hipLevelOk && kneeDiff < 25f
+        val symmetryOk = shoulderLevelOk && hipLevelOk && kneeDiff < 22f
 
-        val standingReady =
-            leftKnee > 158f &&
-                    rightKnee > 158f &&
-                    trunkAngle < 28f &&
+        val fullStandingReturn =
+            leftKnee > 166f &&
+                    rightKnee > 166f &&
+                    trunkAngle < 18f &&
+                    depthRatio < 0.78f &&
+                    supportOk &&
+                    symmetryOk
+
+        val almostStanding =
+            leftKnee > 156f &&
+                    rightKnee > 156f &&
+                    trunkAngle < 24f &&
                     supportOk &&
                     symmetryOk
 
         val squatBottomValid =
-            leftKnee in 65f..135f &&
-                    rightKnee in 65f..135f &&
-                    depthRatio < 0.88f &&
-                    trunkAngle < 36f &&
+            leftKnee in 70f..135f &&
+                    rightKnee in 70f..135f &&
+                    depthRatio < 0.90f &&
+                    trunkAngle < 32f &&
                     supportOk &&
                     symmetryOk &&
-                    kneeCaveRatio < 2.4f
+                    kneeCaveRatio < 2.35f
 
         val obviouslyInvalid =
             !supportOk ||
                     !symmetryOk ||
-                    trunkAngle > 45f ||
-                    kneeCaveRatio >= 2.8f ||
-                    leftKnee < 45f ||
-                    rightKnee < 45f
+                    trunkAngle > 38f ||
+                    kneeCaveRatio >= 2.75f ||
+                    leftKnee < 50f ||
+                    rightKnee < 50f
 
         if (obviouslyInvalid) {
             downStreak = 0
@@ -388,10 +393,23 @@ class SquatActivity : AppCompatActivity() {
             }
             downStreak++
             upStreak = 0
-        } else if (standingReady) {
+        } else if (fullStandingReturn) {
             upStreak++
             downStreak = 0
             bottomHoldStreak = 0
+        } else if (almostStanding) {
+            downStreak = 0
+            upStreak = 0
+            bottomHoldStreak = 0
+
+            return UiState(
+                feedback = "Stand fully upright",
+                segments = buildPartialWarningSegments(
+                    trunkGood = trunkAngle < 24f,
+                    kneesGood = kneeCaveRatio < 2.35f && kneeDiff < 22f,
+                    legsGood = supportOk
+                )
+            )
         } else {
             downStreak = 0
             upStreak = 0
@@ -400,8 +418,8 @@ class SquatActivity : AppCompatActivity() {
             return UiState(
                 feedback = "Return to squat position",
                 segments = buildPartialWarningSegments(
-                    trunkGood = trunkAngle < 36f,
-                    kneesGood = kneeCaveRatio < 2.4f && kneeDiff < 25f,
+                    trunkGood = trunkAngle < 32f,
+                    kneesGood = kneeCaveRatio < 2.35f && kneeDiff < 22f,
                     legsGood = supportOk
                 )
             )
@@ -426,19 +444,20 @@ class SquatActivity : AppCompatActivity() {
 
         val feedback = when {
             !supportOk -> "Keep both feet grounded"
-            kneeCaveRatio >= 2.4f -> "Keep your knees out"
-            trunkAngle >= 36f -> "Keep your chest up"
+            kneeCaveRatio >= 2.35f -> "Keep your knees out"
+            trunkAngle >= 32f -> "Keep your chest up"
             squatBottomValid -> "Good squat"
-            standingReady -> "Ready"
+            fullStandingReturn -> "Ready"
+            almostStanding -> "Stand fully upright"
             else -> "Return to squat position"
         }
 
         val segments = when {
             squatBottomValid -> buildGoodSquatSegments()
-            standingReady -> buildReadySegments()
+            fullStandingReturn -> buildReadySegments()
             else -> buildPartialWarningSegments(
-                trunkGood = trunkAngle < 36f,
-                kneesGood = kneeCaveRatio < 2.4f && kneeDiff < 25f,
+                trunkGood = trunkAngle < 32f,
+                kneesGood = kneeCaveRatio < 2.35f && kneeDiff < 22f,
                 legsGood = supportOk
             )
         }
