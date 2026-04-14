@@ -26,9 +26,9 @@ class PlankActivity : AppCompatActivity() {
 
     private lateinit var previewView: PreviewView
     private lateinit var overlayView: OverlayView
-    private lateinit var tvTimer: TextView          // Duration
+    private lateinit var tvTimer: TextView
     private lateinit var tvExerciseName: TextView
-    private lateinit var tvReps: TextView           // Hold Time
+    private lateinit var tvReps: TextView
     private lateinit var tvFeedback: TextView
     private lateinit var btnSwitchCamera: ImageButton
     private lateinit var btnStartPause: MaterialButton
@@ -49,8 +49,8 @@ class PlankActivity : AppCompatActivity() {
     private val READY_STREAK_NEED = 2
 
     private var isWorkoutActive = false
-    private var elapsedSeconds = 1L
-    private var holdSeconds = 1L
+    private var elapsedSeconds = 0L
+    private var holdSeconds = 0L
     private var timer: CountDownTimer? = null
 
     private var isHolding = false
@@ -117,7 +117,7 @@ class PlankActivity : AppCompatActivity() {
         tvExerciseName = findViewById(R.id.tvExerciseName)
         btnSwitchCamera = findViewById(R.id.btnSwitchCamera)
 
-        overlayView.mirrorX = false
+        overlayView.mirrorX = (lensFacing == CameraSelector.LENS_FACING_FRONT)
         tvTimer.text = "00:00"
         tvReps.text = "00:00"
         tvFeedback.text = "Tap Start"
@@ -140,9 +140,9 @@ class PlankActivity : AppCompatActivity() {
 
         btnSwitchCamera.setOnClickListener {
             lensFacing = if (lensFacing == CameraSelector.LENS_FACING_FRONT) {
-                CameraSelector.LENS_FACING_FRONT
-            } else {
                 CameraSelector.LENS_FACING_BACK
+            } else {
+                CameraSelector.LENS_FACING_FRONT
             }
             overlayView.mirrorX = (lensFacing == CameraSelector.LENS_FACING_FRONT)
             bindCameraUseCases()
@@ -197,8 +197,8 @@ class PlankActivity : AppCompatActivity() {
                 }
 
                 runOnUiThread {
-                    tvTimer.text = formatTime(elapsedSeconds)   // Duration
-                    tvReps.text = formatTime(holdSeconds)       // Hold Time
+                    tvTimer.text = formatTime(elapsedSeconds)
+                    tvReps.text = formatTime(holdSeconds)
                 }
             }
 
