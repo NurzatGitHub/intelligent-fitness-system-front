@@ -2,10 +2,11 @@ package com.example.fitnesscoachai.ui.home
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.graphics.Color
 import android.graphics.Typeface
-import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +34,7 @@ import java.util.Locale
 class HomeFragment : Fragment() {
 
     private lateinit var categoryAdapter: CategoryAdapter
+    private val tag = "HomeFragment"
 
     companion object {
         private var weeklyPlanCache: WeeklyPlanResponse? = null
@@ -92,6 +94,68 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun getAuthPrefs() =
+        requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
+
+    private fun getProfilePrefs() =
+        requireContext().getSharedPreferences("user_profile", Context.MODE_PRIVATE)
+
+    private fun getCurrentUserId(): Int {
+        return getAuthPrefs().getInt("user_id", -1)
+    }
+
+    private fun getAvatarUriKey(): String {
+        val userId = getCurrentUserId()
+        return if (userId > 0) "avatar_uri_$userId" else "avatar_uri_guest"
+    }
+
+    private fun clearBrokenAvatarUri() {
+        getProfilePrefs()
+            .edit()
+            .remove(getAvatarUriKey())
+            .apply()
+    }
+
+    private fun resetHeaderAvatar(avatar: ImageView) {
+        avatar.setImageDrawable(null)
+        avatar.background = null
+        avatar.setPadding(0, 0, 0, 0)
+        avatar.clearColorFilter()
+        avatar.imageTintList = null
+        avatar.invalidate()
+    }
+
+    private fun applyHeaderAvatarSafely(avatar: ImageView, avatarUriString: String?) {
+        if (avatarUriString.isNullOrBlank()) {
+            resetHeaderAvatar(avatar)
+            return
+        }
+
+        try {
+            val uri = Uri.parse(avatarUriString)
+
+            requireContext().contentResolver.openInputStream(uri)?.use {
+                // validate access
+            } ?: throw IllegalStateException("Avatar stream is null")
+
+            avatar.setImageURI(uri)
+            avatar.background = null
+            avatar.setPadding(0, 0, 0, 0)
+            avatar.clearColorFilter()
+            avatar.imageTintList = null
+            avatar.invalidate()
+
+        } catch (e: SecurityException) {
+            Log.w(tag, "No access to avatar uri in Home: $avatarUriString", e)
+            clearBrokenAvatarUri()
+            resetHeaderAvatar(avatar)
+        } catch (e: Exception) {
+            Log.w(tag, "Broken avatar uri in Home: $avatarUriString", e)
+            clearBrokenAvatarUri()
+            resetHeaderAvatar(avatar)
+        }
+    }
+
     private fun bindFromCacheOrLoad(view: View) {
         val currentUserId = getCurrentUserId()
         val cached = weeklyPlanCache
@@ -103,29 +167,15 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun getCurrentUserId(): Int {
-        val prefs = requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
-        return prefs.getInt("user_id", -1)
-    }
-
     private fun bindUserHeader(view: View) {
-        val authPrefs = requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
+        val authPrefs = getAuthPrefs()
         val userName = authPrefs.getString("user_name", "beginner") ?: "beginner"
         view.findViewById<TextView>(R.id.tvUserName)?.text = "$userName 👋"
 
-        val avatarUri = requireContext()
-            .getSharedPreferences("user_profile", Context.MODE_PRIVATE)
-            .getString("avatar_uri", null)
+        val avatarUri = getProfilePrefs().getString(getAvatarUriKey(), null)
 
-        if (!avatarUri.isNullOrBlank()) {
-            view.findViewById<ImageView>(R.id.ivAvatar)?.let { avatar ->
-                avatar.setImageURI(Uri.parse(avatarUri))
-                avatar.background = null
-                avatar.setPadding(0, 0, 0, 0)
-                avatar.clearColorFilter()
-                avatar.imageTintList = null
-                avatar.invalidate()
-            }
+        view.findViewById<ImageView>(R.id.ivAvatar)?.let { avatar ->
+            applyHeaderAvatarSafely(avatar, avatarUri)
         }
     }
 
@@ -147,7 +197,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadWeeklyPlan(view: View) {
-        val prefs = requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
+        val prefs = getAuthPrefs()
         val isGuest = prefs.getBoolean("isGuest", false)
         val token = prefs.getString("access_token", null)
         val currentUserId = prefs.getInt("user_id", -1)

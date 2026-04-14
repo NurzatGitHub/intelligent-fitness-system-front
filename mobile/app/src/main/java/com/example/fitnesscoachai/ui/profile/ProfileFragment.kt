@@ -23,6 +23,7 @@ import com.example.fitnesscoachai.data.models.UpdateProfileRequest
 import com.example.fitnesscoachai.data.models.User
 import com.example.fitnesscoachai.ui.auth.AuthActivity
 import com.example.fitnesscoachai.ui.history.HistoryActivity
+import com.example.fitnesscoachai.ui.home.HomeFragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
@@ -51,19 +52,14 @@ class ProfileFragment : Fragment() {
                     Log.w(tag, "Не удалось персистить Uri для аватара: $uri", e)
                 }
 
-                requireContext()
-                    .getSharedPreferences("user_profile", AppCompatActivity.MODE_PRIVATE)
+                getProfilePrefs()
                     .edit()
-                    .putString("avatar_uri", uri.toString())
+                    .putString(getAvatarUriKey(), uri.toString())
                     .apply()
 
                 val ivAvatar = view?.findViewById<ImageView>(R.id.ivAvatar)
                 ivAvatar?.let {
-                    it.setImageURI(uri)
-                    it.background = null
-                    it.clearColorFilter()
-                    it.imageTintList = null
-                    it.invalidate()
+                    applyAvatarSafely(it, uri.toString())
                 }
             }
         }
@@ -113,9 +109,68 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    private fun getAuthPrefs() =
+        requireContext().getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
+
+    private fun getProfilePrefs() =
+        requireContext().getSharedPreferences("user_profile", AppCompatActivity.MODE_PRIVATE)
+
+    private fun getCurrentUserId(): Int {
+        return getAuthPrefs().getInt("user_id", -1)
+    }
+
+    private fun getAvatarUriKey(): String {
+        val userId = getCurrentUserId()
+        return if (userId > 0) "avatar_uri_$userId" else "avatar_uri_guest"
+    }
+
     private fun getAccessToken(): String? {
-        val authPrefs = requireContext().getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
-        return authPrefs.getString("access_token", null)
+        return getAuthPrefs().getString("access_token", null)
+    }
+
+    private fun clearBrokenAvatarUri() {
+        getProfilePrefs()
+            .edit()
+            .remove(getAvatarUriKey())
+            .apply()
+    }
+
+    private fun resetAvatarView(ivAvatar: ImageView) {
+        ivAvatar.setImageDrawable(null)
+        ivAvatar.background = null
+        ivAvatar.clearColorFilter()
+        ivAvatar.imageTintList = null
+        ivAvatar.invalidate()
+    }
+
+    private fun applyAvatarSafely(ivAvatar: ImageView, avatarUriString: String?) {
+        if (avatarUriString.isNullOrBlank()) {
+            resetAvatarView(ivAvatar)
+            return
+        }
+
+        try {
+            val uri = Uri.parse(avatarUriString)
+
+            requireContext().contentResolver.openInputStream(uri)?.use {
+                // validate access
+            } ?: throw IllegalStateException("Avatar stream is null")
+
+            ivAvatar.setImageURI(uri)
+            ivAvatar.background = null
+            ivAvatar.clearColorFilter()
+            ivAvatar.imageTintList = null
+            ivAvatar.invalidate()
+
+        } catch (e: SecurityException) {
+            Log.w(tag, "Нет доступа к avatar uri: $avatarUriString", e)
+            clearBrokenAvatarUri()
+            resetAvatarView(ivAvatar)
+        } catch (e: Exception) {
+            Log.w(tag, "Битый avatar uri: $avatarUriString", e)
+            clearBrokenAvatarUri()
+            resetAvatarView(ivAvatar)
+        }
     }
 
     private fun fetchProfileFromServer() {
@@ -145,8 +200,9 @@ class ProfileFragment : Fragment() {
     }
 
     private fun cacheUser(user: User) {
-        val authPrefs = requireContext().getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
-        val profilePrefs = requireContext().getSharedPreferences("user_profile", AppCompatActivity.MODE_PRIVATE)
+        val authPrefs = getAuthPrefs()
+        val profilePrefs = getProfilePrefs()
+        val userId = getCurrentUserId()
 
         authPrefs.edit()
             .putString("user_name", user.username)
@@ -154,41 +210,42 @@ class ProfileFragment : Fragment() {
             .apply()
 
         profilePrefs.edit()
-            .putInt("age", user.age ?: 25)
-            .putFloat("weight", user.weight ?: 75f)
-            .putFloat("height", user.height ?: 180f)
-            .putString("fitness_level", user.fitness_level)
-            .putString("training_goal", user.goal.ifBlank { "" })
-            .putString("injuries", user.limitations.ifBlank { "" })
-            .putString("training_frequency", user.frequency.ifBlank { "" })
-            .putString("workout_duration", user.workout_duration.ifBlank { "" })
-            .putString("workout_place", user.workout_place.ifBlank { "" })
-            .putString("endurance_level", user.endurance_level.ifBlank { "" })
-            .putString("gender", user.gender.ifBlank { "" })
-            .putString("profile_picture_url", user.profile_picture_url ?: "")
+            .putInt("age_$userId", user.age ?: 25)
+            .putFloat("weight_$userId", user.weight ?: 75f)
+            .putFloat("height_$userId", user.height ?: 180f)
+            .putString("fitness_level_$userId", user.fitness_level)
+            .putString("training_goal_$userId", user.goal.ifBlank { "" })
+            .putString("injuries_$userId", user.limitations.ifBlank { "" })
+            .putString("training_frequency_$userId", user.frequency.ifBlank { "" })
+            .putString("workout_duration_$userId", user.workout_duration.ifBlank { "" })
+            .putString("workout_place_$userId", user.workout_place.ifBlank { "" })
+            .putString("endurance_level_$userId", user.endurance_level.ifBlank { "" })
+            .putString("gender_$userId", user.gender.ifBlank { "" })
+            .putString("profile_picture_url_$userId", user.profile_picture_url ?: "")
             .apply()
     }
 
     private fun loadCachedProfile(view: View) {
-        val authPrefs = requireContext().getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
-        val profilePrefs = requireContext().getSharedPreferences("user_profile", AppCompatActivity.MODE_PRIVATE)
+        val authPrefs = getAuthPrefs()
+        val profilePrefs = getProfilePrefs()
+        val userId = getCurrentUserId()
 
         val cachedUser = User(
-            id = 0,
+            id = userId.coerceAtLeast(0),
             email = authPrefs.getString("user_email", "") ?: "",
             username = authPrefs.getString("user_name", "Azamat") ?: "Azamat",
-            age = profilePrefs.getInt("age", 25),
-            weight = profilePrefs.getFloat("weight", 75f),
-            height = profilePrefs.getFloat("height", 180f),
-            fitness_level = profilePrefs.getString("fitness_level", "beginner") ?: "beginner",
-            goal = profilePrefs.getString("training_goal", "") ?: "",
-            limitations = profilePrefs.getString("injuries", "") ?: "",
-            frequency = profilePrefs.getString("training_frequency", "") ?: "",
-            workout_duration = profilePrefs.getString("workout_duration", "") ?: "",
-            workout_place = profilePrefs.getString("workout_place", "") ?: "",
-            endurance_level = profilePrefs.getString("endurance_level", "") ?: "",
-            gender = profilePrefs.getString("gender", "") ?: "",
-            profile_picture_url = profilePrefs.getString("profile_picture_url", "")?.ifBlank { null }
+            age = profilePrefs.getInt("age_$userId", 25),
+            weight = profilePrefs.getFloat("weight_$userId", 75f),
+            height = profilePrefs.getFloat("height_$userId", 180f),
+            fitness_level = profilePrefs.getString("fitness_level_$userId", "beginner") ?: "beginner",
+            goal = profilePrefs.getString("training_goal_$userId", "") ?: "",
+            limitations = profilePrefs.getString("injuries_$userId", "") ?: "",
+            frequency = profilePrefs.getString("training_frequency_$userId", "") ?: "",
+            workout_duration = profilePrefs.getString("workout_duration_$userId", "") ?: "",
+            workout_place = profilePrefs.getString("workout_place_$userId", "") ?: "",
+            endurance_level = profilePrefs.getString("endurance_level_$userId", "") ?: "",
+            gender = profilePrefs.getString("gender_$userId", "") ?: "",
+            profile_picture_url = profilePrefs.getString("profile_picture_url_$userId", "")?.ifBlank { null }
         )
 
         updateProfileUI(view, cachedUser)
@@ -209,17 +266,8 @@ class ProfileFragment : Fragment() {
         view.findViewById<TextView>(R.id.tvProfileGoal).text = "Goal: $goalText"
 
         val ivAvatar = view.findViewById<ImageView>(R.id.ivAvatar)
-        val localAvatarUri = requireContext()
-            .getSharedPreferences("user_profile", AppCompatActivity.MODE_PRIVATE)
-            .getString("avatar_uri", null)
-
-        if (!localAvatarUri.isNullOrBlank()) {
-            ivAvatar.setImageURI(Uri.parse(localAvatarUri))
-            ivAvatar.background = null
-            ivAvatar.clearColorFilter()
-            ivAvatar.imageTintList = null
-            ivAvatar.invalidate()
-        }
+        val localAvatarUri = getProfilePrefs().getString(getAvatarUriKey(), null)
+        applyAvatarSafely(ivAvatar, localAvatarUri)
 
         view.findViewById<TextView>(R.id.tvAge).text =
             (user.age ?: 25).toString()
@@ -447,6 +495,8 @@ class ProfileFragment : Fragment() {
         }
 
         view.findViewById<View>(R.id.llLogout).setOnClickListener {
+            HomeFragment.clearCache()
+
             requireActivity()
                 .getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
                 .edit()
@@ -502,9 +552,10 @@ class ProfileFragment : Fragment() {
     }
 
     private fun showEditProfileDialog() {
-        val authPrefs = requireContext().getSharedPreferences("auth", AppCompatActivity.MODE_PRIVATE)
-        val prefs = requireContext().getSharedPreferences("user_profile", AppCompatActivity.MODE_PRIVATE)
+        val authPrefs = getAuthPrefs()
+        val prefs = getProfilePrefs()
         val settingsPrefs = requireContext().getSharedPreferences("app_settings", AppCompatActivity.MODE_PRIVATE)
+        val userId = getCurrentUserId()
 
         val units = settingsPrefs.getString("units", "kg / cm") ?: "kg / cm"
         val isImperial = units == "lb / ft"
@@ -517,8 +568,8 @@ class ProfileFragment : Fragment() {
             topMargin = 16
         }
 
-        val weightKg = prefs.getFloat("weight", 75f)
-        val heightCm = prefs.getFloat("height", 180f)
+        val weightKg = prefs.getFloat("weight_$userId", 75f)
+        val heightCm = prefs.getFloat("height_$userId", 180f)
 
         val container = LinearLayout(ctx).apply {
             orientation = LinearLayout.VERTICAL
@@ -541,7 +592,7 @@ class ProfileFragment : Fragment() {
             isErrorEnabled = true
             addView(TextInputEditText(ctx).apply {
                 inputType = android.text.InputType.TYPE_CLASS_NUMBER
-                setText(prefs.getInt("age", 25).toString())
+                setText(prefs.getInt("age_$userId", 25).toString())
             })
         }
         val etAge = tilAge.editText!!
@@ -678,21 +729,22 @@ class ProfileFragment : Fragment() {
             return
         }
 
-        val prefs = requireContext().getSharedPreferences("user_profile", AppCompatActivity.MODE_PRIVATE)
+        val prefs = getProfilePrefs()
+        val userId = getCurrentUserId()
 
         val request = UpdateProfileRequest(
             username = username,
             age = age,
             weight = weight,
             height = height,
-            fitness_level = prefs.getString("fitness_level", null),
-            goal = prefs.getString("training_goal", null),
-            limitations = prefs.getString("injuries", null),
-            frequency = prefs.getString("training_frequency", null),
-            workout_duration = prefs.getString("workout_duration", null),
-            workout_place = prefs.getString("workout_place", null),
-            endurance_level = prefs.getString("endurance_level", null),
-            gender = prefs.getString("gender", null)
+            fitness_level = prefs.getString("fitness_level_$userId", null),
+            goal = prefs.getString("training_goal_$userId", null),
+            limitations = prefs.getString("injuries_$userId", null),
+            frequency = prefs.getString("training_frequency_$userId", null),
+            workout_duration = prefs.getString("workout_duration_$userId", null),
+            workout_place = prefs.getString("workout_place_$userId", null),
+            endurance_level = prefs.getString("endurance_level_$userId", null),
+            gender = prefs.getString("gender_$userId", null)
         )
 
         viewLifecycleOwner.lifecycleScope.launch {
