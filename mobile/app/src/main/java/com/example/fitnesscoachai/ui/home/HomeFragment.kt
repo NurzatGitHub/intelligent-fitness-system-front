@@ -337,8 +337,8 @@ class HomeFragment : Fragment() {
             binding.card.strokeColor = if (isToday) primaryColor else outlineColor
             binding.card.strokeWidth = if (isToday) dp(3) else dp(1)
             binding.card.alpha = if (isToday) 1f else 0.88f
-            binding.card.scaleX = if (isToday) 1.06f else 1f
-            binding.card.scaleY = if (isToday) 1.06f else 1f
+            binding.card.scaleX = if (isToday) 1.03f else 1f
+            binding.card.scaleY = if (isToday) 1.03f else 1f
             binding.card.cardElevation = if (isToday) dp(6).toFloat() else 0f
 
             binding.label.text = if (isToday) "${day.label} • Today" else day.label
