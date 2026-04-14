@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -52,27 +53,32 @@ class CrunchActivity : AppCompatActivity() {
     private var repCount = 0
 
     private enum class CrunchPhase { UP, DOWN }
-
     private var phase = CrunchPhase.UP
+
     private var downStreak = 0
     private var upStreak = 0
 
-    // Пороги из анализа датасета
-    private val DOWN_T = 98.5f
-    private val UP_T = 140.0f
-    private val FLAT_T = 155.0f
-    private val NECK_DOWN_T = 148f
-
     private var reachedDepthInCurrentRep = false
-    private var downHoldStreak = 0
-    private val DOWN_HOLD_NEED = 1
+    private var validDownHoldStreak = 0
 
     private var readyStreak = 0
-    private val READY_STREAK_NEED = 3
     private var isReady = false
+    private var waitingForFirstDown = true
 
-    // Делаем var, чтобы можно было переключать
     private var lensFacing = CameraSelector.LENS_FACING_FRONT
+
+    companion object {
+        private const val READY_STREAK_NEED = 3
+
+        // Пороги
+        private const val FLAT_T = 158f
+        private const val UP_T = 132f
+        private const val DOWN_T = 100f
+
+        private const val DOWN_STREAK_NEED = 2
+        private const val UP_STREAK_NEED = 2
+        private const val VALID_DOWN_HOLD_NEED = 2
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,7 +134,6 @@ class CrunchActivity : AppCompatActivity() {
             } else {
                 CameraSelector.LENS_FACING_BACK
             }
-
             overlayView.mirrorX = (lensFacing == CameraSelector.LENS_FACING_FRONT)
             bindCameraUseCases()
         }
@@ -147,10 +152,13 @@ class CrunchActivity : AppCompatActivity() {
         downStreak = 0
         upStreak = 0
         reachedDepthInCurrentRep = false
-        downHoldStreak = 0
+        validDownHoldStreak = 0
         readyStreak = 0
         isReady = false
+        waitingForFirstDown = true
 
+        tvReps.text = "0"
+        tvFeedback.text = "Get ready"
         btnStartPause.text = "Pause"
 
         timer = object : CountDownTimer(Long.MAX_VALUE, 1000L) {
@@ -236,7 +244,6 @@ class CrunchActivity : AppCompatActivity() {
 
                 if (!isReady) {
                     val readyResult = readyCheck.check(fixed)
-
                     feedbackText = readyResult.hint.ifEmpty { "Lie on your back, knees bent" }
 
                     if (readyResult.isReady) {
@@ -252,6 +259,9 @@ class CrunchActivity : AppCompatActivity() {
                         phase = CrunchPhase.UP
                         downStreak = 0
                         upStreak = 0
+                        reachedDepthInCurrentRep = false
+                        validDownHoldStreak = 0
+                        waitingForFirstDown = true
                         feedbackText = "Start crunching"
                     }
 
@@ -261,43 +271,63 @@ class CrunchActivity : AppCompatActivity() {
                     if (features != null) {
                         val trunkAngle = features[0]
                         val neckAngle = features[1]
+                        val hipLift = features[2]
+                        val elbowToKnee = features[3]
+                        val symmetryDiff = features[4]
+                        val kneeAngleAvg = features[5]
+                        val shoulderTilt = features[6]
+
+                        val modelResult = crunchModel.predict(features)
 
                         val isFlat = trunkAngle >= FLAT_T
-                        val isCrunching = trunkAngle < DOWN_T
-                        val isRising = trunkAngle in DOWN_T..UP_T
+                        val isUpEnough = trunkAngle >= UP_T
+                        val isDownByTrunk = trunkAngle <= DOWN_T
 
-                        val trunkGood = isFlat || isCrunching || isRising
-                        val neckGood = neckAngle <= NECK_DOWN_T || neckAngle >= 175f
-                        val depthGood = isCrunching
+                        val isNeckOnly = neckAngle < 125f && trunkAngle > 105f
+                        val isElbowClose = elbowToKnee <= 1.20f
+                        val kneesOk = kneeAngleAvg in 25f..130f
+                        val hipsOk = hipLift in -1.55f..-0.20f
 
-                        segments = buildCrunchSegments(
-                            trunkGood = trunkGood,
-                            neckGood = neckGood,
-                            depthGood = depthGood
-                        )
+                        // Только для логов, не для блокировки rep
+                        val bodySymmetric = symmetryDiff <= 0.35f
+                        val shouldersOk = shoulderTilt <= 50f
+
+                        val validDown = isDownByTrunk &&
+                                isElbowClose &&
+                                kneesOk &&
+                                hipsOk &&
+                                !isNeckOnly
+
+                        val almostDown = trunkAngle < 118f && kneesOk && !isNeckOnly
 
                         feedbackText = when {
                             isFlat -> "Lift your upper body"
-                            isCrunching -> "Good crunch"
-                            isRising && !depthGood -> "Go deeper"
-                            neckAngle > NECK_DOWN_T && neckAngle < 175f -> "Lift your head"
+                            isNeckOnly -> "Lift shoulders, not only neck"
+                            !kneesOk -> "Keep knees bent"
+                            !hipsOk -> "Keep hips stable"
+                            validDown -> "Good crunch"
+                            almostDown -> "Almost there"
                             else -> "Keep going"
                         }
 
-                        crunchModel.predict(features)
+                        val trunkGood = validDown || almostDown || isUpEnough
+                        val neckGood = !isNeckOnly
 
-                        val mouthVisible = fixed[2].v >= 0.15f
-                        val crunchDown = trunkAngle <= DOWN_T &&
-                                (!mouthVisible || neckAngle <= NECK_DOWN_T)
-                        val crunchUp = trunkAngle >= UP_T
+                        segments = buildCrunchSegments(
+                            trunkGood = trunkGood,
+                            neckGood = neckGood
+                        )
+
+                        val crunchDown = validDown
+                        val crunchUp = isUpEnough
 
                         if (crunchDown) {
-                            downHoldStreak++
-                            if (downHoldStreak >= DOWN_HOLD_NEED) {
+                            validDownHoldStreak++
+                            if (validDownHoldStreak >= VALID_DOWN_HOLD_NEED) {
                                 reachedDepthInCurrentRep = true
                             }
                         } else {
-                            downHoldStreak = 0
+                            validDownHoldStreak = 0
                         }
 
                         when {
@@ -315,26 +345,52 @@ class CrunchActivity : AppCompatActivity() {
                             }
                         }
 
-                        if (phase == CrunchPhase.UP && downStreak >= 1) {
+                        if (phase == CrunchPhase.UP && downStreak >= DOWN_STREAK_NEED) {
                             phase = CrunchPhase.DOWN
                             downStreak = 0
+                            waitingForFirstDown = false
                         }
 
-                        if (phase == CrunchPhase.DOWN && upStreak >= 1) {
+                        if (phase == CrunchPhase.DOWN && upStreak >= UP_STREAK_NEED && !waitingForFirstDown) {
                             phase = CrunchPhase.UP
                             upStreak = 0
 
-                            if (reachedDepthInCurrentRep) repCount++
+                            if (reachedDepthInCurrentRep) {
+                                repCount++
+                            }
 
                             reachedDepthInCurrentRep = false
-                            downHoldStreak = 0
+                            validDownHoldStreak = 0
                         }
 
+                        Log.d(
+                            "CrunchDebug",
+                            "trunk=%.1f neck=%.1f hip=%.2f ek=%.2f sym=%.3f tilt=%.1f knee=%.1f validDown=%s almost=%s up=%s phase=%s model=%s conf=%s reps=%d shouldersOk=%s bodySym=%s"
+                                .format(
+                                    trunkAngle,
+                                    neckAngle,
+                                    hipLift,
+                                    elbowToKnee,
+                                    symmetryDiff,
+                                    shoulderTilt,
+                                    kneeAngleAvg,
+                                    validDown,
+                                    almostDown,
+                                    crunchUp,
+                                    phase.name,
+                                    modelResult.label,
+                                    modelResult.confidence?.toString() ?: "null",
+                                    repCount,
+                                    shouldersOk,
+                                    bodySymmetric
+                                )
+                        )
                     } else {
                         feedbackText = "Show hips and knees"
                         segments = emptyList()
                         downStreak = 0
                         upStreak = 0
+                        validDownHoldStreak = 0
                     }
                 }
 
@@ -362,8 +418,7 @@ class CrunchActivity : AppCompatActivity() {
 
     private fun buildCrunchSegments(
         trunkGood: Boolean,
-        neckGood: Boolean,
-        depthGood: Boolean
+        neckGood: Boolean
     ): List<Segment> {
         val green = "#00FF00"
         val red = "#FF0000"
@@ -372,10 +427,10 @@ class CrunchActivity : AppCompatActivity() {
         val trunkColor = if (trunkGood) green else red
 
         return listOf(
-            Segment(2, 3, neckColor),
-            Segment(4, 5, trunkColor),
+            Segment(0, 3, neckColor),
             Segment(3, 4, trunkColor),
             Segment(3, 5, trunkColor),
+            Segment(4, 5, trunkColor),
             Segment(4, 10, trunkColor),
             Segment(5, 11, trunkColor),
             Segment(10, 11, trunkColor),

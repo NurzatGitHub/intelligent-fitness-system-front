@@ -49,8 +49,8 @@ class PlankActivity : AppCompatActivity() {
     private val READY_STREAK_NEED = 2
 
     private var isWorkoutActive = false
-    private var elapsedSeconds = 0L
-    private var holdSeconds = 0L
+    private var elapsedSeconds = 1L
+    private var holdSeconds = 1L
     private var timer: CountDownTimer? = null
 
     private var isHolding = false
